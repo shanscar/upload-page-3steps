@@ -130,7 +130,7 @@ export const DescriptionInput = ({
           onKeyDown={handleKeyDown}
           placeholder="例如：今日下午2點在政府總部大樓記者會廳，採訪財政司司長陳茂波講解新一年度預算案重點..."
           className={cn(
-            "min-h-[140px] text-lg p-6 pr-20 transition-all duration-300 border-2 shadow-sm",
+            "min-h-[140px] text-xl p-6 pr-20 transition-all duration-300 border-2 shadow-sm",
             "bg-card focus:shadow-medium focus:border-primary focus:scale-[1.02]",
             "caret-primary shadow-[0_0_15px_hsl(var(--primary)/0.2)]",
             description && "border-primary/40 bg-primary/5 shadow-md"
