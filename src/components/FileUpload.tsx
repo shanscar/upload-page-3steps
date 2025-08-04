@@ -97,6 +97,12 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
     ));
   };
 
+  const updateTrackChannelType = (trackId: number, channelType: 'mono' | 'stereo' | 'surround') => {
+    setAudioTracks(prev => prev.map(track => 
+      track.id === trackId ? { ...track, channelType } : track
+    ));
+  };
+
   // Drag and drop handlers for language assignment
   const handleLanguageDragStart = (e: React.DragEvent, language: string) => {
     e.dataTransfer.setData("text/plain", language);
@@ -164,12 +170,18 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
     const metadata = {
       date: selectedDate,
       audioTracks: audioTracks.filter(track => track.isSelected),
-      languages: audioTracks.filter(track => track.isSelected).map(track => track.language)
+      languages: audioTracks.filter(track => track.isSelected).map(track => track.language),
+      channelTypes: audioTracks.filter(track => track.isSelected).map(track => track.channelType)
     };
     onUpload(uploadedFiles, metadata);
   };
 
   const LANGUAGE_OPTIONS = ["粵語", "英語", "普通話", "環境聲", "其他"];
+  const CHANNEL_OPTIONS = [
+    { value: 'mono', label: '單聲道', icon: <Circle className="w-3 h-3" /> },
+    { value: 'stereo', label: '立體聲', icon: <div className="flex gap-1"><CircleDot className="w-3 h-3" /><CircleDot className="w-3 h-3" /></div> },
+    { value: 'surround', label: '環繞聲', icon: <div className="flex gap-0.5"><Circle className="w-2 h-2" /><Circle className="w-2 h-2" /><Circle className="w-2 h-2" /><Circle className="w-2 h-2" /></div> }
+  ];
   
   // Language color mapping
   const getLanguageColor = (language: string) => {
@@ -193,19 +205,19 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
     }
   };
 
-  // Generate waveform bars based on volume level
-  const generateWaveform = (volumeLevel: number) => {
+  // Generate static waveform bars
+  const generateWaveform = () => {
     const bars = [];
+    const heights = [24, 32, 28, 36, 30, 26, 34, 22]; // Static heights for consistent appearance
     for (let i = 0; i < 8; i++) {
-      const height = Math.max(20, (volumeLevel / 100) * 40 * (Math.random() * 0.4 + 0.8));
       bars.push(
         <div
           key={i}
           className="bg-current transition-all duration-300"
           style={{
             width: '2px',
-            height: `${height}px`,
-            opacity: 0.6 + (volumeLevel / 100) * 0.4
+            height: `${heights[i]}px`,
+            opacity: 0.7
           }}
         />
       );
@@ -373,15 +385,49 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
                     {/* Track header */}
                     <div className="flex items-center justify-between mb-3">
                       <span className="font-semibold text-lg">音軌 {track.id}</span>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        {getChannelIcon(track.channelType)}
-                        <span className="uppercase">{track.channelType}</span>
-                      </div>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-auto p-1 gap-2 text-xs text-muted-foreground hover:text-foreground"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {getChannelIcon(track.channelType)}
+                            <span className="uppercase">{track.channelType}</span>
+                            <ChevronDown className="w-3 h-3" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-40 p-2" align="end">
+                          <div className="space-y-1">
+                            {CHANNEL_OPTIONS.map(option => (
+                              <Button
+                                key={option.value}
+                                variant="ghost"
+                                size="sm"
+                                className={cn(
+                                  "w-full justify-start gap-2",
+                                  track.channelType === option.value && "bg-primary/10"
+                                )}
+                                onClick={() => {
+                                  updateTrackChannelType(track.id, option.value as 'mono' | 'stereo' | 'surround');
+                                }}
+                              >
+                                {option.icon}
+                                <span className="text-xs">{option.label}</span>
+                                {track.channelType === option.value && (
+                                  <Check className="w-3 h-3 ml-auto" />
+                                )}
+                              </Button>
+                            ))}
+                          </div>
+                        </PopoverContent>
+                      </Popover>
                     </div>
                     
                     {/* Waveform visualization */}
                     <div className="flex items-center gap-1 mb-4 h-12 justify-center">
-                      {generateWaveform(track.volumeLevel)}
+                      {generateWaveform()}
                     </div>
                     
                     {/* Language selector */}
@@ -451,10 +497,6 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
                       </div>
                     )}
                     
-                    {/* Volume indicator */}
-                    <div className="mt-3 text-xs text-muted-foreground text-center">
-                      音量: {track.volumeLevel}%
-                    </div>
                   </CardContent>
                 </Card>
               ))}
