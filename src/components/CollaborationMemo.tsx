@@ -921,7 +921,7 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                  {/* Complete Assignment & Send Message Button */}
                  {assignedTasks.length > 0 && (
                    <Button
-                     onClick={handleCopyLink}
+                      onClick={handleSendNotification}
                      className="absolute bottom-4 right-4 h-12 w-12 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
                      title="完成指派並發送訊息"
                    >
