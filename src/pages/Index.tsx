@@ -299,7 +299,7 @@ const Index = () => {
     if (workState.sentStatus) {
       completed.push({
         step: 3,
-        title: "工作",
+        title: "開工",
         summary: `已發送通知 - ${workState.sentStatus.timestamp} (${workState.sentStatus.recipientCount}位協作者)`,
         isCompleted: true
       });
