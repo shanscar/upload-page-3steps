@@ -832,22 +832,37 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                         </p>
                       </div>
                       
-                      {/* Team */}
-                      <div>
+                      <div className="group">
                         <p className={cn("text-xs font-medium mb-1", template.textColor)}>
-                          建議分工：
+                          建議節目：
                         </p>
-                        <div className="flex flex-wrap gap-1">
-                          {template.team.slice(0, 2).map((member, idx) => (
-                            <span key={idx} className={cn("text-xs", template.textColor)}>
-                              {member.split(' ')[0]}
-                            </span>
-                          ))}
-                          {template.team.length > 2 && (
-                            <span className={cn("text-xs", template.textColor)}>
-                              +{template.team.length - 2}
-                            </span>
-                          )}
+                        <div className="relative">
+                          {/* Initially show all examples */}
+                          <div className="group-hover:hidden">
+                            <div className="flex flex-wrap gap-1">
+                              {template.examples.map((example, idx) => (
+                                <span key={idx} className={cn("text-xs bg-white/20 px-2 py-0.5 rounded-full", template.textColor)}>
+                                  {example}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                          
+                          {/* Show first 2 examples on hover */}
+                          <div className="hidden group-hover:block animate-fade-in">
+                            <div className="flex flex-wrap gap-1">
+                              {template.examples.slice(0, 2).map((example, idx) => (
+                                <span key={idx} className={cn("text-xs bg-white/30 px-2 py-0.5 rounded-full", template.textColor)}>
+                                  {example}
+                                </span>
+                              ))}
+                              {template.examples.length > 2 && (
+                                <span className={cn("text-xs bg-white/20 px-2 py-0.5 rounded-full", template.textColor)}>
+                                  +{template.examples.length - 2}更多
+                                </span>
+                              )}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
