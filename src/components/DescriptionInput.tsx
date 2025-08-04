@@ -80,6 +80,7 @@ export const DescriptionInput = ({ onAnalyze, isAnalyzing }: DescriptionInputPro
           className={cn(
             "min-h-[140px] text-lg p-6 transition-all duration-300 border-2 shadow-sm",
             "bg-card focus:shadow-medium focus:border-primary focus:scale-[1.02]",
+            "caret-primary animate-pulse shadow-[0_0_20px_hsl(var(--primary)/0.3)]",
             description && "border-primary/40 bg-primary/5 shadow-md"
           )}
           disabled={isAnalyzing}
