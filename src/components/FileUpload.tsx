@@ -233,18 +233,17 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
         <div className="text-primary text-sm">預期類型：{expectedFileType}</div>
       </div>
 
-      <Card
-        className={cn(
-          "border-2 border-dashed p-8 text-center transition-all duration-300",
-          dragActive && "border-primary bg-primary/5 scale-105",
-          uploadedFiles.length > 0 && "border-success bg-success/5"
-        )}
-        onDragEnter={handleDrag}
-        onDragLeave={handleDrag}
-        onDragOver={handleDrag}
-        onDrop={handleDrop}
-      >
-        {uploadedFiles.length === 0 ? (
+      {uploadedFiles.length === 0 && (
+        <Card
+          className={cn(
+            "border-2 border-dashed p-8 text-center transition-all duration-300",
+            dragActive && "border-primary bg-primary/5 scale-105"
+          )}
+          onDragEnter={handleDrag}
+          onDragLeave={handleDrag}
+          onDragOver={handleDrag}
+          onDrop={handleDrop}
+        >
           <div className="space-y-6 py-12">
             <div className="text-6xl text-muted-foreground">🎬</div>
             <div>
@@ -267,8 +266,14 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
               </Button>
             </div>
           </div>
-        ) : null}
-      </Card>
+        </Card>
+      )}
+
+      {uploadedFiles.length > 0 && (
+        <div className="mb-4 p-3 bg-success/10 border border-success/20 rounded-lg">
+          <p className="text-success text-sm font-medium">✨檔案收到了</p>
+        </div>
+      )}
 
       {uploadedFiles.length > 0 && (
         <div className="space-y-6 animate-fade-in">
