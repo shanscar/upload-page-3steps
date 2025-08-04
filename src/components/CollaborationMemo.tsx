@@ -571,10 +571,6 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
                     </div>
                   </div>
                 </div>
-
-                <div className="text-sm text-amber-700">
-                  已選擇 {selectedTemplates.length} / {PROGRAM_TEMPLATES.length} 個流程
-                </div>
               </div>
             </Card>
           </div>
