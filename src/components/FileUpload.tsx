@@ -274,17 +274,12 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
         </Card>
       )}
 
-      {uploadedFiles.length > 0 && (
-        <div className="mb-4 p-3 bg-success/10 border border-success/20 rounded-lg">
-          <p className="text-success text-sm font-medium">✨ 檔案收到了！</p>
-        </div>
-      )}
 
       {uploadedFiles.length > 0 && (
         <div className="space-y-6 animate-fade-in">
           {/* File List */}
           <Card className="p-4">
-            <h4 className="font-medium mb-3">📊 檔案檢測：</h4>
+            <h4 className="font-medium mb-3">📋 檔案收到了：</h4>
             {uploadedFiles.map((file, index) => (
               <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                 <div>
