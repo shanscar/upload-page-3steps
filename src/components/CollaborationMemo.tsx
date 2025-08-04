@@ -764,7 +764,7 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
       ) : (
         // Collaboration Layout Mode (Left memo + Right tasks by role)
         <>
-          {/* Header */}
+           {/* Header */}
           <div className="relative mb-8">
             <Pin className="absolute -top-3 -right-3 text-slate-400 transform rotate-45 w-8 h-8 z-10" />
             <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-amber-200 shadow-lg">
@@ -790,62 +790,35 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
                     </div>
                   </div>
                 </div>
+                
+                {/* Assigned Tasks integrated in memo card */}
+                {assignedTasks.length > 0 && (
+                  <div className="border-t border-amber-200 pt-4 mt-4">
+                    <div className="flex flex-wrap gap-2">
+                      {assignedTasks.map((task, index) => (
+                        <div
+                          key={index}
+                          className="relative group bg-amber-100/50 rounded-lg px-3 py-1.5 flex items-center gap-2 text-sm animate-fade-in"
+                        >
+                          <span className="text-sm">{task.emoji}</span>
+                          <span className="font-medium text-amber-800">{task.taskName}</span>
+                          <span className="text-amber-700">@{task.assignee}</span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleRemoveAssignment(task.taskKey)}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity h-3 w-3 p-0 text-amber-600 hover:text-red-500 hover:bg-amber-200 ml-1"
+                          >
+                            <X className="h-2 w-2" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </Card>
           </div>
-
-          {/* Assigned Tasks Section */}
-          {assignedTasks.length > 0 && (
-            <div className="mb-8">
-              <h3 className="text-xl font-bold text-amber-900 mb-4 flex items-center gap-2">
-                <CheckCircle className="w-6 h-6 text-green-600" />
-                已指派任務 ({assignedTasks.length})
-              </h3>
-              <div className="flex flex-wrap gap-3">
-                {assignedTasks.map((task, index) => (
-                  <div
-                    key={index}
-                    className={cn(
-                      "relative group bg-white rounded-lg border-2 shadow-md p-3 min-w-48 animate-fade-in",
-                      task.priority === 'high' ? 'border-red-200 bg-red-50' :
-                      task.priority === 'medium' ? 'border-orange-200 bg-orange-50' :
-                      'border-green-200 bg-green-50'
-                    )}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-lg">{task.emoji}</span>
-                          <div className="flex items-center gap-1">
-                            <Badge 
-                              variant={task.priority === 'high' ? 'destructive' : task.priority === 'medium' ? 'default' : 'secondary'}
-                              className="text-xs"
-                            >
-                              {task.priority === 'high' ? '高' : task.priority === 'medium' ? '中' : '低'}
-                            </Badge>
-                          </div>
-                        </div>
-                        <p className="text-sm font-medium text-gray-800 mb-1 line-clamp-2">
-                          {task.taskName}
-                        </p>
-                        <p className="text-xs text-gray-600 font-medium">
-                          指派給：{task.assignee}
-                        </p>
-                      </div>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleRemoveAssignment(task.taskKey)}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0 text-gray-400 hover:text-red-500 hover:bg-red-100"
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Main Layout: Left 1/3 Selected Memo + Right 2/3 Role Tasks */}
           <div className="flex flex-col lg:flex-row gap-8 mb-8">
