@@ -182,7 +182,7 @@ const PROGRAM_TEMPLATES = [
     color: 'from-green-100 to-green-200',
     titleColor: 'text-green-800',
     textColor: 'text-green-700',
-    examples: ['精靈一點', '長者健康之道', '投資新世代', '香江暖流', '社區生活線', '晨光第一線', '開心家庭', '彩虹早晨', '星期日家加樂', '普出校園（普通話台）', '醫生與你', '謝謝你醫生', '生活- 健康- 資訊- 體育- 港式速遞'],
+    examples: ['精靈一點', '長者健康之道', '投資新世代', '香江暖流', '社區生活線', '醫生與你', '謝謝你醫生'],
     focus: '實用生活建議、專家指導、聽眾服務資訊',
     processingAreas: [
       { icon: '⏰', label: '時間索引', content: '專家貼士、實用建議、聽眾參與段落' },
@@ -196,36 +196,36 @@ const PROGRAM_TEMPLATES = [
         role: '🎵 剪輯師',
         emoji: '📹',
         tasks: [
-          { task: '貼士剪輯', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '實用段落編輯', timeEstimate: '1小時', priority: 'medium' as const },
-          { task: '專家訪談剪輯', timeEstimate: '1小時', priority: 'medium' as const }
+          { task: '貼士剪輯' },
+          { task: '實用段落編輯' },
+          { task: '專家訪談剪輯' }
         ]
       },
       {
         role: '✍️ 生活記者',
         emoji: '📋',
         tasks: [
-          { task: '指引內容整理', timeEstimate: '2小時', priority: 'high' as const },
-          { task: '知識整理', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '專家資料核實', timeEstimate: '45分鐘', priority: 'medium' as const }
+          { task: '指引內容整理' },
+          { task: '知識整理' },
+          { task: '專家資料核實' }
         ]
       },
       {
         role: '🎨 設計師',
         emoji: '💡',
         tasks: [
-          { task: '資訊圖卡設計', timeEstimate: '2小時', priority: 'medium' as const },
-          { task: '健康視覺設計', timeEstimate: '1.5小時', priority: 'medium' as const },
-          { task: '數據圖表製作', timeEstimate: '1小時', priority: 'low' as const }
+          { task: '資訊圖卡設計' },
+          { task: '健康視覺設計' },
+          { task: '數據圖表製作' }
         ]
       },
       {
         role: '📱 社媒專員',
         emoji: '🔔',
         tasks: [
-          { task: '生活建議推廣', timeEstimate: '45分鐘', priority: 'high' as const },
-          { task: '資訊重點包裝', timeEstimate: '30分鐘', priority: 'medium' as const },
-          { task: '用戶諮詢回應', timeEstimate: '持續進行', priority: 'medium' as const }
+          { task: '生活建議推廣' },
+          { task: '資訊重點包裝' },
+          { task: '用戶諮詢回應' }
         ]
       }
     ]
@@ -236,7 +236,7 @@ const PROGRAM_TEMPLATES = [
     color: 'from-cyan-100 to-cyan-200',
     titleColor: 'text-cyan-800',
     textColor: 'text-cyan-700',
-    examples: ['旅遊樂園', '我要走天涯', 'Backchat', 'The Pulse', 'Money Talk', 'The Close', 'Hong Kong Today', '灣區全媒睇', '走進東盟 II', '31看世界'],
+    examples: ['旅遊樂園', '我要走天涯', 'Backchat', 'The Pulse', '灣區全媒睇', '31看世界'],
     focus: '旅遊體驗分享、國際視野拓展、文化交流探討',
     processingAreas: [
       { icon: '⏰', label: '時間索引', content: '目的地介紹、旅遊體驗、國際觀察段落' },
@@ -250,36 +250,36 @@ const PROGRAM_TEMPLATES = [
         role: '🎵 剪輯師',
         emoji: '🌍',
         tasks: [
-          { task: '遊歷故事剪輯', timeEstimate: '2小時', priority: 'high' as const },
-          { task: '旅遊片段編輯', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '景點介紹製作', timeEstimate: '1小時', priority: 'medium' as const }
+          { task: '遊歷故事剪輯' },
+          { task: '旅遊片段編輯' },
+          { task: '景點介紹製作' }
         ]
       },
       {
         role: '✍️ 旅遊／國際記者',
         emoji: '✈️',
         tasks: [
-          { task: '異地分析', timeEstimate: '2小時', priority: 'high' as const },
-          { task: '文化觀察', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '旅遊資訊整理', timeEstimate: '1小時', priority: 'medium' as const }
+          { task: '異地分析' },
+          { task: '文化觀察' },
+          { task: '旅遊資訊整理' }
         ]
       },
       {
         role: '🎨 設計師',
         emoji: '🗺️',
         tasks: [
-          { task: '地圖設計', timeEstimate: '2小時', priority: 'medium' as const },
-          { task: '景點圖片處理', timeEstimate: '1.5小時', priority: 'medium' as const },
-          { task: '旅遊視覺包裝', timeEstimate: '1小時', priority: 'low' as const }
+          { task: '地圖設計' },
+          { task: '景點圖片處理' },
+          { task: '旅遊視覺包裝' }
         ]
       },
       {
         role: '📱 社媒專員',
         emoji: '🏖️',
         tasks: [
-          { task: '國際內容分享', timeEstimate: '45分鐘', priority: 'high' as const },
-          { task: '旅遊推廣', timeEstimate: '30分鐘', priority: 'medium' as const },
-          { task: '旅友互動管理', timeEstimate: '持續進行', priority: 'medium' as const }
+          { task: '國際內容分享' },
+          { task: '旅遊推廣' },
+          { task: '旅友互動管理' }
         ]
       }
     ]
@@ -290,7 +290,7 @@ const PROGRAM_TEMPLATES = [
     color: 'from-amber-100 to-amber-200',
     titleColor: 'text-amber-800',
     textColor: 'text-amber-700',
-    examples: ['戲曲之夜', '粵曲天地', '晚間粵曲', '星期五粵曲夜', 'Night Music 長夜細聽', 'Simply Classical 就是古典', 'Cantilena 自投羅網'],
+    examples: ['戲曲之夜', '粵曲天地', '晚間粵曲', '星期五粵曲夜', 'Simply Classical 就是古典'],
     focus: '傳統文化傳承、戲曲藝術推廣、文化教育普及',
     processingAreas: [
       { icon: '⏰', label: '時間索引', content: '經典演出、藝人介紹、曲藝故事' },
@@ -304,36 +304,36 @@ const PROGRAM_TEMPLATES = [
         role: '🎵 剪輯師',
         emoji: '🎬',
         tasks: [
-          { task: '戲曲片段剪輯', timeEstimate: '2.5小時', priority: 'high' as const },
-          { task: '名段精華製作', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '背景音樂處理', timeEstimate: '45分鐘', priority: 'medium' as const }
+          { task: '戲曲片段剪輯' },
+          { task: '名段精華製作' },
+          { task: '背景音樂處理' }
         ]
       },
       {
         role: '✍️ 文化記者',
         emoji: '📜',
         tasks: [
-          { task: '曲藝介紹撰寫', timeEstimate: '2小時', priority: 'high' as const },
-          { task: '藝人資料整理', timeEstimate: '1.5小時', priority: 'medium' as const },
-          { task: '文化背景研究', timeEstimate: '1小時', priority: 'medium' as const }
+          { task: '曲藝介紹撰寫' },
+          { task: '藝人資料整理' },
+          { task: '文化背景研究' }
         ]
       },
       {
         role: '🎨 設計師',
         emoji: '🎨',
         tasks: [
-          { task: '戲曲主題視覺', timeEstimate: '2小時', priority: 'medium' as const },
-          { task: '文化推廣圖設計', timeEstimate: '1.5小時', priority: 'medium' as const },
-          { task: '傳統元素包裝', timeEstimate: '1小時', priority: 'low' as const }
+          { task: '戲曲主題視覺' },
+          { task: '文化推廣圖設計' },
+          { task: '傳統元素包裝' }
         ]
       },
       {
         role: '📱 社媒專員',
         emoji: '🏮',
         tasks: [
-          { task: '戲曲推介', timeEstimate: '45分鐘', priority: 'high' as const },
-          { task: '歷史故事散播', timeEstimate: '30分鐘', priority: 'medium' as const },
-          { task: '文化社群維護', timeEstimate: '持續進行', priority: 'medium' as const }
+          { task: '戲曲推介' },
+          { task: '歷史故事散播' },
+          { task: '文化社群維護' }
         ]
       }
     ]
@@ -344,7 +344,7 @@ const PROGRAM_TEMPLATES = [
     color: 'from-orange-100 to-orange-200',
     titleColor: 'text-orange-800',
     textColor: 'text-orange-700',
-    examples: ['鬥秀場', '守下留情', '三五成群', '周末午夜場', '生活日常', '下午紅人館（普通話台）', '開心朋友仔（普通話台）', 'After Hours with Michael Lance', 'Weekend Sunrise', 'Brunch with Noreen'],
+    examples: ['鬥秀場', '守下留情', '三五成群', '周末午夜場', '生活日常', 'After Hours with Michael Lance'],
     focus: '互動遊戲設計、娛樂內容製作、聽眾參與活動',
     processingAreas: [
       { icon: '⏰', label: '時間索引', content: '開場、遊戲環節、互動討論' },
@@ -358,36 +358,36 @@ const PROGRAM_TEMPLATES = [
         role: '🎵 剪輯師',
         emoji: '🎮',
         tasks: [
-          { task: '趣味段落剪輯', timeEstimate: '2小時', priority: 'high' as const },
-          { task: '互動精華製作', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '搞笑時刻集錦', timeEstimate: '1小時', priority: 'medium' as const }
+          { task: '趣味段落剪輯' },
+          { task: '互動精華製作' },
+          { task: '搞笑時刻集錦' }
         ]
       },
       {
         role: '✍️ 娛樂記者',
         emoji: '🎪',
         tasks: [
-          { task: '有趣內容整理', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '遊戲規則說明', timeEstimate: '1小時', priority: 'medium' as const },
-          { task: '娛樂趨勢分析', timeEstimate: '45分鐘', priority: 'low' as const }
+          { task: '有趣內容整理' },
+          { task: '遊戲規則說明' },
+          { task: '娛樂趨勢分析' }
         ]
       },
       {
         role: '🎨 設計師',
         emoji: '🎨',
         tasks: [
-          { task: '遊戲視覺設計', timeEstimate: '2小時', priority: 'medium' as const },
-          { task: '趣味圖卡製作', timeEstimate: '1.5小時', priority: 'medium' as const },
-          { task: '互動元素設計', timeEstimate: '1小時', priority: 'low' as const }
+          { task: '遊戲視覺設計' },
+          { task: '趣味圖卡製作' },
+          { task: '互動元素設計' }
         ]
       },
       {
         role: '📱 社媒專員',
         emoji: '🎉',
         tasks: [
-          { task: '娛樂推廣', timeEstimate: '45分鐘', priority: 'high' as const },
-          { task: '爆笑短片製作', timeEstimate: '30分鐘', priority: 'medium' as const },
-          { task: '遊戲互動管理', timeEstimate: '持續進行', priority: 'medium' as const }
+          { task: '娛樂推廣' },
+          { task: '爆笑短片製作' },
+          { task: '遊戲互動管理' }
         ]
       }
     ]
@@ -398,7 +398,7 @@ const PROGRAM_TEMPLATES = [
     color: 'from-indigo-100 to-indigo-200',
     titleColor: 'text-indigo-800',
     textColor: 'text-indigo-700',
-    examples: ['香港故事', '獅子山下', 'CIBS社區參與廣播計劃', '走過青春', '教學有心人', '中華知識王', '人類足跡', '替代食物', '守護天堂', '承歡記', '你安全嗎？', 'BobieLand（兒童節目）', '快樂魔法森林（兒童節目）', '恐龍萌遊記（兒童節目）', '大自然生態人'],
+    examples: ['香港故事', '獅子山下', '走過青春', '教學有心人', '中華知識王', '人類足跡', '替代食物'],
     focus: '深度專題製作、紀實報導、教育內容傳播',
     processingAreas: [
       { icon: '⏰', label: '時間索引', content: '故事開端、人物描寫、重要事件' },
@@ -412,36 +412,36 @@ const PROGRAM_TEMPLATES = [
         role: '🎵 剪輯師',
         emoji: '📽️',
         tasks: [
-          { task: '故事精華剪輯', timeEstimate: '3小時', priority: 'high' as const },
-          { task: '人物訪談編輯', timeEstimate: '2小時', priority: 'high' as const },
-          { task: '紀實場景製作', timeEstimate: '1.5小時', priority: 'medium' as const }
+          { task: '故事精華剪輯' },
+          { task: '人物訪談編輯' },
+          { task: '紀實場景製作' }
         ]
       },
       {
         role: '✍️ 專題記者',
         emoji: '🔍',
         tasks: [
-          { task: '深度分析撰寫', timeEstimate: '3小時', priority: 'high' as const },
-          { task: '內容梳理', timeEstimate: '2小時', priority: 'high' as const },
-          { task: '事實查證', timeEstimate: '1小時', priority: 'medium' as const }
+          { task: '深度分析撰寫' },
+          { task: '內容梳理' },
+          { task: '事實查證' }
         ]
       },
       {
         role: '🎨 設計師',
         emoji: '📊',
         tasks: [
-          { task: '紀實圖像設計', timeEstimate: '2小時', priority: 'medium' as const },
-          { task: '教育圖卡製作', timeEstimate: '1.5小時', priority: 'medium' as const },
-          { task: '專題視覺包裝', timeEstimate: '1小時', priority: 'low' as const }
+          { task: '紀實圖像設計' },
+          { task: '教育圖卡製作' },
+          { task: '專題視覺包裝' }
         ]
       },
       {
         role: '📱 社媒專員',
         emoji: '📖',
         tasks: [
-          { task: '故事推廣', timeEstimate: '1小時', priority: 'high' as const },
-          { task: '教育資源分享', timeEstimate: '45分鐘', priority: 'medium' as const },
-          { task: '社會議題討論', timeEstimate: '持續進行', priority: 'medium' as const }
+          { task: '故事推廣' },
+          { task: '教育資源分享' },
+          { task: '社會議題討論' }
         ]
       }
     ]
