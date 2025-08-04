@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Copy, Share, Users, Pin, Paperclip, CheckCircle, Eye } from "lucide-react";
+import { Copy, Pin, Paperclip, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { MemoDetailModal } from "./MemoDetailModal";
@@ -465,8 +465,6 @@ interface CollaborationMemoProps {
 }
 
 export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: CollaborationMemoProps) => {
-  const [colleagueEmail, setColleagueEmail] = useState("");
-  const [shareMessage, setShareMessage] = useState("");
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<typeof PROGRAM_TEMPLATES[0] | null>(null);
@@ -489,27 +487,6 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
     }
   };
 
-  const handleShareToColleague = () => {
-    if (!colleagueEmail) {
-      toast({
-        title: "請輸入同事郵箱",
-        description: "請先輸入要分享的同事郵箱地址",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const selectedTemplateNames = selectedTemplates.map(id => 
-      PROGRAM_TEMPLATES.find(t => t.id === id)?.title
-    ).join('、');
-
-    toast({
-      title: "分享成功",
-      description: `已將選中的流程範本 (${selectedTemplateNames || '無'}) 發送給 ${colleagueEmail}`,
-    });
-    setColleagueEmail("");
-    setShareMessage("");
-  };
 
   const handleTemplateToggle = (templateId: string) => {
     setSelectedTemplates(prev => 
@@ -519,13 +496,6 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
     );
   };
 
-  const handleSelectAll = () => {
-    setSelectedTemplates(PROGRAM_TEMPLATES.map(t => t.id));
-  };
-
-  const handleClearAll = () => {
-    setSelectedTemplates([]);
-  };
 
   const handleMemoDoubleClick = (template: typeof PROGRAM_TEMPLATES[0]) => {
     setSelectedTemplate(template);
@@ -571,7 +541,7 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
       {selectedTemplates.length === 0 ? (
         // Template Selection Mode
         <>
-          {/* Memo Header */}
+          {/* Memo Header with Collaboration */}
           <div className="relative mb-8">
             <Pin className="absolute -top-3 -right-3 text-slate-400 transform rotate-45 w-8 h-8 z-10" />
             <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-amber-200 shadow-lg">
@@ -583,37 +553,27 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
                       工作協作備忘錄
                     </h1>
                   </div>
-                  <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1 rounded">
-                    {new Date().toLocaleDateString('zh-TW')}
+                  
+                  {/* Collaboration Section - Integrated into header */}
+                  <div className="flex items-center gap-3">
+                    <Button 
+                      onClick={handleCopyLink}
+                      variant="outline" 
+                      size="sm"
+                      className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
+                    >
+                      <Copy className="w-4 h-4 mr-1" />
+                      複製訊息
+                    </Button>
+                    
+                    <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1 rounded">
+                      {new Date().toLocaleDateString('zh-TW')}
+                    </div>
                   </div>
                 </div>
-                
-                <p className="text-amber-800 text-lg font-handwriting mb-4">
-                  📝 重新選擇或調整處理流程，打造最適合的工作範本
-                </p>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-2">
-                    <Button 
-                      onClick={handleSelectAll}
-                      variant="outline"
-                      size="sm"
-                      className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
-                    >
-                      全選
-                    </Button>
-                    <Button 
-                      onClick={handleClearAll}
-                      variant="outline"
-                      size="sm"
-                      className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
-                    >
-                      清除
-                    </Button>
-                  </div>
-                  <div className="text-sm text-amber-700">
-                    已選擇 {selectedTemplates.length} / {PROGRAM_TEMPLATES.length} 個流程
-                  </div>
+                <div className="text-sm text-amber-700">
+                  已選擇 {selectedTemplates.length} / {PROGRAM_TEMPLATES.length} 個流程
                 </div>
               </div>
             </Card>
@@ -644,17 +604,8 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
                     onClick={() => handleTemplateToggle(template.id)}
                     onDoubleClick={() => handleMemoDoubleClick(template)}
                   >
-                    {/* Hover overlay with eye icon and instruction */}
-                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
-                      <div className="text-center text-white drop-shadow-lg">
-                        <Eye className="w-8 h-8 mx-auto mb-2" />
-                        <span className="text-sm font-medium bg-black/40 px-3 py-1 rounded">
-                          雙擊查看詳情
-                        </span>
-                      </div>
-                    </div>
 
-                    <div className="h-full flex flex-col group-hover:opacity-60 transition-opacity duration-300">
+                    <div className="h-full flex flex-col">
                       {/* Selection indicator */}
                       {isSelected && (
                         <div className="absolute top-2 left-2 z-10">
@@ -780,61 +731,6 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
         </>
       )}
 
-      {/* Collaboration Section */}
-      <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 shadow-lg mb-6">
-        <div className="p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <Users className="w-6 h-6 text-blue-600" />
-            <h3 className="text-xl font-bold text-blue-900 font-handwriting">
-              協作分享
-            </h3>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Copy Link */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h4 className="font-medium text-blue-900 mb-2">複製項目連結</h4>
-              <p className="text-sm text-blue-700 mb-3">分享選中的流程範本給相關同事</p>
-              <Button 
-                onClick={handleCopyLink}
-                variant="outline" 
-                className="w-full bg-white border-blue-300 text-blue-800 hover:bg-blue-100"
-              >
-                <Copy className="w-4 h-4 mr-2" />
-                複製連結
-              </Button>
-            </div>
-
-            {/* Share to Colleague */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h4 className="font-medium text-blue-900 mb-2">@ 分享給同事</h4>
-              <div className="space-y-2">
-                <Input
-                  placeholder="輸入同事郵箱"
-                  value={colleagueEmail}
-                  onChange={(e) => setColleagueEmail(e.target.value)}
-                  className="bg-white border-blue-300"
-                />
-                <Input
-                  placeholder="添加備註訊息 (可選)"
-                  value={shareMessage}
-                  onChange={(e) => setShareMessage(e.target.value)}
-                  className="bg-white border-blue-300"
-                />
-                <Button 
-                  onClick={handleShareToColleague}
-                  variant="outline"
-                  className="w-full bg-white border-blue-300 text-blue-800 hover:bg-blue-100"
-                  disabled={selectedTemplates.length === 0}
-                >
-                  <Share className="w-4 h-4 mr-2" />
-                  發送範本 ({selectedTemplates.length})
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Card>
 
       {/* Action Footer */}
       <div className="flex justify-end">
