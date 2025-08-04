@@ -143,7 +143,7 @@ export const DescriptionInput = ({
           <Button
             onClick={handleAnalyze}
             size="sm"
-            className="absolute bottom-3 right-3 bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 text-xs px-3 py-2 shadow-sm animate-fade-in"
+            className="absolute bottom-3 right-3 bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 text-sm px-4 py-3 shadow-sm animate-fade-in"
           >
             ⚡ Enter 分析
           </Button>
