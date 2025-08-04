@@ -189,11 +189,11 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
   // Language color mapping
   const getLanguageColor = (language: string) => {
     const colors = {
-      "粵語": "bg-emerald-500 text-white border-emerald-600",
-      "英語": "bg-blue-500 text-white border-blue-600", 
-      "普通話": "bg-red-500 text-white border-red-600",
-      "環境聲": "bg-gray-500 text-white border-gray-600",
-      "其他": "bg-violet-500 text-white border-violet-600"
+      "粵語": "bg-emerald-100 text-emerald-800 border-emerald-300",
+      "英語": "bg-blue-100 text-blue-800 border-blue-300", 
+      "普通話": "bg-red-100 text-red-800 border-red-300",
+      "環境聲": "bg-gray-100 text-gray-800 border-gray-300",
+      "其他": "bg-violet-100 text-violet-800 border-violet-300"
     };
     return colors[language as keyof typeof colors] || colors["其他"];
   };
