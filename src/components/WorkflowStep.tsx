@@ -37,8 +37,8 @@ export const WorkflowStep = ({
         </div>
         <h2 className={cn(
           "text-xl font-semibold transition-colors",
-          isActive && "text-primary",
-          isCompleted && "text-success",
+          isActive && "text-foreground",
+          isCompleted && "text-foreground",
           !isActive && !isCompleted && "text-muted-foreground"
         )}>
           {title}

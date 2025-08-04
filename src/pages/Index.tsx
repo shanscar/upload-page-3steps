@@ -70,10 +70,10 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="border-b bg-gradient-card">
+      <div className="border-b bg-card">
         <div className="max-w-4xl mx-auto px-6 py-8">
           <div className="text-center">
-            <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-2">
+            <h1 className="text-3xl font-bold text-foreground mb-2">
               📱 影片協作工作流程
             </h1>
             <p className="text-muted-foreground">
