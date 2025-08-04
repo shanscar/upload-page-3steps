@@ -60,7 +60,7 @@ export const DescriptionInput = ({ onAnalyze, isAnalyzing }: DescriptionInputPro
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="text-center">
         <div className="text-3xl mb-3">💬</div>
         <h3 className="text-xl font-medium text-foreground mb-2">
@@ -78,16 +78,18 @@ export const DescriptionInput = ({ onAnalyze, isAnalyzing }: DescriptionInputPro
           onKeyDown={handleKeyDown}
           placeholder="例如：今日去政府總部採訪財政預算案..."
           className={cn(
-            "min-h-[140px] text-lg p-6 transition-all duration-300 border-2",
-            "focus:shadow-soft focus:border-primary focus:scale-[1.02]",
-            description && "border-primary/40 bg-primary/5"
+            "min-h-[140px] text-lg p-6 transition-all duration-300 border-2 shadow-sm",
+            "bg-card focus:shadow-medium focus:border-primary focus:scale-[1.02]",
+            description && "border-primary/40 bg-primary/5 shadow-md"
           )}
           disabled={isAnalyzing}
         />
         
         {showHint && !isAnalyzing && (
-          <div className="absolute -bottom-10 left-0 text-sm text-primary animate-fade-in font-medium">
-            ⚡ 按Ctrl+Enter 或點下面按鈕
+          <div className="absolute -bottom-12 left-0 text-sm animate-fade-in">
+            <div className="bg-primary/10 text-primary border border-primary/30 px-3 py-2 rounded-lg font-medium shadow-sm">
+              ⚡ 按Ctrl+Enter 或點下面按鈕
+            </div>
           </div>
         )}
       </div>
@@ -104,18 +106,19 @@ export const DescriptionInput = ({ onAnalyze, isAnalyzing }: DescriptionInputPro
         </div>
       )}
 
-      <Card className="p-4 bg-muted/30">
-        <div className="text-sm text-muted-foreground mb-3">💡 例子：</div>
-        <div className="grid gap-2">
+      <Card className="p-6 bg-accent/50 border-2 border-accent shadow-md">
+        <div className="text-sm text-foreground mb-4 font-medium">💡 例子：</div>
+        <div className="grid gap-3">
           {EXAMPLES.map((example, index) => (
             <button
               key={index}
               onClick={() => handleExampleClick(example)}
               className={cn(
-                "text-left p-3 rounded-lg text-sm transition-all duration-200",
-                "hover:bg-accent hover:text-accent-foreground",
-                "focus:outline-none focus:ring-2 focus:ring-primary/20",
-                description === example && "bg-primary/10 text-primary border border-primary/20"
+                "text-left p-4 rounded-lg text-sm transition-all duration-200 border",
+                "bg-card hover:bg-accent hover:text-accent-foreground hover:shadow-sm",
+                "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
+                "border-border hover:border-accent-foreground/20",
+                description === example && "bg-primary/10 text-primary border-primary/40 shadow-sm"
               )}
               disabled={isAnalyzing}
             >
