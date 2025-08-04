@@ -54,11 +54,14 @@ export const WorkflowProgressBar = ({ currentStep, completedSteps = [], onEditSt
                 className={cn(
                   "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-500 border-2",
                   isCompleted 
-                    ? "bg-success text-success-foreground border-success" 
+                    ? "bg-success text-white border-success shadow-lg" 
                     : isActive
                     ? "bg-primary text-primary-foreground border-primary animate-pulse-glow shadow-md"
                     : "bg-background text-foreground border-border shadow-sm"
                 )}
+                style={{
+                  textShadow: isCompleted ? "none" : "0 1px 2px rgba(0,0,0,0.8)"
+                }}
               >
                 {isCompleted ? "✓" : step.emoji}
               </div>
