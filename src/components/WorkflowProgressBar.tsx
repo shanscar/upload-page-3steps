@@ -1,6 +1,7 @@
 import { Progress } from "@/components/ui/progress";
 import { CompactStepSummary } from "@/components/CompactStepSummary";
 import { cn } from "@/lib/utils";
+import { MessageSquare, FolderPlus, Rocket } from "lucide-react";
 
 interface ProcessStep {
   id: string;
@@ -26,9 +27,9 @@ interface WorkflowProgressBarProps {
 }
 
 const steps = [
-  { id: 1, emoji: "🗣️", label: "述說" },
-  { id: 2, emoji: "📁", label: "入檔" },
-  { id: 3, emoji: "🚀", label: "開工" }
+  { id: 1, icon: MessageSquare, label: "述說" },
+  { id: 2, icon: FolderPlus, label: "入檔" },
+  { id: 3, icon: Rocket, label: "開工" }
 ];
 
 export const WorkflowProgressBar = ({ currentStep, completedSteps = [], onEditStep, className }: WorkflowProgressBarProps) => {
@@ -59,11 +60,8 @@ export const WorkflowProgressBar = ({ currentStep, completedSteps = [], onEditSt
                     ? "bg-primary text-primary-foreground border-primary animate-pulse-glow shadow-md"
                     : "bg-background text-foreground border-border shadow-sm"
                 )}
-                style={{
-                  textShadow: isCompleted ? "none" : "0 1px 2px rgba(0,0,0,0.8)"
-                }}
               >
-                {isCompleted ? "✓" : step.emoji}
+                {isCompleted ? "✓" : <step.icon size={16} />}
               </div>
               <span
                 className={cn(
