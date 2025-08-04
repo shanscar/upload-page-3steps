@@ -837,30 +837,30 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                           建議節目：
                         </p>
                         <div className="relative">
-                          {/* Initially show all examples */}
+                          {/* Default: show first 3 examples + count */}
                           <div className="group-hover:hidden">
                             <div className="flex flex-wrap gap-1">
-                              {template.examples.map((example, idx) => (
+                              {template.examples.slice(0, 3).map((example, idx) => (
                                 <span key={idx} className={cn("text-xs bg-white/20 px-2 py-0.5 rounded-full", template.textColor)}>
                                   {example}
                                 </span>
                               ))}
+                              {template.examples.length > 3 && (
+                                <span className={cn("text-xs bg-white/20 px-2 py-0.5 rounded-full", template.textColor)}>
+                                  +{template.examples.length - 3}更多
+                                </span>
+                              )}
                             </div>
                           </div>
                           
-                          {/* Show first 2 examples on hover */}
+                          {/* Hover: show all examples */}
                           <div className="hidden group-hover:block animate-fade-in">
                             <div className="flex flex-wrap gap-1">
-                              {template.examples.slice(0, 2).map((example, idx) => (
+                              {template.examples.map((example, idx) => (
                                 <span key={idx} className={cn("text-xs bg-white/30 px-2 py-0.5 rounded-full", template.textColor)}>
                                   {example}
                                 </span>
                               ))}
-                              {template.examples.length > 2 && (
-                                <span className={cn("text-xs bg-white/20 px-2 py-0.5 rounded-full", template.textColor)}>
-                                  +{template.examples.length - 2}更多
-                                </span>
-                              )}
                             </div>
                           </div>
                         </div>
