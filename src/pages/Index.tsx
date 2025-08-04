@@ -97,7 +97,7 @@ const Index = () => {
     const steps = ['separation', 'ai_analysis', 'auto_tagging'];
     
     for (const stepId of steps) {
-      await simulateStep(stepId, 2000 + Math.random() * 2000);
+      await simulateStep(stepId);
     }
     
     // Mark processing as complete
@@ -109,8 +109,18 @@ const Index = () => {
     }));
   };
 
-  const simulateStep = (stepId: string, duration: number) => {
+  const simulateStep = (stepId: string) => {
     return new Promise<void>((resolve) => {
+      // Different durations for different steps to simulate realistic processing
+      let baseDuration = 5000; // Base 5 seconds
+      const stepName = archiveState.processingSteps.find(step => step.id === stepId)?.name || '';
+      
+      if (stepName.includes('音軌分離')) baseDuration = 4000; // 4-7 seconds for audio separation
+      if (stepName.includes('AI分析')) baseDuration = 8000; // 8-12 seconds for AI analysis  
+      if (stepName.includes('自動標記')) baseDuration = 3000; // 3-5 seconds for auto-tagging
+      
+      const duration = baseDuration + Math.random() * 3000;
+      
       // Start processing
       setArchiveState(prev => ({
         ...prev,
@@ -124,7 +134,7 @@ const Index = () => {
           ...prev,
           processingSteps: prev.processingSteps.map(step => {
             if (step.id === stepId) {
-              const newProgress = Math.min(step.progress + 10, 100);
+              const newProgress = Math.min(step.progress + 5, 100); // 5% increments for smoother animation
               const newStatus = newProgress >= 100 ? 'completed' as const : 'processing' as const;
               
               if (newProgress >= 100) {
@@ -137,7 +147,7 @@ const Index = () => {
             return step;
           })
         }));
-      }, duration / 10);
+      }, duration / 20); // Update every 5% instead of 10%
     });
   };
 
