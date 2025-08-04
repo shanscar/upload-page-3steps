@@ -8,6 +8,7 @@ import { Copy, Pin, Paperclip, CheckCircle, UserPlus, Check, X } from "lucide-re
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { MemoDetailModal } from "./MemoDetailModal";
+import { HoverCard, HoverCardTrigger, HoverCardContent } from './ui/hover-card';
 
 // Program Templates Data
 const PROGRAM_TEMPLATES = [
@@ -832,38 +833,45 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                         </p>
                       </div>
                       
-                      <div className="group">
+                      <div>
                         <p className={cn("text-xs font-medium mb-1", template.textColor)}>
                           建議節目：
                         </p>
-                        <div className="relative">
-                          {/* Default: show first 3 examples + count */}
-                          <div className="group-hover:hidden">
-                            <div className="flex flex-wrap gap-1">
-                              {template.examples.slice(0, 3).map((example, idx) => (
-                                <span key={idx} className={cn("text-xs bg-white/20 px-2 py-0.5 rounded-full", template.textColor)}>
-                                  {example}
-                                </span>
-                              ))}
-                              {template.examples.length > 3 && (
-                                <span className={cn("text-xs bg-white/20 px-2 py-0.5 rounded-full", template.textColor)}>
-                                  +{template.examples.length - 3}更多
-                                </span>
-                              )}
+                        <HoverCard>
+                          <HoverCardTrigger asChild>
+                            <div className="cursor-pointer">
+                              <div className="flex flex-wrap gap-1">
+                                {template.examples.slice(0, 3).map((example, idx) => (
+                                  <span key={idx} className={cn("text-xs bg-white/20 px-2 py-0.5 rounded-full", template.textColor)}>
+                                    {example}
+                                  </span>
+                                ))}
+                                {template.examples.length > 3 && (
+                                  <span className={cn("text-xs bg-white/20 px-2 py-0.5 rounded-full cursor-pointer hover:bg-white/30 transition-colors", template.textColor)}>
+                                    +{template.examples.length - 3}更多
+                                  </span>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                          
-                          {/* Hover: show all examples */}
-                          <div className="hidden group-hover:block animate-fade-in">
-                            <div className="flex flex-wrap gap-1">
-                              {template.examples.map((example, idx) => (
-                                <span key={idx} className={cn("text-xs bg-white/30 px-2 py-0.5 rounded-full", template.textColor)}>
-                                  {example}
-                                </span>
-                              ))}
+                          </HoverCardTrigger>
+                          <HoverCardContent className="w-80 p-4">
+                            <div className="space-y-3">
+                              <h4 className="font-medium text-popover-foreground">
+                                {template.title} - 所有節目範例
+                              </h4>
+                              <div className="flex flex-wrap gap-2">
+                                {template.examples.map((example, idx) => (
+                                  <span 
+                                    key={idx} 
+                                    className="text-sm bg-primary/10 text-primary px-3 py-1 rounded-full border border-primary/20"
+                                  >
+                                    {example}
+                                  </span>
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        </div>
+                          </HoverCardContent>
+                        </HoverCard>
                       </div>
                     </div>
                   </Card>
