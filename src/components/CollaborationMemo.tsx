@@ -1237,13 +1237,13 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
             
             {/* Right 2/3: Tabbed Content */}
             <div className="w-full lg:w-2/3">
-              <Tabs defaultValue="key-processing" className="w-full">
+              <Tabs defaultValue="key-processing" className="w-full animate-fade-in">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="key-processing">重點處理</TabsTrigger>
                   <TabsTrigger value="task-assignment">分工任務</TabsTrigger>
                 </TabsList>
                 
-                <TabsContent value="key-processing" className="mt-6">
+                <TabsContent value="key-processing" className="mt-6 animate-fade-in">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {selectedTemplates.flatMap(templateId => {
                       const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
@@ -1350,7 +1350,7 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                   )}
                 </TabsContent>
                 
-                <TabsContent value="task-assignment" className="mt-6">
+                <TabsContent value="task-assignment" className="mt-6 animate-fade-in">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {getPrioritizedTasks().map((roleGroup, index) => (
                       <Card key={index} className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 shadow-lg">
