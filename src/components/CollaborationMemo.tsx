@@ -1111,28 +1111,6 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
       )}
 
 
-      {/* Send Notification Button - appears when tasks are assigned */}
-      {assignedTasks.length > 0 && (
-        <div className="fixed bottom-6 right-6 z-50">
-          <Button
-            onClick={handleSendNotification}
-            size="lg"
-            className={cn(
-              "h-14 w-14 rounded-full shadow-lg transition-all duration-300",
-              sentStatus 
-                ? "bg-green-600 hover:bg-green-700 text-white" 
-                : "bg-primary hover:bg-primary/90 text-primary-foreground"
-            )}
-            title={sentStatus ? `已發送通知 - ${sentStatus.timestamp}` : "發送協作通知"}
-          >
-            {sentStatus ? (
-              <Check className="h-6 w-6" />
-            ) : (
-              <CheckCircle className="h-6 w-6" />
-            )}
-          </Button>
-        </div>
-      )}
 
       {/* Detail Modal */}
       <MemoDetailModal
