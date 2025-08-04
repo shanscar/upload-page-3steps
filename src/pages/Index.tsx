@@ -9,7 +9,7 @@ import { UploadProgress } from "@/components/UploadProgress";
 import { ProgramTypeTemplates } from "@/components/ProgramTypeTemplates";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-type WorkflowState = 'input' | 'analyzing' | 'upload' | 'processing' | 'collaboration' | 'viewDetails';
+type WorkflowState = 'input' | 'analyzing' | 'upload' | 'processing' | 'collaboration';
 
 interface AnalysisData {
   location: string;
@@ -25,7 +25,6 @@ const Index = () => {
   const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [uploadMetadata, setUploadMetadata] = useState<any>(null);
-  const [viewingStep, setViewingStep] = useState<number | null>(null);
   const isMobile = useIsMobile();
 
   const handleAnalyze = (desc: string) => {
@@ -74,25 +73,6 @@ const Index = () => {
     }
   };
 
-  const handleViewDetails = (stepNumber: number) => {
-    setViewingStep(stepNumber);
-    setCurrentState('viewDetails');
-  };
-
-  const handleBackFromView = () => {
-    setViewingStep(null);
-    // Return to appropriate state based on progress
-    if (currentState === 'viewDetails') {
-      if (uploadedFiles.length > 0) {
-        setCurrentState('processing');
-      } else if (analysisData) {
-        setCurrentState('upload');
-      } else {
-        setCurrentState('input');
-      }
-    }
-  };
-
   const handleArrowClick = (direction: 'next' | 'prev', fromStep: number) => {
     if (direction === 'next') {
       if (fromStep === 1 && analysisData) {
@@ -119,8 +99,6 @@ const Index = () => {
       case 'processing':
       case 'collaboration':
         return 3;
-      case 'viewDetails':
-        return viewingStep || 1;
       default:
         return 1;
     }
@@ -217,25 +195,6 @@ const Index = () => {
             />
           </div>
         );
-
-      case 'viewDetails':
-        if (viewingStep === 1 && analysisData) {
-          return (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-semibold text-foreground">詳細資訊</h2>
-              <AnalysisResult
-                description={description}
-                onConfirm={handleAnalysisComplete}
-                onEdit={handleEditAnalysis}
-                onReanalyze={handleReanalyze}
-                viewOnly={true}
-                onBack={handleBackFromView}
-                initialData={analysisData}
-              />
-            </div>
-          );
-        }
-        return null;
       
       default:
         return null;
@@ -251,7 +210,6 @@ const Index = () => {
             currentStep={getCurrentStep()} 
             completedSteps={getCompletedSteps()}
             onEditStep={handleStepClick}
-            onViewStep={handleViewDetails}
           />
         </div>
       </div>
