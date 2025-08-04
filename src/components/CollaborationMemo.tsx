@@ -1059,15 +1059,15 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                     </h1>
                    </div>
                    <div className="flex items-center gap-3">
-                     <Button 
-                       onClick={handleCopyLink}
-                       variant="outline"
-                       size="sm"
-                       className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
-                     >
-                       <Copy className="w-4 h-4" />
-                     </Button>
-                     <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1 rounded">
+                      <Button 
+                        onClick={handleCopyLink}
+                        variant="outline"
+                        className="flex items-center gap-2 bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200 px-3 py-1.5 rounded-md text-sm h-auto"
+                      >
+                        <Copy className="w-4 h-4" />
+                        <span>複製</span>
+                      </Button>
+                      <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1.5 rounded-md border border-amber-300">
                        {new Date().toLocaleDateString('zh-TW')}
                      </div>
                    </div>
