@@ -900,7 +900,7 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                       
                       <div className="flex items-center gap-2 bg-amber-100 border border-amber-300 text-amber-800 px-3 py-1.5 rounded-md text-sm">
                         <CheckCircle className="w-4 h-4 text-green-600" />
-                        <span>備忘類別選擇</span>
+                        <span>選擇範本</span>
                       </div>
                     
                     <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1 rounded">
