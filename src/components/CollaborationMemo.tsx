@@ -8,7 +8,7 @@ import { Copy, Pin, Paperclip, CheckCircle, UserPlus, Check, X } from "lucide-re
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { MemoDetailModal } from "./MemoDetailModal";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 // Program Templates Data
 const PROGRAM_TEMPLATES = [
@@ -485,6 +485,8 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
     priority: 'high' | 'medium' | 'low';
   }>>([]);
   const [sentStatus, setSentStatus] = useState<SentStatus | null>(null);
+  const [programModalOpen, setProgramModalOpen] = useState(false);
+  const [programModalData, setProgramModalData] = useState<{ title: string; examples: string[] } | null>(null);
   const { toast } = useToast();
 
   const handleCopyLink = async () => {
@@ -834,50 +836,49 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                        </div>
                        
                        {/* Programs */}
-                       <div>
-                         <HoverCard>
-                           <HoverCardTrigger asChild>
-                             <div className="cursor-help">
-                               <p className={cn("text-xs font-medium mb-1", template.textColor)}>
-                                 建議節目：
-                               </p>
-                               <div className="flex flex-wrap gap-1">
-                                 {template.examples.slice(0, 3).map((example, idx) => (
-                                   <span key={idx} className={cn("text-xs truncate max-w-20", template.textColor)}>
-                                     {example}{idx < 2 && idx < template.examples.slice(0, 3).length - 1 ? ',' : ''}
-                                   </span>
-                                 ))}
-                                 {template.examples.length > 3 && (
-                                   <span className={cn("text-xs font-medium", template.textColor)}>
-                                     +{template.examples.length - 3}更多
-                                   </span>
-                                 )}
-                               </div>
-                             </div>
-                           </HoverCardTrigger>
-                            <HoverCardContent 
-                              className="w-72 p-3 bg-white border border-gray-300 shadow-2xl z-[9999] fixed"
-                              side="top"
-                              align="start"
-                              sideOffset={5}
-                              avoidCollisions={true}
-                              style={{ 
-                                position: 'fixed',
-                                zIndex: 9999,
-                                maxHeight: '300px'
-                              }}
-                            >
-                              <h4 className="font-semibold text-gray-900 mb-2 text-sm">{template.title.replace(/🗞️|🎨|🎵|🏡|🌏|🎭|🎲|📚/, '').trim()}</h4>
-                              <div className="grid grid-cols-1 gap-0.5 max-h-52 overflow-y-auto">
-                                {template.examples.map((example, idx) => (
-                                  <div key={idx} className="text-xs text-gray-700 py-1 px-1 hover:bg-gray-50 rounded">
-                                    • {example}
+                        <div>
+                          <p className={cn("text-xs font-medium mb-1", template.textColor)}>
+                            建議節目：
+                          </p>
+                          <div className="flex flex-wrap gap-1">
+                            {template.examples.slice(0, 3).map((example, idx) => (
+                              <span key={idx} className={cn("text-xs truncate max-w-20", template.textColor)}>
+                                {example}{idx < 2 && idx < template.examples.slice(0, 3).length - 1 ? ',' : ''}
+                              </span>
+                            ))}
+                            {template.examples.length > 3 && (
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <button
+                                    className={cn("text-xs font-medium underline cursor-pointer hover:opacity-80", template.textColor)}
+                                    onClick={() => {
+                                      setProgramModalData({
+                                        title: template.title,
+                                        examples: template.examples
+                                      });
+                                    }}
+                                  >
+                                    +{template.examples.length - 3}更多
+                                  </button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-lg">
+                                  <DialogHeader>
+                                    <DialogTitle>{template.title.replace(/🗞️|🎨|🎵|🏡|🌏|🎭|🎲|📚/, '').trim()} - 完整節目清單</DialogTitle>
+                                  </DialogHeader>
+                                  <div className="max-h-96 overflow-y-auto">
+                                    <div className="grid grid-cols-1 gap-2">
+                                      {template.examples.map((example, idx) => (
+                                        <div key={idx} className="text-sm text-gray-700 py-2 px-3 bg-gray-50 rounded-md">
+                                          • {example}
+                                        </div>
+                                      ))}
+                                    </div>
                                   </div>
-                                ))}
-                              </div>
-                            </HoverCardContent>
-                         </HoverCard>
-                       </div>
+                                </DialogContent>
+                              </Dialog>
+                            )}
+                          </div>
+                        </div>
                     </div>
                   </Card>
                 </div>
@@ -1010,49 +1011,40 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                           </div>
                           
                            <div>
-                             <HoverCard>
-                               <HoverCardTrigger asChild>
-                                 <div className="cursor-help">
-                                   <p className={cn("text-sm font-medium mb-2", template.textColor)}>
-                                     建議節目：
-                                   </p>
-                                   <div className="flex flex-wrap gap-1">
-                                     {template.examples.slice(0, 3).map((example, idx) => (
-                                       <Badge key={idx} variant="secondary" className="text-xs max-w-24 truncate">
-                                         {example}
-                                       </Badge>
-                                     ))}
-                                     {template.examples.length > 3 && (
-                                       <Badge variant="outline" className="text-xs">
-                                         +{template.examples.length - 3}更多
-                                       </Badge>
-                                     )}
-                                   </div>
-                                 </div>
-                               </HoverCardTrigger>
-                                <HoverCardContent 
-                                  className="w-72 p-3 bg-white border border-gray-300 shadow-2xl z-[9999] fixed"
-                                  side="top"
-                                  align="start"
-                                  sideOffset={5}
-                                  avoidCollisions={true}
-                                  style={{ 
-                                    position: 'fixed',
-                                    zIndex: 9999,
-                                    maxHeight: '300px'
-                                  }}
-                                >
-                                  <h4 className="font-semibold text-gray-900 mb-2 text-sm">{template.title.replace(/🗞️|🎨|🎵|🏡|🌏|🎭|🎲|📚/, '').trim()}</h4>
-                                  <div className="grid grid-cols-1 gap-0.5 max-h-52 overflow-y-auto">
-                                    {template.examples.map((example, idx) => (
-                                      <div key={idx} className="text-xs text-gray-700 py-1 px-1 hover:bg-gray-50 rounded">
-                                        • {example}
+                              <p className={cn("text-sm font-medium mb-2", template.textColor)}>
+                                建議節目：
+                              </p>
+                              <div className="flex flex-wrap gap-1">
+                                {template.examples.slice(0, 3).map((example, idx) => (
+                                  <Badge key={idx} variant="secondary" className="text-xs max-w-24 truncate">
+                                    {example}
+                                  </Badge>
+                                ))}
+                                {template.examples.length > 3 && (
+                                  <Dialog>
+                                    <DialogTrigger asChild>
+                                      <Badge variant="outline" className="text-xs cursor-pointer hover:bg-gray-100">
+                                        +{template.examples.length - 3}更多
+                                      </Badge>
+                                    </DialogTrigger>
+                                    <DialogContent className="max-w-lg">
+                                      <DialogHeader>
+                                        <DialogTitle>{template.title.replace(/🗞️|🎨|🎵|🏡|🌏|🎭|🎲|📚/, '').trim()} - 完整節目清單</DialogTitle>
+                                      </DialogHeader>
+                                      <div className="max-h-96 overflow-y-auto">
+                                        <div className="grid grid-cols-1 gap-2">
+                                          {template.examples.map((example, idx) => (
+                                            <div key={idx} className="text-sm text-gray-700 py-2 px-3 bg-gray-50 rounded-md">
+                                              • {example}
+                                            </div>
+                                          ))}
+                                        </div>
                                       </div>
-                                    ))}
-                                  </div>
-                                </HoverCardContent>
-                             </HoverCard>
-                           </div>
+                                    </DialogContent>
+                                  </Dialog>
+                                )}
+                              </div>
+                            </div>
                         </div>
                       </Card>
                     </div>
