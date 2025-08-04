@@ -130,7 +130,7 @@ export const DescriptionInput = ({
           onKeyDown={handleKeyDown}
           placeholder="例如：今日下午2點在政府總部大樓記者會廳，採訪財政司司長陳茂波講解新一年度預算案重點..."
           className={cn(
-            "min-h-[140px] text-lg p-6 transition-all duration-300 border-2 shadow-sm",
+            "min-h-[140px] text-lg p-6 pr-32 transition-all duration-300 border-2 shadow-sm",
             "bg-card focus:shadow-medium focus:border-primary focus:scale-[1.02]",
             "caret-primary shadow-[0_0_15px_hsl(var(--primary)/0.2)]",
             description && "border-primary/40 bg-primary/5 shadow-md"
@@ -138,12 +138,15 @@ export const DescriptionInput = ({
           disabled={isAnalyzing}
         />
         
-        {showHint && !isAnalyzing && (
-          <div className="absolute -bottom-12 left-0 text-sm animate-fade-in">
-            <div className="bg-foreground text-background border border-foreground px-3 py-2 rounded-lg font-medium shadow-sm">
-              ⚡ 按Enter 或點下面按鈕
-            </div>
-          </div>
+        {/* Integrated button at bottom-right corner */}
+        {showHint && description && !isAnalyzing && !showProgressBar && (
+          <Button
+            onClick={handleAnalyze}
+            size="sm"
+            className="absolute bottom-3 right-3 bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 text-xs px-3 py-2 shadow-sm animate-fade-in"
+          >
+            ⚡ 按Enter或點此分析
+          </Button>
         )}
       </div>
 
@@ -160,19 +163,6 @@ export const DescriptionInput = ({
               className="h-2 bg-secondary"
             />
           </div>
-        </div>
-      )}
-
-      {/* Show button when not analyzing and not showing progress bar */}
-      {showHint && description && !isAnalyzing && !showProgressBar && (
-        <div className="flex justify-center animate-fade-in">
-          <Button 
-            onClick={handleAnalyze}
-            size="lg"
-            className="bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-large hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 text-lg px-8 py-6 shadow-medium"
-          >
-            ⚡ AI分析
-          </Button>
         </div>
       )}
 
