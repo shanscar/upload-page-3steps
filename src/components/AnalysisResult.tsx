@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { DescriptionInput } from "./DescriptionInput";
 
 interface AnalysisData {
   location: string;
@@ -16,9 +17,10 @@ interface AnalysisResultProps {
   description: string;
   onConfirm: (data: AnalysisData) => void;
   onEdit: () => void;
+  onReanalyze: (description: string) => void;
 }
 
-export const AnalysisResult = ({ description, onConfirm, onEdit }: AnalysisResultProps) => {
+export const AnalysisResult = ({ description, onConfirm, onEdit, onReanalyze }: AnalysisResultProps) => {
   const [progress, setProgress] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null);
@@ -98,11 +100,17 @@ export const AnalysisResult = ({ description, onConfirm, onEdit }: AnalysisResul
   if (!analysisData) return null;
 
   return (
-    <div className="space-y-6 animate-slide-up">
+    <div className="space-y-8 animate-slide-up">
+      {/* Keep input available for editing */}
+      <DescriptionInput 
+        onAnalyze={onReanalyze}
+        isAnalyzing={false}
+      />
+      
       <div className="text-center">
         <div className="text-3xl mb-2">✨</div>
         <h3 className="text-xl font-medium text-success mb-1">分析完成！</h3>
-        <p className="text-sm text-muted-foreground">檢查一下對不對</p>
+        <p className="text-sm text-muted-foreground">檢查一下對不對，或在上面修改描述重新分析</p>
       </div>
 
       <Card className="p-6 border-success/30 bg-success/5">

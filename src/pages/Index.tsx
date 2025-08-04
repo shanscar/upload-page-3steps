@@ -32,6 +32,12 @@ const Index = () => {
     setCurrentState('analyzing');
   };
 
+  const handleReanalyze = (desc: string) => {
+    setDescription(desc);
+    // Stay on analyzing state but trigger re-analysis
+    setCurrentState('analyzing');
+  };
+
   const handleAnalysisComplete = (data: AnalysisData) => {
     setAnalysisData(data);
     setCurrentState('upload');
@@ -140,6 +146,7 @@ const Index = () => {
                 description={description}
                 onConfirm={handleAnalysisComplete}
                 onEdit={handleEditAnalysis}
+                onReanalyze={handleReanalyze}
               />
             )}
           </div>
