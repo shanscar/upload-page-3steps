@@ -1334,15 +1334,6 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                                         <p className="text-green-800 font-medium text-sm mb-1">
                                           {task.task}
                                         </p>
-                                        <div className="flex items-center gap-2 text-xs text-green-600">
-                                          <Badge 
-                                            variant={task.priority === 'high' ? 'destructive' : task.priority === 'medium' ? 'default' : 'secondary'}
-                                            className="text-xs"
-                                          >
-                                            {task.priority === 'high' ? '高' : task.priority === 'medium' ? '中' : '低'}
-                                          </Badge>
-                                          <span>{task.timeEstimate}</span>
-                                        </div>
                                        </div>
                                        {isAssigned ? (
                                          <div className="ml-2 flex items-center gap-1 text-green-600">
