@@ -801,7 +801,7 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                   {/* Memo Card */}
                   <Card 
                     className={cn(
-                      "cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg p-4 h-52 group relative overflow-hidden",
+                      "cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg p-4 h-56 group relative overflow-hidden",
                       rotation,
                       `bg-gradient-to-br ${template.color}`,
                       isSelected && "ring-2 ring-amber-400 shadow-lg scale-105 -rotate-0"
