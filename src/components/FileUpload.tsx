@@ -227,11 +227,13 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="text-center mb-6">
-        <div className="text-2xl mb-2">📁</div>
-        <h3 className="text-lg font-medium mb-2">拖入影片檔案</h3>
-        <div className="text-primary text-sm">預期類型：{expectedFileType}</div>
-      </div>
+      {uploadedFiles.length === 0 && (
+        <div className="text-center mb-6">
+          <div className="text-2xl mb-2">📁</div>
+          <h3 className="text-lg font-medium mb-2">拖入影片檔案</h3>
+          <div className="text-primary text-sm">預期類型：{expectedFileType}</div>
+        </div>
+      )}
 
       {uploadedFiles.length === 0 && (
         <Card
@@ -271,7 +273,7 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
 
       {uploadedFiles.length > 0 && (
         <div className="mb-4 p-3 bg-success/10 border border-success/20 rounded-lg">
-          <p className="text-success text-sm font-medium">✨檔案收到了</p>
+          <p className="text-success text-sm font-medium">✨ 檔案收到了！</p>
         </div>
       )}
 
