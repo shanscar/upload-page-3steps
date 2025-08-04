@@ -101,7 +101,7 @@ export const AnalysisResult = ({ description, onConfirm, onEdit, onReanalyze }: 
 
   return (
     <div className="space-y-8 animate-slide-up">
-      {/* Keep input available for editing */}
+      {/* Input available for re-analysis after completion */}
       <DescriptionInput 
         onAnalyze={onReanalyze}
         isAnalyzing={false}
