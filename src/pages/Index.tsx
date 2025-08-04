@@ -6,7 +6,7 @@ import { DescriptionInput } from "@/components/DescriptionInput";
 import { AnalysisResult } from "@/components/AnalysisResult";
 import { FileUpload } from "@/components/FileUpload";
 import { UploadProgress } from "@/components/UploadProgress";
-import { CollaborationMemo } from "@/components/CollaborationMemo";
+import CollaborationMemo from "@/components/CollaborationMemo";
 import { useIsMobile } from "@/hooks/use-mobile";
 type WorkflowState = 'talk-input' | 'talk-analyzing' | 'talk-metadata-edit' | 'archive-upload' | 'archive-processing' | 'work-collaboration';
 interface AnalysisData {
