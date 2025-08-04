@@ -1,8 +1,17 @@
 import { Progress } from "@/components/ui/progress";
+import { CompactStepSummary } from "@/components/CompactStepSummary";
 import { cn } from "@/lib/utils";
+
+interface CompletedStepData {
+  step: number;
+  title: string;
+  summary: string;
+}
 
 interface WorkflowProgressBarProps {
   currentStep: number;
+  completedSteps?: CompletedStepData[];
+  onEditStep?: (stepNumber: number) => void;
   className?: string;
 }
 
@@ -12,12 +21,13 @@ const steps = [
   { id: 3, emoji: "🚀", label: "開工" }
 ];
 
-export const WorkflowProgressBar = ({ currentStep, className }: WorkflowProgressBarProps) => {
+export const WorkflowProgressBar = ({ currentStep, completedSteps = [], onEditStep, className }: WorkflowProgressBarProps) => {
   const progress = ((currentStep - 1) / (steps.length - 1)) * 100;
 
   return (
-    <div className={cn("w-full max-w-3xl mx-auto", className)}>
-      <div className="flex items-center justify-between mb-8">
+    <div className={cn("w-full", className)}>
+      {/* Compact Progress Bar */}
+      <div className="flex items-center gap-4 mb-6">
         {steps.map((step, index) => {
           const isActive = currentStep === step.id;
           const isCompleted = currentStep > step.id;
@@ -26,25 +36,25 @@ export const WorkflowProgressBar = ({ currentStep, className }: WorkflowProgress
             <div
               key={step.id}
               className={cn(
-                "flex flex-col items-center transition-all duration-500",
+                "flex items-center gap-2 transition-all duration-500",
                 isActive || isCompleted ? "opacity-100" : "opacity-50"
               )}
             >
               <div
                 className={cn(
-                  "relative w-16 h-16 rounded-full flex items-center justify-center text-2xl mb-3 transition-all duration-500 border-2",
+                  "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-500 border-2",
                   isCompleted 
-                    ? "bg-success text-success-foreground border-success shadow-large scale-105" 
+                    ? "bg-success text-success-foreground border-success" 
                     : isActive
-                    ? "bg-primary text-primary-foreground border-primary shadow-medium animate-pulse-glow scale-110"
-                    : "bg-muted text-muted-foreground border-border shadow-soft"
+                    ? "bg-primary text-primary-foreground border-primary animate-pulse-glow"
+                    : "bg-muted text-muted-foreground border-border"
                 )}
               >
                 {isCompleted ? "✓" : step.emoji}
               </div>
               <span
                 className={cn(
-                  "text-base font-semibold transition-colors duration-300",
+                  "text-sm font-semibold transition-colors duration-300 hidden sm:inline",
                   isCompleted 
                     ? "text-success" 
                     : isActive
@@ -54,17 +64,38 @@ export const WorkflowProgressBar = ({ currentStep, className }: WorkflowProgress
               >
                 {step.label}
               </span>
+              {index < steps.length - 1 && (
+                <div className="w-8 h-0.5 bg-border mx-2" />
+              )}
             </div>
           );
         })}
       </div>
+
+      {/* Completed Steps Summaries */}
+      {completedSteps.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+          {completedSteps.map((stepData) => (
+            <CompactStepSummary
+              key={stepData.step}
+              step={stepData.step}
+              title={stepData.title}
+              summary={stepData.summary}
+              isCompleted={true}
+              onEdit={() => onEditStep?.(stepData.step)}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Progress Bar */}
       <div className="relative">
         <Progress 
           value={progress} 
-          className="h-4 bg-gradient-to-r from-muted to-secondary shadow-medium rounded-full overflow-hidden"
+          className="h-3 bg-gradient-to-r from-muted to-secondary shadow-soft rounded-full overflow-hidden"
         />
         <div 
-          className="absolute top-0 left-0 h-full bg-gradient-primary rounded-full transition-all duration-700 ease-out shadow-soft"
+          className="absolute top-0 left-0 h-full bg-gradient-primary rounded-full transition-all duration-700 ease-out"
           style={{ width: `${progress}%` }}
         />
       </div>

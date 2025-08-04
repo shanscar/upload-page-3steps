@@ -98,191 +98,118 @@ const Index = () => {
     }
   };
 
+  // Generate completed steps summaries
+  const getCompletedSteps = () => {
+    const completed = [];
+    
+    if (analysisData) {
+      completed.push({
+        step: 1,
+        title: "說說今天拍了什麼",
+        summary: `${analysisData.location} - ${analysisData.type}${analysisData.people ? ` (${analysisData.people.length}人)` : ''}`
+      });
+    }
+    
+    if (uploadedFiles.length > 0) {
+      completed.push({
+        step: 2,
+        title: "放入影片",
+        summary: `${uploadedFiles.length}個檔案已上傳`
+      });
+    }
+    
+    return completed;
+  };
+
+  // Get current active step content
+  const getCurrentStepContent = () => {
+    switch (currentState) {
+      case 'input':
+      case 'analyzing':
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold text-foreground">說說今天拍了什麼</h2>
+            {currentState === 'input' && (
+              <DescriptionInput 
+                onAnalyze={handleAnalyze}
+                isAnalyzing={false}
+              />
+            )}
+            {currentState === 'analyzing' && (
+              <AnalysisResult
+                description={description}
+                onConfirm={handleAnalysisComplete}
+                onEdit={handleEditAnalysis}
+              />
+            )}
+          </div>
+        );
+      
+      case 'upload':
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold text-foreground">放入影片</h2>
+            {analysisData && (
+              <FileUpload
+                expectedFileType={analysisData.template}
+                onUpload={handleFileUpload}
+              />
+            )}
+          </div>
+        );
+      
+      case 'processing':
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold text-foreground">處理中</h2>
+            {analysisData && (
+              <UploadProgress
+                files={uploadedFiles}
+                metadata={uploadMetadata}
+                analysisData={analysisData}
+                onComplete={handleProcessingComplete}
+              />
+            )}
+          </div>
+        );
+      
+      case 'collaboration':
+        return (
+          <div className="space-y-6">
+            <div className="text-center space-y-6">
+              <div className="text-2xl">✅</div>
+              <h2 className="text-2xl font-semibold text-success">處理完成！團隊已收到通知</h2>
+              <p className="text-muted-foreground">影片已自動分配給相關同事，可以開始協作了</p>
+            </div>
+            <ProgramTypeTemplates
+              onSelectTemplate={handleTemplateSelect}
+            />
+          </div>
+        );
+      
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-background">
-      {/* Progress Bar as Header */}
-      <div className="bg-gradient-card border-b shadow-soft">
-        <div className="max-w-4xl mx-auto px-6 py-8">
-          <WorkflowProgressBar currentStep={getCurrentStep()} />
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary-glow/10 to-secondary/20">
+      {/* Compact Header */}
+      <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm border-b border-border/50 p-4">
+        <div className="max-w-7xl mx-auto">
+          <WorkflowProgressBar 
+            currentStep={getCurrentStep()} 
+            completedSteps={getCompletedSteps()}
+            onEditStep={handleStepClick}
+          />
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-6 py-8">
-        {isMobile ? (
-          // Mobile: Vertical Layout
-          <div className="space-y-8">
-            <WorkflowStep
-              step={1}
-              title="說說今天拍了什麼"
-              isActive={currentState === 'input' || currentState === 'analyzing'}
-              isCompleted={getCurrentStep() > 1}
-            >
-              {currentState === 'input' && (
-                <DescriptionInput 
-                  onAnalyze={handleAnalyze}
-                  isAnalyzing={false}
-                />
-              )}
-              {currentState === 'analyzing' && (
-                <AnalysisResult
-                  description={description}
-                  onConfirm={handleAnalysisComplete}
-                  onEdit={handleEditAnalysis}
-                />
-              )}
-              {getCurrentStep() > 1 && analysisData && (
-                <div className="text-sm text-muted-foreground">
-                  ✓ 已分析：{analysisData.type} - {analysisData.location}
-                </div>
-              )}
-            </WorkflowStep>
-
-            <WorkflowStep
-              step={2}
-              title="放入影片"
-              isActive={currentState === 'upload'}
-              isCompleted={getCurrentStep() > 2}
-            >
-              {currentState === 'upload' && analysisData && (
-                <FileUpload
-                  expectedFileType={analysisData.template}
-                  onUpload={handleFileUpload}
-                />
-              )}
-              {getCurrentStep() > 2 && uploadedFiles.length > 0 && (
-                <div className="text-sm text-muted-foreground">
-                  ✓ 已上載：{uploadedFiles[0].name}
-                </div>
-              )}
-            </WorkflowStep>
-
-            <WorkflowStep
-              step={3}
-              title="開始協作"
-              isActive={currentState === 'processing' || currentState === 'collaboration'}
-              isCompleted={false}
-            >
-              {currentState === 'processing' && analysisData && (
-                <UploadProgress
-                  files={uploadedFiles}
-                  metadata={uploadMetadata}
-                  analysisData={analysisData}
-                  onComplete={handleProcessingComplete}
-                />
-              )}
-              {currentState === 'collaboration' && (
-                <div className="space-y-6">
-                  <div className="text-center p-4">
-                    <div className="text-2xl mb-2">✅</div>
-                    <h3 className="text-lg font-medium text-success mb-2">
-                      處理完成！團隊已收到通知
-                    </h3>
-                    <p className="text-muted-foreground text-sm">
-                      影片已自動分配給相關同事，可以開始協作了
-                    </p>
-                  </div>
-                  
-                  <ProgramTypeTemplates
-                    onSelectTemplate={handleTemplateSelect}
-                  />
-                </div>
-              )}
-            </WorkflowStep>
-          </div>
-        ) : (
-          // Desktop: Horizontal Layout
-          <HorizontalWorkflowSteps
-            onStepClick={handleStepClick}
-            onArrowClick={handleArrowClick}
-            steps={[
-              {
-                step: 1,
-                title: "說說今天拍了什麼",
-                isActive: currentState === 'input' || currentState === 'analyzing',
-                isCompleted: getCurrentStep() > 1,
-                children: (
-                  <>
-                    {currentState === 'input' && (
-                      <DescriptionInput 
-                        onAnalyze={handleAnalyze}
-                        isAnalyzing={false}
-                      />
-                    )}
-                    {currentState === 'analyzing' && (
-                      <AnalysisResult
-                        description={description}
-                        onConfirm={handleAnalysisComplete}
-                        onEdit={handleEditAnalysis}
-                      />
-                    )}
-                    {getCurrentStep() > 1 && analysisData && (
-                      <div className="text-sm text-muted-foreground">
-                        ✓ 已分析：{analysisData.type} - {analysisData.location}
-                      </div>
-                    )}
-                  </>
-                )
-              },
-              {
-                step: 2,
-                title: "放入影片",
-                isActive: currentState === 'upload',
-                isCompleted: getCurrentStep() > 2,
-                children: (
-                  <>
-                    {currentState === 'upload' && analysisData && (
-                      <FileUpload
-                        expectedFileType={analysisData.template}
-                        onUpload={handleFileUpload}
-                      />
-                    )}
-                    {getCurrentStep() > 2 && uploadedFiles.length > 0 && (
-                      <div className="text-sm text-muted-foreground">
-                        ✓ 已上載：{uploadedFiles[0].name}
-                      </div>
-                    )}
-                  </>
-                )
-              },
-              {
-                step: 3,
-                title: "開始協作",
-                isActive: currentState === 'processing' || currentState === 'collaboration',
-                isCompleted: false,
-                children: (
-                  <>
-                    {currentState === 'processing' && analysisData && (
-                      <UploadProgress
-                        files={uploadedFiles}
-                        metadata={uploadMetadata}
-                        analysisData={analysisData}
-                        onComplete={handleProcessingComplete}
-                      />
-                    )}
-                    {currentState === 'collaboration' && (
-                      <div className="space-y-6">
-                        <div className="text-center p-4">
-                          <div className="text-2xl mb-2">✅</div>
-                          <h3 className="text-lg font-medium text-success mb-2">
-                            處理完成！團隊已收到通知
-                          </h3>
-                          <p className="text-muted-foreground text-sm">
-                            影片已自動分配給相關同事，可以開始協作了
-                          </p>
-                        </div>
-                        
-                        <ProgramTypeTemplates
-                          onSelectTemplate={handleTemplateSelect}
-                        />
-                      </div>
-                    )}
-                  </>
-                )
-              }
-            ]}
-          />
-        )}
+      {/* Main Content Area */}
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="min-h-[60vh]">
+          {getCurrentStepContent()}
+        </div>
       </div>
     </div>
   );
