@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { AudioWaveform, Circle, CircleDot, Check, ChevronDown } from "lucide-react";
+import { AudioWaveform, Circle, CircleDot, Check, ChevronDown, X } from "lucide-react";
 
 interface FileUploadProps {
   expectedFileType: string;
@@ -89,6 +89,9 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
   };
 
   const toggleTrackSelection = (trackId: number) => {
+    // First track cannot be unselected
+    if (trackId === 1) return;
+    
     setAudioTracks(prev => prev.map(track => 
       track.id === trackId ? { ...track, isSelected: !track.isSelected } : track
     ));
@@ -130,13 +133,31 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
     e.preventDefault();
     const language = e.dataTransfer.getData("text/plain");
     if (language && LANGUAGE_OPTIONS.includes(language)) {
-      toggleTrackLanguage(trackId, language);
+      // Auto-select track when language is assigned
+      setAudioTracks(prev => prev.map(track => 
+        track.id === trackId 
+          ? { ...track, language, isSelected: true }
+          : track
+      ));
     }
     setDragState({
       isDragging: false,
       draggedLanguage: null,
       dropTarget: null
     });
+  };
+
+  const removeTrackLanguage = (trackId: number) => {
+    setAudioTracks(prev => prev.map(track => 
+      track.id === trackId 
+        ? { 
+            ...track, 
+            language: undefined, 
+            // Only unselect if not the first track
+            isSelected: trackId === 1 ? true : false 
+          }
+        : track
+    ));
   };
 
   const handleUpload = () => {
@@ -365,48 +386,61 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
                     
                     {/* Language selector */}
                     {track.language ? (
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className={cn(
-                              "w-full justify-between",
-                              getLanguageColor(track.language)
-                            )}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <span>{track.language}</span>
-                            <ChevronDown className="w-4 h-4" />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-48 p-2" align="start">
-                          <div className="space-y-1">
-                            {LANGUAGE_OPTIONS.map(lang => (
-                              <Button
-                                key={lang}
-                                variant="ghost"
-                                size="sm"
-                                className={cn(
-                                  "w-full justify-start",
-                                  track.language === lang && "bg-primary/10"
-                                )}
-                                onClick={() => {
-                                  toggleTrackLanguage(track.id, lang);
-                                }}
-                              >
-                                <div className={cn(
-                                  "w-3 h-3 rounded-full mr-2",
-                                  getLanguageColor(lang).split(' ')[0]
-                                )} />
-                                {lang}
-                                {track.language === lang && (
-                                  <Check className="w-4 h-4 ml-auto" />
-                                )}
-                              </Button>
-                            ))}
-                          </div>
-                        </PopoverContent>
-                      </Popover>
+                      <div className="flex gap-2">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                "flex-1 justify-between",
+                                getLanguageColor(track.language)
+                              )}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <span>{track.language}</span>
+                              <ChevronDown className="w-4 h-4" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-48 p-2" align="start">
+                            <div className="space-y-1">
+                              {LANGUAGE_OPTIONS.map(lang => (
+                                <Button
+                                  key={lang}
+                                  variant="ghost"
+                                  size="sm"
+                                  className={cn(
+                                    "w-full justify-start",
+                                    track.language === lang && "bg-primary/10"
+                                  )}
+                                  onClick={() => {
+                                    toggleTrackLanguage(track.id, lang);
+                                  }}
+                                >
+                                  <div className={cn(
+                                    "w-3 h-3 rounded-full mr-2",
+                                    getLanguageColor(lang).split(' ')[0]
+                                  )} />
+                                  {lang}
+                                  {track.language === lang && (
+                                    <Check className="w-4 h-4 ml-auto" />
+                                  )}
+                                </Button>
+                              ))}
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="p-2 text-muted-foreground hover:text-destructive hover:border-destructive"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeTrackLanguage(track.id);
+                          }}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
                     ) : (
                       <div className="w-full p-3 border-2 border-dashed border-muted-foreground/30 rounded-lg text-center text-muted-foreground text-sm">
                         {dragState.dropTarget === track.id && dragState.draggedLanguage ? (
