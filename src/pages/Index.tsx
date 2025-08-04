@@ -56,6 +56,33 @@ const Index = () => {
     console.log('Template selected:', template);
   };
 
+  const handleStepClick = (stepNumber: number) => {
+    // Only allow navigation to completed steps or current step
+    if (stepNumber === 1) {
+      setCurrentState('input');
+    } else if (stepNumber === 2 && analysisData) {
+      setCurrentState('upload');
+    } else if (stepNumber === 3 && uploadedFiles.length > 0) {
+      setCurrentState('processing');
+    }
+  };
+
+  const handleArrowClick = (direction: 'next' | 'prev', fromStep: number) => {
+    if (direction === 'next') {
+      if (fromStep === 1 && analysisData) {
+        setCurrentState('upload');
+      } else if (fromStep === 2 && uploadedFiles.length > 0) {
+        setCurrentState('processing');
+      }
+    } else if (direction === 'prev') {
+      if (fromStep === 2) {
+        setCurrentState('input');
+      } else if (fromStep === 3) {
+        setCurrentState('upload');
+      }
+    }
+  };
+
   const getCurrentStep = () => {
     switch (currentState) {
       case 'input':
@@ -166,6 +193,8 @@ const Index = () => {
         ) : (
           // Desktop: Horizontal Layout
           <HorizontalWorkflowSteps
+            onStepClick={handleStepClick}
+            onArrowClick={handleArrowClick}
             steps={[
               {
                 step: 1,

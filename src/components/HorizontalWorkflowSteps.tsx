@@ -13,9 +13,11 @@ interface Step {
 interface HorizontalWorkflowStepsProps {
   steps: Step[];
   className?: string;
+  onStepClick?: (stepNumber: number) => void;
+  onArrowClick?: (direction: 'next' | 'prev', fromStep: number) => void;
 }
 
-export const HorizontalWorkflowSteps = ({ steps, className }: HorizontalWorkflowStepsProps) => {
+export const HorizontalWorkflowSteps = ({ steps, className, onStepClick, onArrowClick }: HorizontalWorkflowStepsProps) => {
   // Determine grid layout based on active step
   const getGridCols = () => {
     const activeIndex = steps.findIndex(step => step.isActive);
@@ -37,6 +39,11 @@ export const HorizontalWorkflowSteps = ({ steps, className }: HorizontalWorkflow
               stepData.isCompleted && "border-success bg-success/5 hover:bg-success/10 cursor-pointer",
               !stepData.isActive && !stepData.isCompleted && "border-border bg-muted/20 opacity-60"
             )}
+            onClick={() => {
+              if (stepData.isCompleted && onStepClick) {
+                onStepClick(stepData.step);
+              }
+            }}
           >
             <div className="flex items-center gap-3 mb-4">
               <div
@@ -77,9 +84,19 @@ export const HorizontalWorkflowSteps = ({ steps, className }: HorizontalWorkflow
             <div className="flex items-center justify-center pt-12">
               <ChevronRight
                 className={cn(
-                  "w-5 h-5 transition-colors",
-                  stepData.isCompleted ? "text-success" : "text-muted-foreground"
+                  "w-5 h-5 transition-colors cursor-pointer hover:scale-110",
+                  stepData.isCompleted ? "text-success hover:text-success/80" : "text-muted-foreground hover:text-foreground",
+                  onArrowClick && stepData.isCompleted && "hover:scale-125"
                 )}
+                onClick={() => {
+                  if (onArrowClick) {
+                    if (stepData.isCompleted) {
+                      onArrowClick('next', stepData.step);
+                    } else if (index > 0) {
+                      onArrowClick('prev', stepData.step);
+                    }
+                  }
+                }}
               />
             </div>
           )}
