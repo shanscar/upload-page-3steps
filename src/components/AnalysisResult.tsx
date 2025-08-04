@@ -107,6 +107,7 @@ export const AnalysisResult = ({ description, onConfirm, onEdit, onReanalyze }: 
         isAnalyzing={false}
         showExamples={false}
         showProgressBar={false}
+        initialValue={description}
       />
       
       <div className="text-center">

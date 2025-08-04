@@ -10,6 +10,7 @@ interface DescriptionInputProps {
   isAnalyzing: boolean;
   showExamples?: boolean;
   showProgressBar?: boolean;
+  initialValue?: string;
 }
 
 const EXAMPLES = [
@@ -23,13 +24,19 @@ export const DescriptionInput = ({
   onAnalyze, 
   isAnalyzing, 
   showExamples = true, 
-  showProgressBar = false 
+  showProgressBar = false,
+  initialValue = ""
 }: DescriptionInputProps) => {
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState(initialValue);
   const [showHint, setShowHint] = useState(false);
   const [typingTimer, setTypingTimer] = useState<NodeJS.Timeout | null>(null);
   const [progress, setProgress] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Set initial value when prop changes
+  useEffect(() => {
+    setDescription(initialValue);
+  }, [initialValue]);
 
   // Auto focus on mount
   useEffect(() => {
