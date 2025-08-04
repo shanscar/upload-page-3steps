@@ -810,7 +810,7 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                     onDoubleClick={() => handleMemoDoubleClick(template)}
                   >
 
-                    <div className="h-full flex flex-col">
+                    <div className="min-h-56 flex flex-col">
                       {/* Selection indicator */}
                       {isSelected && (
                         <div className="absolute top-2 left-2 z-10">
@@ -820,25 +820,25 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                       
                       {/* Title */}
                       <h3 className={cn(
-                        "text-base font-extrabold font-sans mb-3 leading-tight",
+                        "text-base font-extrabold font-sans mb-4 leading-tight",
                         template.titleColor
                       )}>
                         {template.title}
                       </h3>
                       
                       {/* Focus areas */}
-                      <div className="flex-1">
-                        <p className={cn("text-xs font-medium mb-1", template.textColor)}>
+                      <div>
+                        <p className={cn("text-xs font-medium mb-2", template.textColor)}>
                           重點處理：
                         </p>
-                        <p className={cn("text-xs leading-tight mb-2", template.textColor)}>
+                        <p className={cn("text-xs leading-relaxed mb-4", template.textColor)}>
                           {template.focus}
                         </p>
                        </div>
                        
                        {/* Programs */}
-                        <div>
-                          <p className={cn("text-xs font-medium mb-1", template.textColor)}>
+                        <div className="mt-4">
+                          <p className={cn("text-xs font-medium mb-2", template.textColor)}>
                             建議節目：
                           </p>
                           <div className="flex flex-wrap gap-1">
