@@ -139,15 +139,25 @@ const Index = () => {
               <DescriptionInput 
                 onAnalyze={handleAnalyze}
                 isAnalyzing={false}
+                showExamples={true}
+                showProgressBar={false}
               />
             )}
             {currentState === 'analyzing' && (
-              <AnalysisResult
-                description={description}
-                onConfirm={handleAnalysisComplete}
-                onEdit={handleEditAnalysis}
-                onReanalyze={handleReanalyze}
-              />
+              <div className="space-y-8">
+                <DescriptionInput 
+                  onAnalyze={handleReanalyze}
+                  isAnalyzing={true}
+                  showExamples={false}
+                  showProgressBar={true}
+                />
+                <AnalysisResult
+                  description={description}
+                  onConfirm={handleAnalysisComplete}
+                  onEdit={handleEditAnalysis}
+                  onReanalyze={handleReanalyze}
+                />
+              </div>
             )}
           </div>
         );

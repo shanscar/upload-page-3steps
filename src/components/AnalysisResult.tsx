@@ -105,6 +105,8 @@ export const AnalysisResult = ({ description, onConfirm, onEdit, onReanalyze }: 
       <DescriptionInput 
         onAnalyze={onReanalyze}
         isAnalyzing={false}
+        showExamples={false}
+        showProgressBar={false}
       />
       
       <div className="text-center">
