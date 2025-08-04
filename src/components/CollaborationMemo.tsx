@@ -636,7 +636,35 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
 
   const handleSaveAssignee = () => {
     if (assigneeName.trim() && assigneeName.trim() !== '@' && assigningTask) {
-      // Find the task details
+      // Check if it's a processing area assignment (format: templateId-areaIndex)
+      if (assigningTask.includes('-') && assigningTask.split('-').length === 2) {
+        const [templateId, areaIndex] = assigningTask.split('-');
+        const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
+        
+        if (template && template.processingAreas[parseInt(areaIndex)]) {
+          const area = template.processingAreas[parseInt(areaIndex)];
+          const newAssignment = {
+            taskKey: assigningTask,
+            taskName: area.label,
+            assignee: assigneeName.replace(/^@/, ''),
+            role: '處理領域',
+            emoji: area.icon,
+            priority: 'medium' as const
+          };
+          
+          setAssignedTasks(prev => [...prev, newAssignment]);
+          setAssigningTask(null);
+          setAssigneeName('');
+          
+          toast({
+            title: "處理領域已指派",
+            description: `「${area.label}」已指派給 ${assigneeName.replace(/^@/, '')}`,
+          });
+          return;
+        }
+      }
+      
+      // Find the task details for regular tasks
       const allTasks = getPrioritizedTasks();
       let taskDetails = null;
       let roleDetails = null;
@@ -670,8 +698,9 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
           description: `任務「${taskDetails.task}」已指派給 ${assigneeName.replace(/^@/, '')}`,
         });
         
-        // Reset input but keep task in assigning mode for multiple assignments
-        setAssigneeName('@');
+        // Reset assignment state
+        setAssigningTask(null);
+        setAssigneeName('');
       }
     }
   };
@@ -1106,58 +1135,100 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                 </TabsList>
                 
                 <TabsContent value="key-processing" className="mt-6">
-                  <Card>
-                    <div className="p-6">
-                      <h3 className="text-lg font-semibold mb-4 text-blue-900">重點處理項目</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {selectedTemplates.flatMap(templateId => {
+                      const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
+                      if (!template) return [];
                       
-                      <div className="space-y-6">
-                        {selectedTemplates.map(templateId => {
-                          const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
-                          if (!template) return null;
-                          
-                          return (
-                            <div key={template.id} className="border rounded-lg p-4 bg-slate-50">
-                              <div className="flex items-center gap-2 mb-3">
-                                <h4 className="font-medium text-slate-900">{template.title}</h4>
+                      return template.processingAreas.map((area, areaIndex) => {
+                        const areaKey = `${template.id}-${areaIndex}`;
+                        const isAssigning = assigningTask === areaKey;
+                        const isAssigned = assignedTasks.some(assignedTask => assignedTask.taskKey === areaKey);
+                        
+                        return (
+                          <Card key={areaKey} className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 shadow-lg">
+                            <div className="p-4">
+                              <div className="flex items-center gap-3 mb-4">
+                                <span className="text-2xl">{area.icon}</span>
+                                <h4 className="text-lg font-bold text-green-900">
+                                  {area.label}
+                                </h4>
                               </div>
                               
-                              {/* Focus Area */}
-                              <div className="mb-4">
-                                <h5 className="text-sm font-medium text-slate-700 mb-2">處理重點</h5>
-                                <p className="text-sm text-slate-600 bg-blue-50 p-3 rounded border-l-4 border-blue-200">
-                                  {template.focus}
-                                </p>
-                              </div>
-                              
-                              {/* Processing Areas */}
-                              <div>
-                                <h5 className="text-sm font-medium text-slate-700 mb-3">處理領域</h5>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                  {template.processingAreas.map((area, index) => (
-                                    <div key={index} className="bg-white border rounded-lg p-3">
-                                      <div className="flex items-center gap-2 mb-2">
-                                        <span className="text-lg">{area.icon}</span>
-                                        <span className="font-medium text-sm text-slate-800">{area.label}</span>
-                                      </div>
-                                      <p className="text-xs text-slate-600 leading-relaxed">
+                              <div className="bg-white rounded-lg p-3 border border-green-200">
+                                {isAssigning ? (
+                                  <div className="space-y-3">
+                                    <p className="text-green-800 font-medium text-sm">
+                                      {area.content}
+                                    </p>
+                                    <div className="flex items-center gap-2">
+                                       <Input
+                                         value={assigneeName}
+                                         onChange={(e) => setAssigneeName(e.target.value)}
+                                         onKeyDown={(e) => {
+                                           if (e.key === 'Enter') {
+                                             handleSaveAssignee();
+                                           }
+                                         }}
+                                         placeholder="@輸入人名 (Enter確認)"
+                                         className="flex-1 text-sm"
+                                         autoFocus
+                                       />
+                                      <Button
+                                        size="sm"
+                                        onClick={handleSaveAssignee}
+                                        className="h-8 w-8 p-0 text-green-600 hover:bg-green-100"
+                                        variant="ghost"
+                                      >
+                                        <Check className="h-4 w-4" />
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={handleCancelAssign}
+                                        className="h-8 w-8 p-0 text-gray-600 hover:bg-gray-100"
+                                      >
+                                        <X className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="flex items-start justify-between">
+                                    <div className="flex-1">
+                                      <p className="text-green-800 font-medium text-sm mb-1">
                                         {area.content}
                                       </p>
-                                    </div>
-                                  ))}
-                                </div>
+                                     </div>
+                                     {isAssigned ? (
+                                       <div className="ml-2 flex items-center gap-1 text-green-600">
+                                         <CheckCircle className="h-4 w-4" />
+                                         <span className="text-xs font-medium">已指派</span>
+                                       </div>
+                                     ) : (
+                                       <Button
+                                         size="sm"
+                                         variant="ghost"
+                                         onClick={() => handleAssignTask(areaKey)}
+                                         className="ml-2 p-1 h-8 w-8 text-green-600 hover:text-green-800 hover:bg-green-100"
+                                       >
+                                         <UserPlus className="h-4 w-4" />
+                                       </Button>
+                                     )}
+                                  </div>
+                                )}
                               </div>
                             </div>
-                          );
-                        })}
-                      </div>
-                      
-                      {selectedTemplates.length === 0 && (
-                        <div className="text-center py-8 text-slate-500">
-                          <p>請先選擇程式類別以查看重點處理項目</p>
-                        </div>
-                      )}
+                          </Card>
+                        );
+                      });
+                    })}
+                  </div>
+                  
+                  {selectedTemplates.length === 0 && (
+                    <div className="text-center py-8 text-slate-500">
+                      <p>請先選擇程式類別以查看重點處理項目</p>
                     </div>
-                  </Card>
+                  )}
                 </TabsContent>
                 
                 <TabsContent value="task-assignment" className="mt-6">
