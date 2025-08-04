@@ -113,11 +113,11 @@ const Index = () => {
       // Different durations for different steps to simulate realistic processing
       let baseDuration = 5000; // Base 5 seconds
       const stepName = archiveState.processingSteps.find(step => step.id === stepId)?.name || '';
-      if (stepName.includes('音軌分離')) baseDuration = 4000; // 4-7 seconds for audio separation
-      if (stepName.includes('AI分析')) baseDuration = 8000; // 8-12 seconds for AI analysis  
-      if (stepName.includes('自動標記')) baseDuration = 3000; // 3-5 seconds for auto-tagging
+      if (stepName.includes('音軌分離')) baseDuration = 6000; // 6-10 seconds for audio separation
+      if (stepName.includes('AI分析')) baseDuration = 10000; // 10-15 seconds for AI analysis  
+      if (stepName.includes('自動標記')) baseDuration = 4000; // 4-7 seconds for auto-tagging
 
-      const duration = baseDuration + Math.random() * 3000;
+      const duration = baseDuration + Math.random() * (stepName.includes('音軌分離') ? 4000 : stepName.includes('AI分析') ? 5000 : 3000);
 
       // Start processing
       setArchiveState(prev => ({

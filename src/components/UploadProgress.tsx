@@ -33,16 +33,16 @@ export const UploadProgress = ({ files, metadata, analysisData, onComplete }: Up
     // Simulate upload and processing steps
     const processSteps = async () => {
       // Step 1: File upload
-      await simulateProgress('upload', 100, 2000);
+      await simulateProgress('upload', 100, 3500);
       
       // Step 2: Audio separation
-      await simulateProgress('separation', 100, 3000);
+      await simulateProgress('separation', 100, 5500);
       
       // Step 3: AI analysis
-      await simulateProgress('ai_analysis', 100, 2500);
+      await simulateProgress('ai_analysis', 100, 4500);
       
       // Step 4: Auto tagging
-      await simulateProgress('auto_tagging', 100, 1500);
+      await simulateProgress('auto_tagging', 100, 3500);
       
       // Generate mock results
       setShareLink("https://workflow.rthk.hk/project/abc123");
@@ -63,7 +63,7 @@ export const UploadProgress = ({ files, metadata, analysisData, onComplete }: Up
       const interval = setInterval(() => {
         setSteps(prev => prev.map(step => {
           if (step.id === stepId) {
-            const newProgress = Math.min(step.progress + 10, targetProgress);
+            const newProgress = Math.min(step.progress + 5, targetProgress);
             const newStatus = newProgress >= targetProgress ? 'completed' as const : 'processing' as const;
             
             if (newProgress >= targetProgress) {
@@ -75,7 +75,7 @@ export const UploadProgress = ({ files, metadata, analysisData, onComplete }: Up
           }
           return step;
         }));
-      }, duration / 10);
+      }, duration / 20);
     });
   };
 
