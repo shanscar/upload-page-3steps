@@ -14,7 +14,265 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      audio_tracks: {
+        Row: {
+          channel_type: string
+          created_at: string
+          id: string
+          is_selected: boolean
+          language: string
+          processing_status: string
+          project_id: string
+          track_number: number
+          updated_at: string
+        }
+        Insert: {
+          channel_type?: string
+          created_at?: string
+          id?: string
+          is_selected?: boolean
+          language?: string
+          processing_status?: string
+          project_id: string
+          track_number: number
+          updated_at?: string
+        }
+        Update: {
+          channel_type?: string
+          created_at?: string
+          id?: string
+          is_selected?: boolean
+          language?: string
+          processing_status?: string
+          project_id?: string
+          track_number?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audio_tracks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      collaboration_memos: {
+        Row: {
+          assignments: Json | null
+          created_at: string
+          custom_tasks: Json | null
+          id: string
+          notification_status: string
+          project_id: string
+          share_link: string | null
+          template_ids: Json | null
+          updated_at: string
+        }
+        Insert: {
+          assignments?: Json | null
+          created_at?: string
+          custom_tasks?: Json | null
+          id?: string
+          notification_status?: string
+          project_id: string
+          share_link?: string | null
+          template_ids?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          assignments?: Json | null
+          created_at?: string
+          custom_tasks?: Json | null
+          id?: string
+          notification_status?: string
+          project_id?: string
+          share_link?: string | null
+          template_ids?: Json | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collaboration_memos_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      processing_jobs: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          error_message: string | null
+          id: string
+          job_type: string
+          progress_percentage: number
+          project_id: string
+          started_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          job_type: string
+          progress_percentage?: number
+          project_id: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          job_type?: string
+          progress_percentage?: number
+          project_id?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "processing_jobs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_files: {
+        Row: {
+          created_at: string
+          file_path: string
+          file_size: number | null
+          id: string
+          mime_type: string | null
+          original_filename: string
+          processing_status: string
+          project_id: string
+          updated_at: string
+          upload_status: string
+        }
+        Insert: {
+          created_at?: string
+          file_path: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          original_filename: string
+          processing_status?: string
+          project_id: string
+          updated_at?: string
+          upload_status?: string
+        }
+        Update: {
+          created_at?: string
+          file_path?: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          original_filename?: string
+          processing_status?: string
+          project_id?: string
+          updated_at?: string
+          upload_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_files_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_metadata: {
+        Row: {
+          ai_confidence_score: number | null
+          content_type: string | null
+          created_at: string
+          id: string
+          location: string | null
+          people: Json | null
+          project_id: string
+          recording_date: string | null
+          template_type: string | null
+          updated_at: string
+        }
+        Insert: {
+          ai_confidence_score?: number | null
+          content_type?: string | null
+          created_at?: string
+          id?: string
+          location?: string | null
+          people?: Json | null
+          project_id: string
+          recording_date?: string | null
+          template_type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ai_confidence_score?: number | null
+          content_type?: string | null
+          created_at?: string
+          id?: string
+          location?: string | null
+          people?: Json | null
+          project_id?: string
+          recording_date?: string | null
+          template_type?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_metadata_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
