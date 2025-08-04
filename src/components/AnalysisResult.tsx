@@ -121,7 +121,7 @@ export const AnalysisResult = ({ description, onConfirm, onEdit, onReanalyze }: 
       />
       
       <div className="text-center">
-        <h3 className="text-xl font-medium text-success">✨ 分析完成！請檢查或修改描述重新分析</h3>
+        <h3 className="text-xl font-medium text-primary">✨ 分析完成！請檢查或修改描述重新分析</h3>
       </div>
 
       <Card 
