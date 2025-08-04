@@ -10,10 +10,10 @@ interface DescriptionInputProps {
 }
 
 const EXAMPLES = [
-  "政府總部採訪",
+  "今日政府總部採訪財政司司長談預算案",
   "今日下午2點在政府總部大樓記者會廳，採訪財政司司長陳茂波講解新一年度預算案重點，現場約30名記者出席",
   "突發：旺角亞皆老街交通意外，涉及兩車相撞，現場有輕傷人士送院",
-  "在TVB電視城S5直播室專訪瑪麗醫院腫瘤科李醫生，討論胸腺癌最新治療方案及預防方法"
+  "在香港電台廣播大樓錄音室專訪瑪麗醫院腫瘤科李醫生，討論肺腺癌最新治療方案及預防方法"
 ];
 
 export const DescriptionInput = ({ onAnalyze, isAnalyzing }: DescriptionInputProps) => {
