@@ -121,13 +121,13 @@ export const AnalysisResult = ({ description, onConfirm, onEdit, onReanalyze }: 
       />
       
       <div className="text-center">
-        <h3 className="text-xl font-medium text-primary">✨ 分析完成！請檢查或修改描述重新分析</h3>
+        <h3 className="text-xl font-medium text-success">✨ 分析完成！請檢查或修改描述重新分析</h3>
       </div>
 
       <Card 
         ref={metadataCardRef}
         tabIndex={0}
-        className="p-6 border-2 border-[hsl(var(--focus-highlight))] bg-[hsl(var(--focus-highlight))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--focus-highlight))] focus:border-[hsl(var(--focus-highlight))] focus:shadow-large transition-all duration-300"
+        className="p-6 border-primary/30 bg-primary/5 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary/50 focus:shadow-large transition-all duration-300"
       >
         <div className="space-y-4">
           <div className="flex items-center gap-3">
