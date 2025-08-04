@@ -488,8 +488,26 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
     
     if (assignedTasks.length > 0) {
       message += "✅ 已指派任務：\n";
-      assignedTasks.forEach((task, index) => {
-        message += `${index + 1}. ${task.emoji} ${task.taskName}\n   👤 @${task.assignee}\n\n`;
+      
+      // Group assignments by task
+      const taskGroups = assignedTasks.reduce((acc, task) => {
+        if (!acc[task.taskKey]) {
+          acc[task.taskKey] = {
+            taskName: task.taskName,
+            emoji: task.emoji,
+            assignees: []
+          };
+        }
+        acc[task.taskKey].assignees.push(task.assignee);
+        return acc;
+      }, {} as Record<string, { taskName: string; emoji: string; assignees: string[] }>);
+      
+      Object.values(taskGroups).forEach((group, index) => {
+        message += `${index + 1}. ${group.emoji} ${group.taskName}\n`;
+        group.assignees.forEach(assignee => {
+          message += `   👤 @${assignee}\n`;
+        });
+        message += "\n";
       });
     } else {
       message += "📝 尚未指派任務\n\n";
@@ -559,25 +577,30 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
       }
       
       if (taskDetails && roleDetails) {
+        // Check if this task already has assignments
+        const existingAssignments = assignedTasks.filter(task => task.taskKey === assigningTask);
+        
         const newAssignment = {
           taskKey: assigningTask,
           taskName: taskDetails.task,
           assignee: assigneeName.replace(/^@/, ''),
           role: roleDetails.role,
           emoji: roleDetails.emoji,
-          priority: taskDetails.priority
+          priority: taskDetails.priority,
+          assignmentId: `${assigningTask}-${Date.now()}` // Unique ID for multiple assignments
         };
         
         setAssignedTasks(prev => [...prev, newAssignment]);
         
         toast({
           title: "已指派任務",
-          description: `任務「${taskDetails.task}」已指派給 ${assigneeName}`,
+          description: `任務「${taskDetails.task}」已指派給 ${assigneeName.replace(/^@/, '')}`,
         });
+        
+        // Reset input but keep task in assigning mode for multiple assignments
+        setAssigneeName('@');
       }
     }
-    setAssigningTask(null);
-    setAssigneeName('');
   };
 
   const handleCancelAssign = () => {
@@ -937,13 +960,18 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
                                     {task.task}
                                   </p>
                                   <div className="flex items-center gap-2">
-                                    <Input
-                                      value={assigneeName}
-                                      onChange={(e) => setAssigneeName(e.target.value)}
-                                      placeholder="@輸入人名"
-                                      className="flex-1 text-sm"
-                                      autoFocus
-                                    />
+                                     <Input
+                                       value={assigneeName}
+                                       onChange={(e) => setAssigneeName(e.target.value)}
+                                       onKeyDown={(e) => {
+                                         if (e.key === 'Enter') {
+                                           handleSaveAssignee();
+                                         }
+                                       }}
+                                       placeholder="@輸入人名 (Enter確認)"
+                                       className="flex-1 text-sm"
+                                       autoFocus
+                                     />
                                     <Button
                                       size="sm"
                                       onClick={handleSaveAssignee}
