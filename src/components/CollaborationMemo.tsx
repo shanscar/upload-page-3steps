@@ -1068,10 +1068,10 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                         <span>複製</span>
                       </Button>
                       <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1.5 rounded-md border border-amber-300">
-                       {new Date().toLocaleDateString('zh-TW')}
-                     </div>
-                   </div>
-                 </div>
+                        {new Date().toLocaleDateString('zh-TW')}
+                      </div>
+                    </div>
+                  </div>
                  
                   {/* Assigned Tasks integrated in memo card */}
                   <div className="border-t border-amber-200 pt-4 mt-4">
