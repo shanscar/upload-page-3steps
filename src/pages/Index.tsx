@@ -44,9 +44,15 @@ interface ArchiveState {
   lastCompletedSubState: 'upload' | 'processing' | null;
 }
 
+interface SentStatus {
+  timestamp: string;
+  recipientCount: number;
+}
+
 interface WorkState {
   collaborationStarted: boolean;
   selectedTemplate: any;
+  sentStatus: SentStatus | null;
 }
 
 const Index = () => {
@@ -65,7 +71,8 @@ const Index = () => {
   });
   const [workState, setWorkState] = useState<WorkState>({
     collaborationStarted: false,
-    selectedTemplate: null
+    selectedTemplate: null,
+    sentStatus: null
   });
   const isMobile = useIsMobile();
 
@@ -200,6 +207,14 @@ const Index = () => {
       });
     }
     
+    if (workState.sentStatus) {
+      completed.push({
+        step: 3,
+        title: "工作",
+        summary: `已發送通知 - ${workState.sentStatus.timestamp} (${workState.sentStatus.recipientCount}位協作者)`
+      });
+    }
+    
     return completed;
   };
 
@@ -289,7 +304,12 @@ const Index = () => {
               <CollaborationMemo
                 analysisData={talkState.analysisData}
                 archiveData={archiveState}
-                onContinue={() => console.log('Collaboration completed')}
+                onContinue={(sentStatus?: SentStatus) => {
+                  if (sentStatus) {
+                    setWorkState(prev => ({ ...prev, sentStatus }));
+                  }
+                  console.log('Collaboration completed');
+                }}
               />
             )}
           </div>

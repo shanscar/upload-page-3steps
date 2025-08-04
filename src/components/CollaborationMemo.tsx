@@ -461,7 +461,12 @@ interface CollaborationMemoProps {
     };
     uploadedFiles?: File[];
   };
-  onContinue: () => void;
+  onContinue: (sentStatus?: SentStatus) => void;
+}
+
+interface SentStatus {
+  timestamp: string;
+  recipientCount: number;
 }
 
 export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: CollaborationMemoProps) => {
@@ -478,6 +483,7 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
     emoji: string;
     priority: 'high' | 'medium' | 'low';
   }>>([]);
+  const [sentStatus, setSentStatus] = useState<SentStatus | null>(null);
   const { toast } = useToast();
 
   const handleCopyLink = async () => {
@@ -530,6 +536,64 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
     }
   };
 
+  const handleSendNotification = async () => {
+    const currentUrl = window.location.href;
+    const projectUrl = currentUrl.split('?')[0];
+    
+    // Group assigned tasks by assignee
+    const tasksByAssignee = assignedTasks.reduce((acc, task) => {
+      if (!acc[task.assignee]) {
+        acc[task.assignee] = [];
+      }
+      acc[task.assignee].push(task);
+      return acc;
+    }, {} as Record<string, typeof assignedTasks>);
+
+    const message = `🎯 協作任務分配通知
+
+📋 專案連結: ${projectUrl}
+
+👥 任務分配詳情:
+${Object.entries(tasksByAssignee).map(([assignee, tasks]) => 
+  `${assignee}:
+${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
+).join('\n\n')}
+
+🔗 請點擊上方連結查看完整專案詳情`;
+
+    try {
+      await navigator.clipboard.writeText(message);
+      
+      // Record sent status
+      const timestamp = new Date().toLocaleString('zh-TW', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      
+      const newSentStatus = {
+        timestamp,
+        recipientCount: Object.keys(tasksByAssignee).length
+      };
+      
+      setSentStatus(newSentStatus);
+      onContinue(newSentStatus);
+      
+      toast({
+        title: "通知已發送",
+        description: `已複製協作訊息並記錄發送狀態 (${Object.keys(tasksByAssignee).length} 位協作者)`,
+      });
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+      toast({
+        title: "發送失敗",
+        description: "無法複製到剪貼板，請手動複製",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleTemplateToggle = (templateId: string) => {
     setSelectedTemplates(prev => 
@@ -586,8 +650,7 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
           assignee: assigneeName.replace(/^@/, ''),
           role: roleDetails.role,
           emoji: roleDetails.emoji,
-          priority: taskDetails.priority,
-          assignmentId: `${assigningTask}-${Date.now()}` // Unique ID for multiple assignments
+          priority: taskDetails.priority
         };
         
         setAssignedTasks(prev => [...prev, newAssignment]);
@@ -835,12 +898,12 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
                      <div className="flex flex-wrap gap-2">
                        {assignedTasks.map((task, index) => (
                          <div
-                           key={index}
-                           className="relative group bg-amber-100/50 rounded-lg px-3 py-1.5 flex items-center gap-2 text-sm animate-fade-in"
-                         >
-                           <span className="text-sm">{task.emoji}</span>
-                           <span className="font-medium text-amber-800">{task.taskName}</span>
-                           <span className="text-amber-700">@{task.assignee}</span>
+                            key={index}
+                            className="relative group bg-amber-100/50 rounded-lg px-3 py-1.5 flex items-center gap-2 text-sm animate-fade-in"
+                          >
+                            <span className="text-sm">{task.emoji}</span>
+                            <span className="font-medium text-amber-800">{task.taskName}</span>
+                            <span className="text-amber-700">@{task.assignee}</span>
                            <Button
                              size="sm"
                              variant="ghost"
@@ -1048,16 +1111,28 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
       )}
 
 
-      {/* Action Footer */}
-      <div className="flex justify-end">
-        <Button 
-          onClick={onContinue}
-          className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 text-lg"
-          disabled={selectedTemplates.length === 0}
-        >
-          完成協作設定 ({selectedTemplates.length} 個範本)
-        </Button>
-      </div>
+      {/* Send Notification Button - appears when tasks are assigned */}
+      {assignedTasks.length > 0 && (
+        <div className="fixed bottom-6 right-6 z-50">
+          <Button
+            onClick={handleSendNotification}
+            size="lg"
+            className={cn(
+              "h-14 w-14 rounded-full shadow-lg transition-all duration-300",
+              sentStatus 
+                ? "bg-green-600 hover:bg-green-700 text-white" 
+                : "bg-primary hover:bg-primary/90 text-primary-foreground"
+            )}
+            title={sentStatus ? `已發送通知 - ${sentStatus.timestamp}` : "發送協作通知"}
+          >
+            {sentStatus ? (
+              <Check className="h-6 w-6" />
+            ) : (
+              <CheckCircle className="h-6 w-6" />
+            )}
+          </Button>
+        </div>
+      )}
 
       {/* Detail Modal */}
       <MemoDetailModal
