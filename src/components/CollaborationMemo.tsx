@@ -891,7 +891,7 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                           onClick={handleCopyLink}
                           variant="outline"
                           size="sm"
-                          className="flex items-center gap-2 bg-amber-50 border-amber-300 text-amber-800 hover:bg-amber-100"
+                          className="flex items-center gap-2 bg-amber-50 border-amber-300 text-amber-800 hover:bg-amber-100 px-3 py-1.5 rounded-md text-sm h-auto"
                         >
                           <Copy className="w-4 h-4" />
                           <span>複製</span>
@@ -903,7 +903,7 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                         <span>選擇範本</span>
                       </div>
                     
-                    <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1 rounded">
+                     <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1.5 rounded-md border border-amber-300">
                       {new Date().toLocaleDateString('zh-TW')}
                     </div>
                   </div>
