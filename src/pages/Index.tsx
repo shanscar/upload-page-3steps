@@ -6,7 +6,7 @@ import { DescriptionInput } from "@/components/DescriptionInput";
 import { AnalysisResult } from "@/components/AnalysisResult";
 import { FileUpload } from "@/components/FileUpload";
 import { UploadProgress } from "@/components/UploadProgress";
-import { ProgramTypeTemplates } from "@/components/ProgramTypeTemplates";
+import { CollaborationMemo } from "@/components/CollaborationMemo";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 type WorkflowState = 
@@ -23,6 +23,11 @@ interface AnalysisData {
   people: string[];
   date: string;
   template: string;
+  focus: string;
+  teamRoles: Array<{
+    role: string;
+    tasks: string[];
+  }>;
 }
 
 interface TalkState {
@@ -280,14 +285,13 @@ const Index = () => {
       case 'work-collaboration':
         return (
           <div className="space-y-6">
-            <div className="text-center space-y-6">
-              <div className="text-2xl">✅</div>
-              <h2 className="text-2xl font-semibold text-success">處理完成！團隊已收到通知</h2>
-              <p className="text-muted-foreground">影片已自動分配給相關同事，可以開始協作了</p>
-            </div>
-            <ProgramTypeTemplates
-              onSelectTemplate={handleTemplateSelect}
-            />
+            {talkState.analysisData && (
+              <CollaborationMemo
+                analysisData={talkState.analysisData}
+                archiveData={archiveState}
+                onContinue={() => console.log('Collaboration completed')}
+              />
+            )}
           </div>
         );
       
