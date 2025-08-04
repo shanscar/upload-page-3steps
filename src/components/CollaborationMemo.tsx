@@ -484,7 +484,6 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
     priority: 'high' | 'medium' | 'low';
   }>>([]);
   const [sentStatus, setSentStatus] = useState<SentStatus | null>(null);
-  const [showMemoModal, setShowMemoModal] = useState(false);
   const { toast } = useToast();
 
   const handleCopyLink = async () => {
@@ -767,15 +766,10 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                   
                   {/* Collaboration Section - Integrated into header */}
                   <div className="flex items-center gap-3">
-                     <Button 
-                       onClick={() => setShowMemoModal(true)}
-                       variant="outline" 
-                       size="sm"
-                       className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
-                     >
-                       <Pin className="w-4 h-4 mr-1" />
-                       選擇備忘類別
-                     </Button>
+                     <div className="flex items-center gap-2 bg-amber-100 border border-amber-300 text-amber-800 px-3 py-1.5 rounded-md text-sm">
+                       <CheckCircle className="w-4 h-4 text-green-600" />
+                       <span>備忘類別選擇</span>
+                     </div>
                     
                     <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1 rounded">
                       {new Date().toLocaleDateString('zh-TW')}
