@@ -8,6 +8,7 @@ import { Copy, Pin, Paperclip, CheckCircle, UserPlus, Check, X } from "lucide-re
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { MemoDetailModal } from "./MemoDetailModal";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 // Program Templates Data
 const PROGRAM_TEMPLATES = [
@@ -17,7 +18,7 @@ const PROGRAM_TEMPLATES = [
     color: 'from-blue-100 to-blue-200',
     titleColor: 'text-blue-800',
     textColor: 'text-blue-700',
-    examples: ['自由風自由Phone', '星期六問責', '新聞天地'],
+    examples: ['千禧年代', '自由風自由Phone', '星期六問責', '新聞天地', '今日立法會', '晨早新聞專輯', '政正關你事 - 為人民服務', '鏗鏘集', '日新多面睇（普通話台）', '凝聚香港（電視）', '時事摘錄（電視）'],
     focus: '專注於時事分析、政治評論、社會議題深度報導',
     processingAreas: [
       { icon: '⏰', label: '時間索引', content: '主持開場、議題重點、來賓意見、聽眾來電、總結評論' },
@@ -71,7 +72,7 @@ const PROGRAM_TEMPLATES = [
     color: 'from-purple-100 to-purple-200',
     titleColor: 'text-purple-800',
     textColor: 'text-purple-700',
-    examples: ['講東講西', '我們一直都在說故事', '藝術家專題'],
+    examples: ['講東講西', '我們一直都在說故事', '裝腔啟示錄', '不完美受害人', '學人沙龍', '舊日的足跡', '港樂- 講樂', '「字」從遇見你', '典故裏的科學', '澳門雙行線'],
     focus: '深度人物訪談、藝術創作分享、文化背景探索',
     processingAreas: [
       { icon: '⏰', label: '時間索引', content: '作品介紹段落、嘉賓訪問、創作展示' },
@@ -125,7 +126,7 @@ const PROGRAM_TEMPLATES = [
     color: 'from-pink-100 to-pink-200',
     titleColor: 'text-pink-800',
     textColor: 'text-pink-700',
-    examples: ['中文歌曲龍虎榜', 'Made in Hong Kong', '輕談淺唱不夜天'],
+    examples: ['中文歌曲龍虎榜', 'Made in Hong Kong 李志剛', '輕談淺唱不夜天', '音樂情人', '音樂中年', '音樂說（Let The Music Speak）', '經典重溫', '瘋SHOW快活人', '終身美麗', '演藝盛薈- 開放舞台'],
     focus: '音樂趨勢分析、榜單內容製作、歌手互動展示',
     processingAreas: [
       { icon: '⏰', label: '時間索引', content: '音樂播放環節、榜單介紹、歌手互動' },
@@ -179,7 +180,7 @@ const PROGRAM_TEMPLATES = [
     color: 'from-green-100 to-green-200',
     titleColor: 'text-green-800',
     textColor: 'text-green-700',
-    examples: ['精靈一點', '長者健康之道', '投資新世代'],
+    examples: ['精靈一點', '長者健康之道', '投資新世代', '香江暖流', '社區生活線', '晨光第一線', '開心家庭', '彩虹早晨', '星期日家加樂', '普出校園（普通話台）', '醫生與你', '謝謝你醫生', '生活- 健康- 資訊- 體育- 港式速遞'],
     focus: '實用生活建議、專家指導、聽眾服務資訊',
     processingAreas: [
       { icon: '⏰', label: '時間索引', content: '專家貼士、實用建議、聽眾參與段落' },
@@ -233,7 +234,7 @@ const PROGRAM_TEMPLATES = [
     color: 'from-cyan-100 to-cyan-200',
     titleColor: 'text-cyan-800',
     textColor: 'text-cyan-700',
-    examples: ['旅遊樂園', '我要走天涯', 'The Pulse', 'Backchat'],
+    examples: ['旅遊樂園', '我要走天涯', 'Backchat', 'The Pulse', 'Money Talk', 'The Close', 'Hong Kong Today', '灣區全媒睇', '走進東盟 II', '31看世界'],
     focus: '旅遊體驗分享、國際視野拓展、文化交流探討',
     processingAreas: [
       { icon: '⏰', label: '時間索引', content: '目的地介紹、旅遊體驗、國際觀察段落' },
@@ -287,7 +288,7 @@ const PROGRAM_TEMPLATES = [
     color: 'from-amber-100 to-amber-200',
     titleColor: 'text-amber-800',
     textColor: 'text-amber-700',
-    examples: ['戲曲之夜', '粵曲天地', '晚間粵曲'],
+    examples: ['戲曲之夜', '粵曲天地', '晚間粵曲', '星期五粵曲夜', 'Night Music 長夜細聽', 'Simply Classical 就是古典', 'Cantilena 自投羅網'],
     focus: '傳統文化傳承、戲曲藝術推廣、文化教育普及',
     processingAreas: [
       { icon: '⏰', label: '時間索引', content: '經典演出、藝人介紹、曲藝故事' },
@@ -341,7 +342,7 @@ const PROGRAM_TEMPLATES = [
     color: 'from-orange-100 to-orange-200',
     titleColor: 'text-orange-800',
     textColor: 'text-orange-700',
-    examples: ['鬥秀場', '守下留情', '三五成群'],
+    examples: ['鬥秀場', '守下留情', '三五成群', '周末午夜場', '生活日常', '下午紅人館（普通話台）', '開心朋友仔（普通話台）', 'After Hours with Michael Lance', 'Weekend Sunrise', 'Brunch with Noreen'],
     focus: '互動遊戲設計、娛樂內容製作、聽眾參與活動',
     processingAreas: [
       { icon: '⏰', label: '時間索引', content: '開場、遊戲環節、互動討論' },
@@ -395,7 +396,7 @@ const PROGRAM_TEMPLATES = [
     color: 'from-indigo-100 to-indigo-200',
     titleColor: 'text-indigo-800',
     textColor: 'text-indigo-700',
-    examples: ['香港故事', '獅子山下', 'CIBS社區計劃'],
+    examples: ['香港故事', '獅子山下', 'CIBS社區參與廣播計劃', '走過青春', '教學有心人', '中華知識王', '人類足跡', '替代食物', '守護天堂', '承歡記', '你安全嗎？', 'BobieLand（兒童節目）', '快樂魔法森林（兒童節目）', '恐龍萌遊記（兒童節目）', '大自然生態人'],
     focus: '深度專題製作、紀實報導、教育內容傳播',
     processingAreas: [
       { icon: '⏰', label: '時間索引', content: '故事開端、人物描寫、重要事件' },
@@ -830,26 +831,42 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                         <p className={cn("text-xs leading-tight mb-2", template.textColor)}>
                           {template.focus}
                         </p>
-                      </div>
-                      
-                      {/* Team */}
-                      <div>
-                        <p className={cn("text-xs font-medium mb-1", template.textColor)}>
-                          建議分工：
-                        </p>
-                        <div className="flex flex-wrap gap-1">
-                          {template.team.slice(0, 2).map((member, idx) => (
-                            <span key={idx} className={cn("text-xs", template.textColor)}>
-                              {member.split(' ')[0]}
-                            </span>
-                          ))}
-                          {template.team.length > 2 && (
-                            <span className={cn("text-xs", template.textColor)}>
-                              +{template.team.length - 2}
-                            </span>
-                          )}
-                        </div>
-                      </div>
+                       </div>
+                       
+                       {/* Programs */}
+                       <div>
+                         <HoverCard>
+                           <HoverCardTrigger asChild>
+                             <div className="cursor-help">
+                               <p className={cn("text-xs font-medium mb-1", template.textColor)}>
+                                 建議節目：
+                               </p>
+                               <div className="flex flex-wrap gap-1">
+                                 {template.examples.slice(0, 3).map((example, idx) => (
+                                   <span key={idx} className={cn("text-xs truncate max-w-20", template.textColor)}>
+                                     {example}{idx < 2 && idx < template.examples.slice(0, 3).length - 1 ? ',' : ''}
+                                   </span>
+                                 ))}
+                                 {template.examples.length > 3 && (
+                                   <span className={cn("text-xs font-medium", template.textColor)}>
+                                     +{template.examples.length - 3}更多
+                                   </span>
+                                 )}
+                               </div>
+                             </div>
+                           </HoverCardTrigger>
+                           <HoverCardContent className="w-80 p-4 bg-white/95 backdrop-blur-sm border border-gray-200 shadow-xl z-50">
+                             <h4 className="font-semibold text-gray-900 mb-2">{template.title} - 完整節目清單</h4>
+                             <div className="grid grid-cols-1 gap-1 max-h-48 overflow-y-auto">
+                               {template.examples.map((example, idx) => (
+                                 <div key={idx} className="text-sm text-gray-700 py-1 border-b border-gray-100 last:border-0">
+                                   {example}
+                                 </div>
+                               ))}
+                             </div>
+                           </HoverCardContent>
+                         </HoverCard>
+                       </div>
                     </div>
                   </Card>
                 </div>
@@ -981,18 +998,39 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                             </p>
                           </div>
                           
-                          <div>
-                            <p className={cn("text-sm font-medium mb-2", template.textColor)}>
-                              建議分工：
-                            </p>
-                            <div className="flex flex-wrap gap-1">
-                              {template.team.map((member, idx) => (
-                                <Badge key={idx} variant="secondary" className="text-xs">
-                                  {member}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
+                           <div>
+                             <HoverCard>
+                               <HoverCardTrigger asChild>
+                                 <div className="cursor-help">
+                                   <p className={cn("text-sm font-medium mb-2", template.textColor)}>
+                                     建議節目：
+                                   </p>
+                                   <div className="flex flex-wrap gap-1">
+                                     {template.examples.slice(0, 3).map((example, idx) => (
+                                       <Badge key={idx} variant="secondary" className="text-xs max-w-24 truncate">
+                                         {example}
+                                       </Badge>
+                                     ))}
+                                     {template.examples.length > 3 && (
+                                       <Badge variant="outline" className="text-xs">
+                                         +{template.examples.length - 3}更多
+                                       </Badge>
+                                     )}
+                                   </div>
+                                 </div>
+                               </HoverCardTrigger>
+                               <HoverCardContent className="w-80 p-4 bg-white/95 backdrop-blur-sm border border-gray-200 shadow-xl z-50">
+                                 <h4 className="font-semibold text-gray-900 mb-2">{template.title} - 完整節目清單</h4>
+                                 <div className="grid grid-cols-1 gap-1 max-h-48 overflow-y-auto">
+                                   {template.examples.map((example, idx) => (
+                                     <div key={idx} className="text-sm text-gray-700 py-1 border-b border-gray-100 last:border-0">
+                                       {example}
+                                     </div>
+                                   ))}
+                                 </div>
+                               </HoverCardContent>
+                             </HoverCard>
+                           </div>
                         </div>
                       </Card>
                     </div>
