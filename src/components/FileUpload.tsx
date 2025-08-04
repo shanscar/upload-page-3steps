@@ -10,6 +10,13 @@ import { format } from "date-fns";
 interface FileUploadProps {
   expectedFileType: string;
   onUpload: (files: File[], metadata: any) => void;
+  initialData?: {
+    files?: File[];
+    metadata?: any;
+    selectedDate?: string;
+    customDate?: Date;
+    audioTracks?: AudioTrack[];
+  };
 }
 
 interface AudioTrack {
@@ -26,12 +33,12 @@ interface DragState {
   dropTarget: number | null;
 }
 
-export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
+export const FileUpload = ({ expectedFileType, onUpload, initialData }: FileUploadProps) => {
   const [dragActive, setDragActive] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [audioTracks, setAudioTracks] = useState<AudioTrack[]>([]);
-  const [selectedDate, setSelectedDate] = useState("today");
-  const [customDate, setCustomDate] = useState<Date>();
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>(initialData?.files || []);
+  const [audioTracks, setAudioTracks] = useState<AudioTrack[]>(initialData?.audioTracks || []);
+  const [selectedDate, setSelectedDate] = useState(initialData?.selectedDate || "today");
+  const [customDate, setCustomDate] = useState<Date | undefined>(initialData?.customDate);
   const [dragState, setDragState] = useState<DragState>({
     isDragging: false,
     draggedLanguage: null,

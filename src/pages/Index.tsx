@@ -137,13 +137,7 @@ const Index = () => {
         setCurrentState('talk-input');
       }
     } else if (stepNumber === 2 && talkState.analysisData) {
-      // Go to the last completed sub-state of archive
-      const lastState = archiveState.lastCompletedSubState;
-      if (lastState === 'processing') {
-        setCurrentState('archive-processing');
-      } else {
-        setCurrentState('archive-upload');
-      }
+      setCurrentState('archive-upload');
     } else if (stepNumber === 3 && archiveState.uploadedFiles.length > 0) {
       setCurrentState('work-collaboration');
     }
@@ -256,6 +250,13 @@ const Index = () => {
               <FileUpload
                 expectedFileType={talkState.analysisData.template}
                 onUpload={handleFileUpload}
+                initialData={{
+                  files: archiveState.uploadedFiles,
+                  metadata: archiveState.metadata,
+                  selectedDate: archiveState.metadata?.date,
+                  customDate: archiveState.metadata?.customDate,
+                  audioTracks: archiveState.metadata?.audioTracks
+                }}
               />
             )}
           </div>
