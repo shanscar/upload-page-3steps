@@ -12,7 +12,7 @@ interface FileUploadProps {
 
 interface AudioTrack {
   id: number;
-  language: string;
+  language?: string;
   isSelected: boolean;
   channelType: 'mono' | 'stereo' | 'surround';
   volumeLevel: number; // 0-100 for waveform height
@@ -65,12 +65,12 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
 
   const handleFiles = (files: File[]) => {
     setUploadedFiles(files);
-    // Mock audio track detection with enhanced properties
+    // Mock audio track detection with enhanced properties - no default languages
     const mockTracks: AudioTrack[] = [
-      { id: 1, language: "粵語", isSelected: true, channelType: "stereo", volumeLevel: 85 },
-      { id: 2, language: "英語", isSelected: false, channelType: "stereo", volumeLevel: 72 },
-      { id: 3, language: "普通話", isSelected: false, channelType: "mono", volumeLevel: 68 },
-      { id: 4, language: "環境聲", isSelected: false, channelType: "surround", volumeLevel: 45 }
+      { id: 1, isSelected: true, channelType: "stereo", volumeLevel: 85 },
+      { id: 2, isSelected: false, channelType: "stereo", volumeLevel: 72 },
+      { id: 3, isSelected: false, channelType: "mono", volumeLevel: 68 },
+      { id: 4, isSelected: false, channelType: "surround", volumeLevel: 45 }
     ];
     setAudioTracks(mockTracks);
   };
@@ -364,48 +364,58 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
                     </div>
                     
                     {/* Language selector */}
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-between",
-                            getLanguageColor(track.language)
-                          )}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <span>{track.language}</span>
-                          <ChevronDown className="w-4 h-4" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-48 p-2" align="start">
-                        <div className="space-y-1">
-                          {LANGUAGE_OPTIONS.map(lang => (
-                            <Button
-                              key={lang}
-                              variant="ghost"
-                              size="sm"
-                              className={cn(
-                                "w-full justify-start",
-                                track.language === lang && "bg-primary/10"
-                              )}
-                              onClick={() => {
-                                toggleTrackLanguage(track.id, lang);
-                              }}
-                            >
-                              <div className={cn(
-                                "w-3 h-3 rounded-full mr-2",
-                                getLanguageColor(lang).split(' ')[0]
-                              )} />
-                              {lang}
-                              {track.language === lang && (
-                                <Check className="w-4 h-4 ml-auto" />
-                              )}
-                            </Button>
-                          ))}
-                        </div>
-                      </PopoverContent>
-                    </Popover>
+                    {track.language ? (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-between",
+                              getLanguageColor(track.language)
+                            )}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <span>{track.language}</span>
+                            <ChevronDown className="w-4 h-4" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-48 p-2" align="start">
+                          <div className="space-y-1">
+                            {LANGUAGE_OPTIONS.map(lang => (
+                              <Button
+                                key={lang}
+                                variant="ghost"
+                                size="sm"
+                                className={cn(
+                                  "w-full justify-start",
+                                  track.language === lang && "bg-primary/10"
+                                )}
+                                onClick={() => {
+                                  toggleTrackLanguage(track.id, lang);
+                                }}
+                              >
+                                <div className={cn(
+                                  "w-3 h-3 rounded-full mr-2",
+                                  getLanguageColor(lang).split(' ')[0]
+                                )} />
+                                {lang}
+                                {track.language === lang && (
+                                  <Check className="w-4 h-4 ml-auto" />
+                                )}
+                              </Button>
+                            ))}
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    ) : (
+                      <div className="w-full p-3 border-2 border-dashed border-muted-foreground/30 rounded-lg text-center text-muted-foreground text-sm">
+                        {dragState.dropTarget === track.id && dragState.draggedLanguage ? (
+                          <span className="text-blue-600">放開以分配 "{dragState.draggedLanguage}"</span>
+                        ) : (
+                          <span>拖拽語言標籤到此處分配語言</span>
+                        )}
+                      </div>
+                    )}
                     
                     {/* Volume indicator */}
                     <div className="mt-3 text-xs text-muted-foreground text-center">
@@ -420,9 +430,9 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
             <div className="mt-4 p-3 bg-muted/30 rounded-lg">
               <div className="text-sm text-muted-foreground">
                 已選擇 {audioTracks.filter(t => t.isSelected).length} / {audioTracks.length} 個音軌
-                {audioTracks.filter(t => t.isSelected).length > 0 && (
+                {audioTracks.filter(t => t.isSelected && t.language).length > 0 && (
                   <span className="ml-2">
-                    ({audioTracks.filter(t => t.isSelected).map(t => t.language).join(', ')})
+                    ({audioTracks.filter(t => t.isSelected && t.language).map(t => t.language).join(', ')})
                   </span>
                 )}
               </div>
