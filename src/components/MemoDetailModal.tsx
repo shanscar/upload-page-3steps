@@ -19,13 +19,21 @@ interface TeamMemberDetail {
   tasks: TaskDetail[];
 }
 
+interface ProcessingArea {
+  icon: string;
+  label: string;
+  content: string;
+}
+
 interface ProgramTemplate {
   id: string;
   title: string;
   color: string;
   titleColor: string;
   textColor: string;
+  examples: string[];
   focus: string;
+  processingAreas: ProcessingArea[];
   team: string[];
   detailedTeam?: TeamMemberDetail[];
 }
@@ -95,6 +103,20 @@ export const MemoDetailModal = ({
                   {template.title}
                 </h2>
                 
+                {/* Examples */}
+                <div className="mb-3">
+                  <p className={cn("text-sm font-medium mb-2", template.titleColor)}>
+                    🎯 適用例子：
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {template.examples.map((example, index) => (
+                      <Badge key={index} variant="outline" className={cn("text-xs", template.textColor)}>
+                        {example}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                
                 <div className="flex items-center gap-2 mb-4">
                   {isSelected && (
                     <Badge className="bg-green-100 text-green-800 border-green-200">
@@ -126,6 +148,31 @@ export const MemoDetailModal = ({
               <p className={cn("text-base leading-relaxed", template.textColor)}>
                 {template.focus}
               </p>
+            </div>
+            
+            <Separator className="my-6" />
+            
+            {/* Processing Areas */}
+            <div className="mb-6">
+              <h3 className={cn("text-lg font-bold mb-4", template.titleColor)}>
+                ⚙️ 四大處理重點
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {template.processingAreas.map((area, index) => (
+                  <div key={index} className="bg-white/60 rounded-lg p-4 border border-white/40">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-xl">{area.icon}</span>
+                      <h4 className={cn("font-bold text-sm", template.titleColor)}>
+                        {area.label}
+                      </h4>
+                    </div>
+                    <p className={cn("text-xs leading-relaxed", template.textColor)}>
+                      {area.content}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
             
             <Separator className="my-6" />
@@ -186,6 +233,7 @@ export const MemoDetailModal = ({
                 💡 <strong>協作提示：</strong>
                 這個範本適合 {template.detailedTeam?.length || template.team.length} 人小組協作，
                 建議在開始前進行角色分配會議，確保每個成員都清楚自己的責任範圍。
+                各項任務可根據實際需要調整優先級和時間分配。
               </p>
             </div>
           </div>
