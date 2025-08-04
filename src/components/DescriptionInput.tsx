@@ -114,7 +114,7 @@ export const DescriptionInput = ({
   return (
     <div className="space-y-8">
       <div className="text-center">
-        <div className="text-3xl mb-3">💬</div>
+        <div className="text-3xl mb-3">🗣️</div>
         <h3 className="text-xl font-medium text-foreground mb-2">
           講講今日的拍攝情況
         </h3>
