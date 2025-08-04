@@ -538,141 +538,247 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
     }
   };
 
+  const handleResetSelection = () => {
+    setSelectedTemplates([]);
+  };
+
+  // Extract follow-up tasks from selected templates
+  const getFollowUpTasks = () => {
+    const allTasks: string[] = [];
+    
+    selectedTemplates.forEach(templateId => {
+      const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
+      if (template?.detailedTeam) {
+        template.detailedTeam.forEach(teamMember => {
+          teamMember.tasks.forEach(task => {
+            if (!allTasks.includes(task.task)) {
+              allTasks.push(task.task);
+            }
+          });
+        });
+      }
+    });
+    
+    return allTasks;
+  };
+
+  const selectedTemplateNames = selectedTemplates.map(id => 
+    PROGRAM_TEMPLATES.find(t => t.id === id)?.title
+  ).filter(Boolean);
+
   return (
     <div className="max-w-6xl mx-auto p-6">
-      {/* Memo Header */}
-      <div className="relative mb-8">
-        <Pin className="absolute -top-3 -right-3 text-slate-400 transform rotate-45 w-8 h-8 z-10" />
-        <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-amber-200 shadow-lg">
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <Paperclip className="w-6 h-6 text-amber-600 transform -rotate-12" />
-                <h1 className="text-3xl font-bold text-amber-900 font-handwriting">
-                  工作協作備忘錄
-                </h1>
-              </div>
-              <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1 rounded">
-                {new Date().toLocaleDateString('zh-TW')}
-              </div>
-            </div>
-            
-            <p className="text-amber-800 text-lg font-handwriting mb-4">
-              📝 重新選擇或調整處理流程，打造最適合的工作範本
-            </p>
+      {selectedTemplates.length === 0 ? (
+        // Template Selection Mode
+        <>
+          {/* Memo Header */}
+          <div className="relative mb-8">
+            <Pin className="absolute -top-3 -right-3 text-slate-400 transform rotate-45 w-8 h-8 z-10" />
+            <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-amber-200 shadow-lg">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <Paperclip className="w-6 h-6 text-amber-600 transform -rotate-12" />
+                    <h1 className="text-3xl font-bold text-amber-900 font-handwriting">
+                      工作協作備忘錄
+                    </h1>
+                  </div>
+                  <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1 rounded">
+                    {new Date().toLocaleDateString('zh-TW')}
+                  </div>
+                </div>
+                
+                <p className="text-amber-800 text-lg font-handwriting mb-4">
+                  📝 重新選擇或調整處理流程，打造最適合的工作範本
+                </p>
 
-            <div className="flex items-center justify-between">
-              <div className="flex gap-2">
-                <Button 
-                  onClick={handleSelectAll}
-                  variant="outline"
-                  size="sm"
-                  className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
-                >
-                  全選
-                </Button>
-                <Button 
-                  onClick={handleClearAll}
-                  variant="outline"
-                  size="sm"
-                  className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
-                >
-                  清除
-                </Button>
+                <div className="flex items-center justify-between">
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={handleSelectAll}
+                      variant="outline"
+                      size="sm"
+                      className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
+                    >
+                      全選
+                    </Button>
+                    <Button 
+                      onClick={handleClearAll}
+                      variant="outline"
+                      size="sm"
+                      className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
+                    >
+                      清除
+                    </Button>
+                  </div>
+                  <div className="text-sm text-amber-700">
+                    已選擇 {selectedTemplates.length} / {PROGRAM_TEMPLATES.length} 個流程
+                  </div>
+                </div>
               </div>
-              <div className="text-sm text-amber-700">
-                已選擇 {selectedTemplates.length} / {PROGRAM_TEMPLATES.length} 個流程
-              </div>
-            </div>
+            </Card>
           </div>
-        </Card>
-      </div>
 
-      {/* Process Options - Memo Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
-        {PROGRAM_TEMPLATES.map((template, index) => {
-          const isSelected = selectedTemplates.includes(template.id);
-          const rotation = index % 2 === 0 ? 'rotate-1' : '-rotate-1';
-          
-          return (
-            <div key={template.id} className="relative">
-              {/* Pin for each memo */}
-              <Pin className={cn(
-                "absolute -top-2 -right-1 w-5 h-5 transform rotate-45 z-10",
-                isSelected ? "text-red-500" : "text-slate-400"
-              )} />
+          {/* Process Options - Memo Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+            {PROGRAM_TEMPLATES.map((template, index) => {
+              const isSelected = selectedTemplates.includes(template.id);
+              const rotation = index % 2 === 0 ? 'rotate-1' : '-rotate-1';
               
-              {/* Memo Card */}
-              <Card 
-                className={cn(
-                  "cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg p-4 h-48 group relative overflow-hidden",
-                  rotation,
-                  `bg-gradient-to-br ${template.color}`,
-                  isSelected && "ring-2 ring-amber-400 shadow-lg scale-105 -rotate-0"
-                )}
-                onClick={() => handleTemplateToggle(template.id)}
-                onDoubleClick={() => handleMemoDoubleClick(template)}
-              >
-                {/* Hover overlay with eye icon and instruction */}
-                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
-                  <div className="text-center text-white drop-shadow-lg">
-                    <Eye className="w-8 h-8 mx-auto mb-2" />
-                    <span className="text-sm font-medium bg-black/40 px-3 py-1 rounded">
-                      雙擊查看詳情
-                    </span>
-                  </div>
-                </div>
+              return (
+                <div key={template.id} className="relative">
+                  {/* Pin for each memo */}
+                  <Pin className={cn(
+                    "absolute -top-2 -right-1 w-5 h-5 transform rotate-45 z-10",
+                    isSelected ? "text-red-500" : "text-slate-400"
+                  )} />
+                  
+                  {/* Memo Card */}
+                  <Card 
+                    className={cn(
+                      "cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg p-4 h-48 group relative overflow-hidden",
+                      rotation,
+                      `bg-gradient-to-br ${template.color}`,
+                      isSelected && "ring-2 ring-amber-400 shadow-lg scale-105 -rotate-0"
+                    )}
+                    onClick={() => handleTemplateToggle(template.id)}
+                    onDoubleClick={() => handleMemoDoubleClick(template)}
+                  >
+                    {/* Hover overlay with eye icon and instruction */}
+                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
+                      <div className="text-center text-white drop-shadow-lg">
+                        <Eye className="w-8 h-8 mx-auto mb-2" />
+                        <span className="text-sm font-medium bg-black/40 px-3 py-1 rounded">
+                          雙擊查看詳情
+                        </span>
+                      </div>
+                    </div>
 
-                <div className="h-full flex flex-col group-hover:opacity-60 transition-opacity duration-300">
-                  {/* Selection indicator */}
-                  {isSelected && (
-                    <div className="absolute top-2 left-2 z-10">
-                      <CheckCircle className="w-5 h-5 text-green-600 bg-white rounded-full" />
-                    </div>
-                  )}
-                  
-                  {/* Title */}
-                  <h3 className={cn(
-                    "text-sm font-bold font-handwriting mb-2 leading-tight",
-                    template.titleColor
-                  )}>
-                    {template.title}
-                  </h3>
-                  
-                  {/* Focus areas */}
-                  <div className="flex-1">
-                    <p className={cn("text-xs font-medium mb-1", template.textColor)}>
-                      重點處理：
-                    </p>
-                    <p className={cn("text-xs leading-tight mb-2", template.textColor)}>
-                      {template.focus}
-                    </p>
-                  </div>
-                  
-                  {/* Team */}
-                  <div>
-                    <p className={cn("text-xs font-medium mb-1", template.textColor)}>
-                      建議分工：
-                    </p>
-                    <div className="flex flex-wrap gap-1">
-                      {template.team.slice(0, 2).map((member, idx) => (
-                        <span key={idx} className={cn("text-xs", template.textColor)}>
-                          {member.split(' ')[0]}
-                        </span>
-                      ))}
-                      {template.team.length > 2 && (
-                        <span className={cn("text-xs", template.textColor)}>
-                          +{template.team.length - 2}
-                        </span>
+                    <div className="h-full flex flex-col group-hover:opacity-60 transition-opacity duration-300">
+                      {/* Selection indicator */}
+                      {isSelected && (
+                        <div className="absolute top-2 left-2 z-10">
+                          <CheckCircle className="w-5 h-5 text-green-600 bg-white rounded-full" />
+                        </div>
                       )}
+                      
+                      {/* Title */}
+                      <h3 className={cn(
+                        "text-sm font-bold font-handwriting mb-2 leading-tight",
+                        template.titleColor
+                      )}>
+                        {template.title}
+                      </h3>
+                      
+                      {/* Focus areas */}
+                      <div className="flex-1">
+                        <p className={cn("text-xs font-medium mb-1", template.textColor)}>
+                          重點處理：
+                        </p>
+                        <p className={cn("text-xs leading-tight mb-2", template.textColor)}>
+                          {template.focus}
+                        </p>
+                      </div>
+                      
+                      {/* Team */}
+                      <div>
+                        <p className={cn("text-xs font-medium mb-1", template.textColor)}>
+                          建議分工：
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          {template.team.slice(0, 2).map((member, idx) => (
+                            <span key={idx} className={cn("text-xs", template.textColor)}>
+                              {member.split(' ')[0]}
+                            </span>
+                          ))}
+                          {template.team.length > 2 && (
+                            <span className={cn("text-xs", template.textColor)}>
+                              +{template.team.length - 2}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      ) : (
+        // Follow-up Items Mode
+        <>
+          {/* Simplified Memo Header */}
+          <div className="relative mb-8">
+            <Pin className="absolute -top-3 -right-3 text-slate-400 transform rotate-45 w-8 h-8 z-10" />
+            <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-amber-200 shadow-lg">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <Paperclip className="w-6 h-6 text-amber-600 transform -rotate-12" />
+                    <h1 className="text-3xl font-bold text-amber-900 font-handwriting">
+                      工作協作備忘錄
+                    </h1>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Button 
+                      onClick={handleResetSelection}
+                      variant="outline"
+                      size="sm"
+                      className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
+                    >
+                      重新選擇範本
+                    </Button>
+                    <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1 rounded">
+                      {new Date().toLocaleDateString('zh-TW')}
                     </div>
                   </div>
                 </div>
-              </Card>
+                
+                {/* Selected Templates Summary */}
+                <div className="mb-4">
+                  <p className="text-amber-800 text-sm font-medium mb-2">已選範本：</p>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedTemplateNames.map((name, index) => (
+                      <Badge key={index} variant="secondary" className="bg-amber-100 text-amber-800">
+                        {name}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          {/* Follow-up Items */}
+          <Card className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 shadow-lg mb-8">
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-green-900 font-handwriting mb-4">
+                📋 跟進事項
+              </h3>
+              
+              <div className="space-y-3">
+                {getFollowUpTasks().map((task, index) => (
+                  <div key={index} className="flex items-start gap-3 p-3 bg-white rounded-lg border border-green-200">
+                    <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-green-700 text-sm font-bold">{index + 1}</span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-green-800 font-medium">{task}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {getFollowUpTasks().length === 0 && (
+                <p className="text-green-700 text-center py-8 italic">
+                  暫無跟進事項，請先選擇範本
+                </p>
+              )}
             </div>
-          );
-        })}
-      </div>
+          </Card>
+        </>
+      )}
 
       {/* Collaboration Section */}
       <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 shadow-lg mb-6">
