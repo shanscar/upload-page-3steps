@@ -1062,7 +1062,7 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                       <Button 
                         onClick={handleCopyLink}
                         variant="outline"
-                        className="flex items-center gap-2 bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200 px-3 py-1.5 rounded-md text-sm h-auto"
+                        className="flex items-center gap-2 bg-amber-50 border-amber-300 text-amber-800 hover:bg-amber-100 px-3 py-1.5 rounded-md text-sm h-auto"
                       >
                         <Copy className="w-4 h-4" />
                         <span>複製</span>
