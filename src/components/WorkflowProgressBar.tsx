@@ -2,10 +2,20 @@ import { Progress } from "@/components/ui/progress";
 import { CompactStepSummary } from "@/components/CompactStepSummary";
 import { cn } from "@/lib/utils";
 
+interface ProcessStep {
+  id: string;
+  name: string;
+  progress: number;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+}
+
 interface CompletedStepData {
   step: number;
   title: string;
   summary: string;
+  isCompleted: boolean;
+  isProcessing?: boolean;
+  processingSteps?: ProcessStep[];
 }
 
 interface WorkflowProgressBarProps {
@@ -81,7 +91,9 @@ export const WorkflowProgressBar = ({ currentStep, completedSteps = [], onEditSt
               step={stepData.step}
               title={stepData.title}
               summary={stepData.summary}
-              isCompleted={true}
+              isCompleted={stepData.isCompleted}
+              isProcessing={stepData.isProcessing}
+              processingSteps={stepData.processingSteps}
               onEdit={() => onEditStep?.(stepData.step)}
             />
           ))}

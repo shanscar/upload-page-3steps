@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { WorkflowStep } from "@/components/WorkflowStep";
 import { WorkflowProgressBar } from "@/components/WorkflowProgressBar";
 import { HorizontalWorkflowSteps } from "@/components/HorizontalWorkflowSteps";
@@ -37,11 +37,20 @@ interface TalkState {
   analysisData: AnalysisData | null;
 }
 
+interface ProcessStep {
+  id: string;
+  name: string;
+  progress: number;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+}
+
 interface ArchiveState {
   uploadedFiles: File[];
   metadata: any;
   processingComplete: boolean;
   lastCompletedSubState: 'upload' | 'processing' | null;
+  processingSteps: ProcessStep[];
+  isProcessing: boolean;
 }
 
 interface SentStatus {
@@ -67,7 +76,14 @@ const Index = () => {
     uploadedFiles: [],
     metadata: null,
     processingComplete: false,
-    lastCompletedSubState: null
+    lastCompletedSubState: null,
+    processingSteps: [
+      { id: 'upload', name: '檔案上載', progress: 0, status: 'pending' },
+      { id: 'separation', name: '音軌分離', progress: 0, status: 'pending' },
+      { id: 'ai_analysis', name: 'AI分析', progress: 0, status: 'pending' },
+      { id: 'auto_tagging', name: '自動標記', progress: 0, status: 'pending' }
+    ],
+    isProcessing: false
   });
   const [workState, setWorkState] = useState<WorkState>({
     collaborationStarted: false,
@@ -75,6 +91,55 @@ const Index = () => {
     sentStatus: null
   });
   const isMobile = useIsMobile();
+
+  // Background processing function
+  const startBackgroundProcessing = async () => {
+    const steps = ['separation', 'ai_analysis', 'auto_tagging'];
+    
+    for (const stepId of steps) {
+      await simulateStep(stepId, 2000 + Math.random() * 2000);
+    }
+    
+    // Mark processing as complete
+    setArchiveState(prev => ({
+      ...prev,
+      processingComplete: true,
+      lastCompletedSubState: 'processing',
+      isProcessing: false
+    }));
+  };
+
+  const simulateStep = (stepId: string, duration: number) => {
+    return new Promise<void>((resolve) => {
+      // Start processing
+      setArchiveState(prev => ({
+        ...prev,
+        processingSteps: prev.processingSteps.map(step => 
+          step.id === stepId ? { ...step, status: 'processing' } : step
+        )
+      }));
+
+      const interval = setInterval(() => {
+        setArchiveState(prev => ({
+          ...prev,
+          processingSteps: prev.processingSteps.map(step => {
+            if (step.id === stepId) {
+              const newProgress = Math.min(step.progress + 10, 100);
+              const newStatus = newProgress >= 100 ? 'completed' as const : 'processing' as const;
+              
+              if (newProgress >= 100) {
+                clearInterval(interval);
+                resolve();
+              }
+              
+              return { ...step, progress: newProgress, status: newStatus };
+            }
+            return step;
+          })
+        }));
+      }, duration / 10);
+    });
+  };
 
   const handleAnalyze = (desc: string) => {
     setTalkState(prev => ({
@@ -114,9 +179,16 @@ const Index = () => {
       ...prev,
       uploadedFiles: files,
       metadata: metadata,
-      lastCompletedSubState: 'upload'
+      lastCompletedSubState: 'upload',
+      isProcessing: true,
+      processingSteps: prev.processingSteps.map(step => 
+        step.id === 'upload' ? { ...step, status: 'completed', progress: 100 } : step
+      )
     }));
-    setCurrentState('archive-processing');
+    // Skip archive-processing and go directly to collaboration
+    setCurrentState('work-collaboration');
+    // Start background processing
+    startBackgroundProcessing();
   };
 
   const handleProcessingComplete = () => {
@@ -195,23 +267,44 @@ const Index = () => {
       completed.push({
         step: 1,
         title: "說話",
-        summary: `${talkState.analysisData.location} - ${talkState.analysisData.type}${talkState.analysisData.people ? ` (${talkState.analysisData.people.length}人)` : ''}`
+        summary: `${talkState.analysisData.location} - ${talkState.analysisData.type}${talkState.analysisData.people ? ` (${talkState.analysisData.people.length}人)` : ''}`,
+        isCompleted: true
       });
     }
     
-    if (archiveState.processingComplete && archiveState.lastCompletedSubState === 'processing') {
-      completed.push({
-        step: 2,
-        title: "入檔",
-        summary: `${archiveState.uploadedFiles.length}個檔案已處理完成`
-      });
+    // Show archive processing status
+    if (archiveState.uploadedFiles.length > 0) {
+      if (archiveState.isProcessing) {
+        // Get current processing step
+        const processingStep = archiveState.processingSteps.find(step => step.status === 'processing');
+        const completedSteps = archiveState.processingSteps.filter(step => step.status === 'completed').length;
+        
+        completed.push({
+          step: 2,
+          title: "入檔",
+          summary: processingStep 
+            ? `處理中... ${processingStep.name} ${processingStep.progress}%` 
+            : `處理中... ${completedSteps}/${archiveState.processingSteps.length} 完成`,
+          isCompleted: false,
+          isProcessing: true,
+          processingSteps: archiveState.processingSteps
+        });
+      } else if (archiveState.processingComplete) {
+        completed.push({
+          step: 2,
+          title: "入檔",
+          summary: `${archiveState.uploadedFiles.length}個檔案已處理完成`,
+          isCompleted: true
+        });
+      }
     }
     
     if (workState.sentStatus) {
       completed.push({
         step: 3,
         title: "工作",
-        summary: `已發送通知 - ${workState.sentStatus.timestamp} (${workState.sentStatus.recipientCount}位協作者)`
+        summary: `已發送通知 - ${workState.sentStatus.timestamp} (${workState.sentStatus.recipientCount}位協作者)`,
+        isCompleted: true
       });
     }
     
@@ -282,20 +375,6 @@ const Index = () => {
           </div>
         );
       
-      case 'archive-processing':
-        return (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-semibold text-foreground">處理中</h2>
-            {talkState.analysisData && (
-              <UploadProgress
-                files={archiveState.uploadedFiles}
-                metadata={archiveState.metadata}
-                analysisData={talkState.analysisData}
-                onComplete={handleProcessingComplete}
-              />
-            )}
-          </div>
-        );
       
       case 'work-collaboration':
         return (
