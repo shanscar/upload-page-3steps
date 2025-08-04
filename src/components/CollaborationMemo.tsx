@@ -842,8 +842,8 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                           </p>
                           <div className="flex flex-wrap gap-1">
                             {template.examples.slice(0, 3).map((example, idx) => (
-                              <span key={idx} className={cn("text-xs truncate max-w-20", template.textColor)}>
-                                {example}{idx < 2 && idx < template.examples.slice(0, 3).length - 1 ? ',' : ''}
+                              <span key={idx} className={cn("text-xs", template.textColor)}>
+                                {example}{idx < 2 && idx < template.examples.slice(0, 3).length - 1 ? ", " : ""}
                               </span>
                             ))}
                             {template.examples.length > 3 && (
@@ -1016,7 +1016,7 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                               </p>
                               <div className="flex flex-wrap gap-1">
                                 {template.examples.slice(0, 3).map((example, idx) => (
-                                  <Badge key={idx} variant="secondary" className="text-xs max-w-24 truncate">
+                                  <Badge key={idx} variant="secondary" className="text-xs whitespace-normal">
                                     {example}
                                   </Badge>
                                 ))}
