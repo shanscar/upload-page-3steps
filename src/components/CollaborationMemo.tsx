@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Copy, Share, Users, Pin, Paperclip, CheckCircle } from "lucide-react";
+import { Copy, Share, Users, Pin, Paperclip, CheckCircle, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { MemoDetailModal } from "./MemoDetailModal";
@@ -465,26 +465,28 @@ interface CollaborationMemoProps {
 }
 
 export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: CollaborationMemoProps) => {
-  const { toast } = useToast();
+  const [colleagueEmail, setColleagueEmail] = useState("");
+  const [shareMessage, setShareMessage] = useState("");
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
-  const [colleagueEmail, setColleagueEmail] = useState('');
-  const [shareMessage, setShareMessage] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<typeof PROGRAM_TEMPLATES[0] | null>(null);
+  const { toast } = useToast();
 
-  const handleCopyMessage = () => {
-    const selectedItems = selectedTemplates.map(id => {
-      const template = PROGRAM_TEMPLATES.find(t => t.id === id);
-      return template?.title || '';
-    }).join(', ');
-    
-    const message = `📋 工作協作事項\n\n已選範本：${selectedItems}\n\n跟進事項：\n${getFollowUpTasks().map((task, index) => `${index + 1}. ${task}`).join('\n')}\n\n項目連結：${window.location.href}`;
-    
-    navigator.clipboard.writeText(message);
-    toast({
-      title: "訊息已複製",
-      description: "協作訊息已複製到剪貼板",
-    });
+  const handleCopyLink = async () => {
+    const projectUrl = window.location.href;
+    try {
+      await navigator.clipboard.writeText(projectUrl);
+      toast({
+        title: "連結已複製",
+        description: "項目連結已複製到剪貼板",
+      });
+    } catch (err) {
+      toast({
+        title: "複製失敗",
+        description: "無法複製連結，請手動複製",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleShareToColleague = () => {
@@ -517,9 +519,17 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
     );
   };
 
+  const handleSelectAll = () => {
+    setSelectedTemplates(PROGRAM_TEMPLATES.map(t => t.id));
+  };
+
+  const handleClearAll = () => {
+    setSelectedTemplates([]);
+  };
+
   const handleMemoDoubleClick = (template: typeof PROGRAM_TEMPLATES[0]) => {
     setSelectedTemplate(template);
-    setIsModalOpen(true);
+    setDetailModalOpen(true);
   };
 
   const handleModalToggleSelection = () => {
@@ -552,271 +562,295 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
     return allTasks;
   };
 
-  // Show simplified memo when templates are selected
-  if (selectedTemplates.length > 0) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 p-8 relative">
-        {/* Whiteboard texture background */}
-        <div className="absolute inset-0 opacity-30" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000' fill-opacity='0.05'%3E%3Cpath d='M20 20c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10zm10 0c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10z'/%3E%3C/g%3E%3C/svg%3E")`,
-        }} />
-        
-        <div className="max-w-7xl mx-auto relative z-10">
-          {/* Left side - Main Whiteboard */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            <div className="lg:col-span-3">
-              {/* Whiteboard Header */}
-              <div className="bg-white rounded-lg p-8 shadow-lg border-4 border-slate-300 mb-6" style={{
-                backgroundImage: `linear-gradient(45deg, transparent 24%, rgba(0,0,0,.05) 25%, rgba(0,0,0,.05) 26%, transparent 27%, transparent 74%, rgba(0,0,0,.05) 75%, rgba(0,0,0,.05) 76%, transparent 77%, transparent), linear-gradient(45deg, transparent 24%, rgba(0,0,0,.05) 25%, rgba(0,0,0,.05) 26%, transparent 27%, transparent 74%, rgba(0,0,0,.05) 75%, rgba(0,0,0,.05) 76%, transparent 77%, transparent)`,
-                backgroundSize: '20px 20px',
-                backgroundPosition: '0 0, 10px 10px'
-              }}>
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h1 className="text-4xl font-bold font-handwriting text-slate-800 mb-2">
-                      📋 工作協作大畫板
+  const selectedTemplateNames = selectedTemplates.map(id => 
+    PROGRAM_TEMPLATES.find(t => t.id === id)?.title
+  ).filter(Boolean);
+
+  return (
+    <div className="max-w-6xl mx-auto p-6">
+      {selectedTemplates.length === 0 ? (
+        // Template Selection Mode
+        <>
+          {/* Memo Header */}
+          <div className="relative mb-8">
+            <Pin className="absolute -top-3 -right-3 text-slate-400 transform rotate-45 w-8 h-8 z-10" />
+            <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-amber-200 shadow-lg">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <Paperclip className="w-6 h-6 text-amber-600 transform -rotate-12" />
+                    <h1 className="text-3xl font-bold text-amber-900 font-handwriting">
+                      工作協作備忘錄
                     </h1>
-                    <p className="text-slate-600 text-lg">
-                      {new Date().toLocaleDateString('zh-TW', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      })} • 早晨工作提醒
-                    </p>
                   </div>
-                  <Button 
-                    variant="outline" 
-                    onClick={handleResetSelection}
-                    className="border-slate-400 text-slate-700 hover:bg-slate-100"
-                  >
-                    重新選擇範本
-                  </Button>
-                </div>
-
-                {/* Selected Templates Summary */}
-                <div className="bg-blue-50 rounded-lg p-6 mb-6 border-2 border-blue-200 border-dashed">
-                  <h2 className="text-2xl font-bold text-blue-800 mb-3 font-handwriting">📝 今日處理範本</h2>
-                  <div className="flex flex-wrap gap-3">
-                    {selectedTemplates.map(templateId => {
-                      const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
-                      return template ? (
-                        <Badge key={templateId} className="bg-blue-100 text-blue-800 border-blue-300 text-sm py-1 px-3">
-                          {template.title}
-                        </Badge>
-                      ) : null;
-                    })}
+                  <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1 rounded">
+                    {new Date().toLocaleDateString('zh-TW')}
                   </div>
                 </div>
-
-                {/* Follow-up Items */}
-                <div className="bg-yellow-50 rounded-lg p-6 border-2 border-yellow-200 border-dashed">
-                  <h2 className="text-2xl font-bold text-yellow-800 mb-4 font-handwriting">✅ 跟進事項清單</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {getFollowUpTasks().map((task, index) => (
-                      <div key={index} className="flex items-start gap-3 p-4 bg-white rounded-lg border border-yellow-200 shadow-sm">
-                        <div className="w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                          {index + 1}
-                        </div>
-                        <span className="text-yellow-900 font-medium">{task}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right side - Collaboration Panel */}
-            <div className="lg:col-span-1">
-              <div className="bg-white rounded-lg p-6 shadow-lg border-4 border-slate-300 sticky top-8">
-                <h2 className="text-xl font-bold text-slate-800 mb-4 font-handwriting">👥 協作分享</h2>
                 
-                <div className="space-y-4">
-                  <Button 
-                    onClick={handleCopyMessage} 
-                    variant="outline" 
-                    className="w-full flex items-center gap-2 border-slate-300 hover:bg-slate-50"
-                  >
-                    <Copy className="w-4 h-4" />
-                    複製訊息
-                  </Button>
-                  
-                  <Separator />
-                  
-                  <div className="space-y-3">
-                    <Input
-                      placeholder="同事email"
-                      value={colleagueEmail}
-                      onChange={(e) => setColleagueEmail(e.target.value)}
-                      className="border-slate-300"
-                    />
+                <p className="text-amber-800 text-lg font-handwriting mb-4">
+                  📝 重新選擇或調整處理流程，打造最適合的工作範本
+                </p>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex gap-2">
                     <Button 
-                      onClick={handleShareToColleague} 
-                      className="w-full flex items-center gap-2 bg-slate-700 hover:bg-slate-800"
+                      onClick={handleSelectAll}
+                      variant="outline"
+                      size="sm"
+                      className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
                     >
-                      <Share className="w-4 h-4" />
-                      發送給同事
+                      全選
+                    </Button>
+                    <Button 
+                      onClick={handleClearAll}
+                      variant="outline"
+                      size="sm"
+                      className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
+                    >
+                      清除
                     </Button>
                   </div>
+                  <div className="text-sm text-amber-700">
+                    已選擇 {selectedTemplates.length} / {PROGRAM_TEMPLATES.length} 個流程
+                  </div>
                 </div>
               </div>
-            </div>
+            </Card>
           </div>
 
-          {/* Continue Button */}
-          <div className="flex justify-center mt-8">
-            <Button onClick={onContinue} size="lg" className="px-8 bg-green-600 hover:bg-green-700 text-white">
-              完成協作設定
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+          {/* Process Options - Memo Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+            {PROGRAM_TEMPLATES.map((template, index) => {
+              const isSelected = selectedTemplates.includes(template.id);
+              const rotation = index % 2 === 0 ? 'rotate-1' : '-rotate-1';
+              
+              return (
+                <div key={template.id} className="relative">
+                  {/* Pin for each memo */}
+                  <Pin className={cn(
+                    "absolute -top-2 -right-1 w-5 h-5 transform rotate-45 z-10",
+                    isSelected ? "text-red-500" : "text-slate-400"
+                  )} />
+                  
+                  {/* Memo Card */}
+                  <Card 
+                    className={cn(
+                      "cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg p-4 h-48 group relative overflow-hidden",
+                      rotation,
+                      `bg-gradient-to-br ${template.color}`,
+                      isSelected && "ring-2 ring-amber-400 shadow-lg scale-105 -rotate-0"
+                    )}
+                    onClick={() => handleTemplateToggle(template.id)}
+                    onDoubleClick={() => handleMemoDoubleClick(template)}
+                  >
+                    {/* Hover overlay with eye icon and instruction */}
+                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
+                      <div className="text-center text-white drop-shadow-lg">
+                        <Eye className="w-8 h-8 mx-auto mb-2" />
+                        <span className="text-sm font-medium bg-black/40 px-3 py-1 rounded">
+                          雙擊查看詳情
+                        </span>
+                      </div>
+                    </div>
 
-  // Template selection view
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 p-8 relative">
-      {/* Whiteboard texture background */}
-      <div className="absolute inset-0 opacity-20" style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-      }} />
-      
-      <div className="max-w-6xl mx-auto relative z-10">
-        {/* Large Whiteboard Header */}
-        <div className="bg-white rounded-lg p-8 shadow-lg border-4 border-slate-300 mb-8" style={{
-          backgroundImage: `linear-gradient(45deg, transparent 24%, rgba(0,0,0,.05) 25%, rgba(0,0,0,.05) 26%, transparent 27%, transparent 74%, rgba(0,0,0,.05) 75%, rgba(0,0,0,.05) 76%, transparent 77%, transparent), linear-gradient(45deg, transparent 24%, rgba(0,0,0,.05) 25%, rgba(0,0,0,.05) 26%, transparent 27%, transparent 74%, rgba(0,0,0,.05) 75%, rgba(0,0,0,.05) 76%, transparent 77%, transparent)`,
-          backgroundSize: '20px 20px',
-          backgroundPosition: '0 0, 10px 10px'
-        }}>
-          <div className="text-center">
-            <h1 className="text-5xl font-bold font-handwriting text-slate-800 mb-4">
-              📋 工作協作大畫板
-            </h1>
-            <p className="text-slate-600 text-xl font-handwriting">
-              選擇適合的節目範本，開始今日的工作協作
-            </p>
-          </div>
-        </div>
-
-        {/* Template Selection Controls - Simplified */}
-        <div className="flex items-center justify-center gap-4 mb-8">
-          <Badge variant="outline" className="border-slate-400 text-slate-700 bg-white text-lg py-2 px-4">
-            已選擇 {selectedTemplates.length} 個範本
-          </Badge>
-        </div>
-
-        {/* Template Grid - Large Whiteboard Style */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {PROGRAM_TEMPLATES.map((template) => {
-            const isSelected = selectedTemplates.includes(template.id);
-            
-            return (
-              <div key={template.id} className="relative group">
-                {/* Pin decoration */}
-                <Pin className={cn(
-                  "absolute -top-4 -right-4 w-8 h-8 transform rotate-45 z-10 transition-colors",
-                  isSelected ? "text-red-500" : "text-slate-400"
-                )} />
-                
-                {/* Memo card on whiteboard */}
-                <Card 
-                  className={cn(
-                    "h-64 p-4 cursor-pointer transition-all duration-300 transform",
-                    `bg-gradient-to-br ${template.color}`,
-                    "border-2 shadow-lg",
-                    isSelected ? "border-red-300 scale-105 shadow-xl" : "border-slate-300 hover:scale-102 hover:shadow-xl",
-                    "group-hover:shadow-2xl"
-                  )}
-                  onClick={() => handleTemplateToggle(template.id)}
-                  onDoubleClick={() => handleMemoDoubleClick(template)}
-                >
-                  <div className="h-full flex flex-col justify-between">
-                    {/* Header */}
-                    <div>
+                    <div className="h-full flex flex-col group-hover:opacity-60 transition-opacity duration-300">
+                      {/* Selection indicator */}
+                      {isSelected && (
+                        <div className="absolute top-2 left-2 z-10">
+                          <CheckCircle className="w-5 h-5 text-green-600 bg-white rounded-full" />
+                        </div>
+                      )}
+                      
+                      {/* Title */}
                       <h3 className={cn(
-                        "text-lg font-bold font-handwriting mb-2 leading-tight",
+                        "text-sm font-bold font-handwriting mb-2 leading-tight",
                         template.titleColor
                       )}>
                         {template.title}
                       </h3>
                       
-                      {/* Examples */}
-                      <div className="mb-3">
-                        <p className={cn("text-xs font-medium mb-1", template.titleColor)}>
-                          🎯 例子：
+                      {/* Focus areas */}
+                      <div className="flex-1">
+                        <p className={cn("text-xs font-medium mb-1", template.textColor)}>
+                          重點處理：
                         </p>
-                        <div className="flex flex-wrap gap-1">
-                          {template.examples.slice(0, 2).map((example, index) => (
-                            <Badge key={index} variant="outline" className={cn("text-xs py-0 px-1", template.textColor)}>
-                              {example}
-                            </Badge>
-                          ))}
-                          {template.examples.length > 2 && (
-                            <Badge variant="outline" className={cn("text-xs py-0 px-1", template.textColor)}>
-                              +{template.examples.length - 2}
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Footer */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <Badge variant="outline" className={cn("text-xs border", template.textColor)}>
-                          {template.team.length} 個角色
-                        </Badge>
-                        
-                        <div className="flex items-center gap-1">
-                          {isSelected && (
-                            <CheckCircle className="w-4 h-4 text-green-600" />
-                          )}
-                        </div>
+                        <p className={cn("text-xs leading-tight mb-2", template.textColor)}>
+                          {template.focus}
+                        </p>
                       </div>
                       
-                      <p className={cn("text-xs leading-tight line-clamp-2", template.textColor)}>
-                        {template.focus}
-                      </p>
+                      {/* Team */}
+                      <div>
+                        <p className={cn("text-xs font-medium mb-1", template.textColor)}>
+                          建議分工：
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          {template.team.slice(0, 2).map((member, idx) => (
+                            <span key={idx} className={cn("text-xs", template.textColor)}>
+                              {member.split(' ')[0]}
+                            </span>
+                          ))}
+                          {template.team.length > 2 && (
+                            <span className={cn("text-xs", template.textColor)}>
+                              +{template.team.length - 2}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      ) : (
+        // Follow-up Items Mode
+        <>
+          {/* Simplified Memo Header */}
+          <div className="relative mb-8">
+            <Pin className="absolute -top-3 -right-3 text-slate-400 transform rotate-45 w-8 h-8 z-10" />
+            <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-amber-200 shadow-lg">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <Paperclip className="w-6 h-6 text-amber-600 transform -rotate-12" />
+                    <h1 className="text-3xl font-bold text-amber-900 font-handwriting">
+                      工作協作備忘錄
+                    </h1>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Button 
+                      onClick={handleResetSelection}
+                      variant="outline"
+                      size="sm"
+                      className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
+                    >
+                      重新選擇範本
+                    </Button>
+                    <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1 rounded">
+                      {new Date().toLocaleDateString('zh-TW')}
                     </div>
                   </div>
-                </Card>
+                </div>
+                
+                {/* Selected Templates Summary */}
+                <div className="mb-4">
+                  <p className="text-amber-800 text-sm font-medium mb-2">已選範本：</p>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedTemplateNames.map((name, index) => (
+                      <Badge key={index} variant="secondary" className="bg-amber-100 text-amber-800">
+                        {name}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
               </div>
-            );
-          })}
-        </div>
+            </Card>
+          </div>
 
-        {/* Collaboration Section - Simplified */}
-        {selectedTemplates.length > 0 && (
-          <div className="bg-white rounded-lg p-6 border-4 border-slate-300 shadow-lg mb-8">
-            <h2 className="text-xl font-bold text-slate-800 mb-4 font-handwriting">👥 快速協作</h2>
-            
-            <div className="flex items-center justify-center gap-4">
+          {/* Follow-up Items */}
+          <Card className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 shadow-lg mb-8">
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-green-900 font-handwriting mb-4">
+                📋 跟進事項
+              </h3>
+              
+              <div className="space-y-3">
+                {getFollowUpTasks().map((task, index) => (
+                  <div key={index} className="flex items-start gap-3 p-3 bg-white rounded-lg border border-green-200">
+                    <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-green-700 text-sm font-bold">{index + 1}</span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-green-800 font-medium">{task}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {getFollowUpTasks().length === 0 && (
+                <p className="text-green-700 text-center py-8 italic">
+                  暫無跟進事項，請先選擇範本
+                </p>
+              )}
+            </div>
+          </Card>
+        </>
+      )}
+
+      {/* Collaboration Section */}
+      <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 shadow-lg mb-6">
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <Users className="w-6 h-6 text-blue-600" />
+            <h3 className="text-xl font-bold text-blue-900 font-handwriting">
+              協作分享
+            </h3>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Copy Link */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h4 className="font-medium text-blue-900 mb-2">複製項目連結</h4>
+              <p className="text-sm text-blue-700 mb-3">分享選中的流程範本給相關同事</p>
               <Button 
-                onClick={handleCopyMessage} 
+                onClick={handleCopyLink}
                 variant="outline" 
-                className="flex items-center gap-2 border-slate-400 hover:bg-slate-50"
+                className="w-full bg-white border-blue-300 text-blue-800 hover:bg-blue-100"
               >
-                <Copy className="w-4 h-4" />
-                複製訊息
+                <Copy className="w-4 h-4 mr-2" />
+                複製連結
               </Button>
             </div>
-          </div>
-        )}
 
-        {/* Continue Button */}
-        {selectedTemplates.length > 0 && (
-          <div className="flex justify-center">
-            <Button onClick={onContinue} size="lg" className="px-8 bg-green-600 hover:bg-green-700 text-white">
-              完成協作設定
-            </Button>
+            {/* Share to Colleague */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h4 className="font-medium text-blue-900 mb-2">@ 分享給同事</h4>
+              <div className="space-y-2">
+                <Input
+                  placeholder="輸入同事郵箱"
+                  value={colleagueEmail}
+                  onChange={(e) => setColleagueEmail(e.target.value)}
+                  className="bg-white border-blue-300"
+                />
+                <Input
+                  placeholder="添加備註訊息 (可選)"
+                  value={shareMessage}
+                  onChange={(e) => setShareMessage(e.target.value)}
+                  className="bg-white border-blue-300"
+                />
+                <Button 
+                  onClick={handleShareToColleague}
+                  variant="outline"
+                  className="w-full bg-white border-blue-300 text-blue-800 hover:bg-blue-100"
+                  disabled={selectedTemplates.length === 0}
+                >
+                  <Share className="w-4 h-4 mr-2" />
+                  發送範本 ({selectedTemplates.length})
+                </Button>
+              </div>
+            </div>
           </div>
-        )}
+        </div>
+      </Card>
+
+      {/* Action Footer */}
+      <div className="flex justify-end">
+        <Button 
+          onClick={onContinue}
+          className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 text-lg"
+          disabled={selectedTemplates.length === 0}
+        >
+          完成協作設定 ({selectedTemplates.length} 個範本)
+        </Button>
       </div>
 
-      {/* Modal */}
+      {/* Detail Modal */}
       <MemoDetailModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={detailModalOpen}
+        onClose={() => setDetailModalOpen(false)}
         template={selectedTemplate}
         isSelected={selectedTemplate ? selectedTemplates.includes(selectedTemplate.id) : false}
         onToggleSelection={handleModalToggleSelection}
