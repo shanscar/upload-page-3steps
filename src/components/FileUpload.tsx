@@ -18,11 +18,22 @@ interface AudioTrack {
   volumeLevel: number; // 0-100 for waveform height
 }
 
+interface DragState {
+  isDragging: boolean;
+  draggedLanguage: string | null;
+  dropTarget: number | null;
+}
+
 export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [audioTracks, setAudioTracks] = useState<AudioTrack[]>([]);
   const [selectedDate, setSelectedDate] = useState("today");
+  const [dragState, setDragState] = useState<DragState>({
+    isDragging: false,
+    draggedLanguage: null,
+    dropTarget: null
+  });
 
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -81,6 +92,51 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
     setAudioTracks(prev => prev.map(track => 
       track.id === trackId ? { ...track, isSelected: !track.isSelected } : track
     ));
+  };
+
+  // Drag and drop handlers for language assignment
+  const handleLanguageDragStart = (e: React.DragEvent, language: string) => {
+    e.dataTransfer.setData("text/plain", language);
+    setDragState({
+      isDragging: true,
+      draggedLanguage: language,
+      dropTarget: null
+    });
+  };
+
+  const handleLanguageDragEnd = () => {
+    setDragState({
+      isDragging: false,
+      draggedLanguage: null,
+      dropTarget: null
+    });
+  };
+
+  const handleTrackDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleTrackDragEnter = (trackId: number) => {
+    if (dragState.isDragging) {
+      setDragState(prev => ({ ...prev, dropTarget: trackId }));
+    }
+  };
+
+  const handleTrackDragLeave = () => {
+    setDragState(prev => ({ ...prev, dropTarget: null }));
+  };
+
+  const handleTrackDrop = (e: React.DragEvent, trackId: number) => {
+    e.preventDefault();
+    const language = e.dataTransfer.getData("text/plain");
+    if (language && LANGUAGE_OPTIONS.includes(language)) {
+      toggleTrackLanguage(trackId, language);
+    }
+    setDragState({
+      isDragging: false,
+      draggedLanguage: null,
+      dropTarget: null
+    });
   };
 
   const handleUpload = () => {
@@ -238,6 +294,34 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
               <AudioWaveform className="w-5 h-5 text-primary" />
               音軌：偵測到 {audioTracks.length} 個音軌
             </h4>
+
+            {/* Draggable Language Pool */}
+            <div className="mb-6 p-4 bg-muted/30 rounded-lg">
+              <h5 className="text-sm font-medium mb-3 text-muted-foreground">拖拽語言標籤到音軌卡片上</h5>
+              <div className="flex flex-wrap gap-2">
+                {LANGUAGE_OPTIONS.map(language => (
+                  <div
+                    key={language}
+                    draggable
+                    onDragStart={(e) => handleLanguageDragStart(e, language)}
+                    onDragEnd={handleLanguageDragEnd}
+                    className={cn(
+                      "px-3 py-2 rounded-full text-sm font-medium cursor-move transition-all duration-200",
+                      "hover:scale-105 hover:shadow-md active:scale-95",
+                      getLanguageColor(language),
+                      dragState.draggedLanguage === language && "opacity-50 scale-95"
+                    )}
+                  >
+                    {language}
+                  </div>
+                ))}
+              </div>
+              {dragState.isDragging && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  正在拖拽 "{dragState.draggedLanguage}" - 放到音軌卡片上分配語言
+                </p>
+              )}
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
               {audioTracks.map(track => (
@@ -247,9 +331,15 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
                     "relative cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg",
                     track.isSelected 
                       ? "ring-2 ring-primary bg-primary/5 shadow-md" 
-                      : "hover:bg-muted/50"
+                      : "hover:bg-muted/50",
+                    dragState.dropTarget === track.id && 
+                      "ring-2 ring-blue-400 bg-blue-50 border-blue-300 border-dashed"
                   )}
                   onClick={() => toggleTrackSelection(track.id)}
+                  onDragOver={handleTrackDragOver}
+                  onDragEnter={() => handleTrackDragEnter(track.id)}
+                  onDragLeave={handleTrackDragLeave}
+                  onDrop={(e) => handleTrackDrop(e, track.id)}
                 >
                   <CardContent className="p-4">
                     {/* Selection indicator */}
