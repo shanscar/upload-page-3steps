@@ -211,7 +211,7 @@ export const ProgramTypeTemplates = ({ selectedType, onSelectTemplate }: Program
 
               <div className="pt-4 border-t">
                 <Button 
-                  className="w-full bg-gradient-primary hover:scale-105 transition-transform"
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-large hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 shadow-medium"
                   onClick={() => onSelectTemplate(template)}
                 >
                   選用這個範本

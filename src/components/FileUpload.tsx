@@ -126,7 +126,7 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
                 accept=".mp4,.mov,.avi"
                 onChange={handleFileInput}
               />
-              <Button asChild size="lg" className="bg-gradient-primary">
+              <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-large hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 shadow-medium">
                 <label htmlFor="file-upload" className="cursor-pointer px-8 py-3">
                   選擇檔案
                 </label>
@@ -219,7 +219,7 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
             <Button
               onClick={handleUpload}
               size="lg"
-              className="bg-gradient-primary hover:scale-105 transition-transform px-12 py-4 text-lg"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-large hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 px-12 py-4 text-lg shadow-medium disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-medium"
               disabled={audioTracks.filter(t => t.isSelected).length === 0}
             >
               🚀 開始處理
