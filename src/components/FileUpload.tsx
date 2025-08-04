@@ -93,11 +93,10 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <p className="text-muted-foreground mb-4">
-          根據你的描述，我們預期收到：
-        </p>
-        <div className="text-primary font-medium">📁 {expectedFileType}</div>
+      <div className="text-center mb-6">
+        <div className="text-2xl mb-2">📁</div>
+        <h3 className="text-lg font-medium mb-2">拖入影片檔案</h3>
+        <div className="text-primary text-sm">預期類型：{expectedFileType}</div>
       </div>
 
       <Card
@@ -112,13 +111,12 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
         onDrop={handleDrop}
       >
         {uploadedFiles.length === 0 ? (
-          <div className="space-y-4">
-            <div className="text-4xl text-muted-foreground">📁</div>
+          <div className="space-y-6 py-12">
+            <div className="text-6xl text-muted-foreground">🎬</div>
             <div>
-              <p className="text-lg font-medium mb-2">拖拽影片檔案到此處</p>
-              <p className="text-sm text-muted-foreground mb-4">
-                預期檔案類型：MP4/MOV<br />
-                建議包含：主錄影 + 備份
+              <p className="text-xl font-medium mb-2">拖入或選擇影片</p>
+              <p className="text-muted-foreground mb-6">
+                支援 MP4, MOV, AVI 格式
               </p>
               <input
                 type="file"
@@ -128,17 +126,17 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
                 accept=".mp4,.mov,.avi"
                 onChange={handleFileInput}
               />
-              <Button asChild variant="outline">
-                <label htmlFor="file-upload" className="cursor-pointer">
+              <Button asChild size="lg" className="bg-gradient-primary">
+                <label htmlFor="file-upload" className="cursor-pointer px-8 py-3">
                   選擇檔案
                 </label>
               </Button>
             </div>
           </div>
         ) : (
-          <div className="space-y-4">
-            <div className="text-2xl text-success">✅</div>
-            <p className="font-medium text-success">檔案已準備好</p>
+          <div className="space-y-4 py-8">
+            <div className="text-3xl text-success">✨</div>
+            <p className="text-lg font-medium text-success">檔案收到了！</p>
           </div>
         )}
       </Card>
@@ -220,10 +218,11 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
           <div className="flex justify-center">
             <Button
               onClick={handleUpload}
-              className="bg-gradient-primary hover:scale-105 transition-transform"
+              size="lg"
+              className="bg-gradient-primary hover:scale-105 transition-transform px-12 py-4 text-lg"
               disabled={audioTracks.filter(t => t.isSelected).length === 0}
             >
-              📤 確認上載
+              🚀 開始處理
             </Button>
           </div>
         </div>

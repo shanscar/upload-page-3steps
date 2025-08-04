@@ -85,12 +85,12 @@ export const AnalysisResult = ({ description, onConfirm, onEdit }: AnalysisResul
   if (!showResult) {
     return (
       <div className="space-y-6 animate-fade-in">
-        <div className="text-center">
-          <div className="text-2xl mb-4">🔍</div>
-          <h3 className="text-lg font-medium mb-4">正在分析你的描述...</h3>
-          <Progress value={progress} className="w-full max-w-md mx-auto" />
-          <div className="text-sm text-muted-foreground mt-2">{progress}%</div>
-        </div>
+      <div className="text-center">
+        <div className="text-3xl mb-4">🤖</div>
+        <h3 className="text-xl font-medium mb-4">AI正在理解...</h3>
+        <Progress value={progress} className="w-full max-w-md mx-auto h-3" />
+        <div className="text-sm text-primary mt-3 font-medium">{progress}%</div>
+      </div>
       </div>
     );
   }
@@ -100,8 +100,9 @@ export const AnalysisResult = ({ description, onConfirm, onEdit }: AnalysisResul
   return (
     <div className="space-y-6 animate-slide-up">
       <div className="text-center">
-        <div className="text-2xl mb-2">✅</div>
-        <h3 className="text-lg font-medium text-success">智能整理完成！</h3>
+        <div className="text-3xl mb-2">✨</div>
+        <h3 className="text-xl font-medium text-success mb-1">分析完成！</h3>
+        <p className="text-sm text-muted-foreground">檢查一下對不對</p>
       </div>
 
       <Card className="p-6 border-success/30 bg-success/5">
@@ -157,19 +158,21 @@ export const AnalysisResult = ({ description, onConfirm, onEdit }: AnalysisResul
         </div>
       </Card>
 
-      <div className="flex gap-3 justify-center">
+      <div className="flex gap-4 justify-center">
         <Button 
           onClick={() => onConfirm(analysisData)}
-          className="bg-gradient-primary hover:scale-105 transition-transform"
+          size="lg"
+          className="bg-gradient-primary hover:scale-105 transition-transform px-8 py-3"
         >
-          ✓ 用呢個
+          ✓ 正確
         </Button>
         <Button 
           variant="outline" 
+          size="lg"
           onClick={onEdit}
-          className="hover:scale-105 transition-transform"
+          className="hover:scale-105 transition-transform px-8 py-3"
         >
-          ✏️ 我自己改
+          ✏️ 修改
         </Button>
       </div>
     </div>

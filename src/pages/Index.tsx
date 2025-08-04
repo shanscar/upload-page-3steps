@@ -6,7 +6,7 @@ import { FileUpload } from "@/components/FileUpload";
 import { UploadProgress } from "@/components/UploadProgress";
 import { ProgramTypeTemplates } from "@/components/ProgramTypeTemplates";
 
-type WorkflowState = 'input' | 'analyzing' | 'result' | 'upload' | 'processing' | 'templates' | 'completed';
+type WorkflowState = 'input' | 'analyzing' | 'upload' | 'processing' | 'collaboration';
 
 interface AnalysisData {
   location: string;
@@ -44,26 +44,24 @@ const Index = () => {
   };
 
   const handleProcessingComplete = () => {
-    setCurrentState('templates');
+    setCurrentState('collaboration');
   };
 
   const handleTemplateSelect = (template: any) => {
-    setCurrentState('completed');
+    // 完成流程
+    console.log('Template selected:', template);
   };
 
   const getCurrentStep = () => {
     switch (currentState) {
       case 'input':
       case 'analyzing':
-      case 'result':
         return 1;
       case 'upload':
         return 2;
       case 'processing':
+      case 'collaboration':
         return 3;
-      case 'templates':
-      case 'completed':
-        return 4;
       default:
         return 1;
     }
@@ -76,10 +74,10 @@ const Index = () => {
         <div className="max-w-4xl mx-auto px-6 py-8">
           <div className="text-center">
             <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-2">
-              📺 影片處理工作流程系統
+              📱 影片協作工作流程
             </h1>
             <p className="text-muted-foreground">
-              智能分析 • 自動處理 • 團隊協作
+              說話 → 放片 → 開工
             </p>
           </div>
         </div>
@@ -91,7 +89,7 @@ const Index = () => {
           {/* Step 1: Description Input */}
           <WorkflowStep
             step={1}
-            title="今日做了什麼 - 完整設計"
+            title="說說今天拍了什麼"
             isActive={currentState === 'input' || currentState === 'analyzing'}
             isCompleted={getCurrentStep() > 1}
           >
@@ -118,7 +116,7 @@ const Index = () => {
           {/* Step 2: File Upload */}
           <WorkflowStep
             step={2}
-            title="拖拽影片檔案"
+            title="放入影片"
             isActive={currentState === 'upload'}
             isCompleted={getCurrentStep() > 2}
           >
@@ -135,12 +133,12 @@ const Index = () => {
             )}
           </WorkflowStep>
 
-          {/* Step 3: Processing */}
+          {/* Step 3: Processing & Collaboration */}
           <WorkflowStep
             step={3}
-            title="確認上載 & 處理"
-            isActive={currentState === 'processing'}
-            isCompleted={getCurrentStep() > 3}
+            title="開始協作"
+            isActive={currentState === 'processing' || currentState === 'collaboration'}
+            isCompleted={false}
           >
             {currentState === 'processing' && analysisData && (
               <UploadProgress
@@ -150,34 +148,21 @@ const Index = () => {
                 onComplete={handleProcessingComplete}
               />
             )}
-            {getCurrentStep() > 3 && (
-              <div className="text-sm text-muted-foreground">
-                ✓ 處理完成，已生成分享連結並通知團隊
-              </div>
-            )}
-          </WorkflowStep>
-
-          {/* Step 4: Program Templates */}
-          <WorkflowStep
-            step={4}
-            title="工作分配範本"
-            isActive={currentState === 'templates'}
-            isCompleted={currentState === 'completed'}
-          >
-            {currentState === 'templates' && (
-              <ProgramTypeTemplates
-                onSelectTemplate={handleTemplateSelect}
-              />
-            )}
-            {currentState === 'completed' && (
-              <div className="text-center p-8">
-                <div className="text-4xl mb-4">🎉</div>
-                <h3 className="text-xl font-semibold text-success mb-2">
-                  工作流程設置完成！
-                </h3>
-                <p className="text-muted-foreground">
-                  系統已為你的團隊安排好所有工作分配，可以開始協作了。
-                </p>
+            {currentState === 'collaboration' && (
+              <div className="space-y-6">
+                <div className="text-center p-4">
+                  <div className="text-2xl mb-2">✅</div>
+                  <h3 className="text-lg font-medium text-success mb-2">
+                    處理完成！團隊已收到通知
+                  </h3>
+                  <p className="text-muted-foreground text-sm">
+                    影片已自動分配給相關同事，可以開始協作了
+                  </p>
+                </div>
+                
+                <ProgramTypeTemplates
+                  onSelectTemplate={handleTemplateSelect}
+                />
               </div>
             )}
           </WorkflowStep>

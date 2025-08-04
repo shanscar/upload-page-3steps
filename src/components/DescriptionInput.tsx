@@ -62,10 +62,13 @@ export const DescriptionInput = ({ onAnalyze, isAnalyzing }: DescriptionInputPro
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <div className="text-2xl mb-2">✏️</div>
-        <h3 className="text-lg font-medium text-foreground mb-4">
-          用一句話描述今日的採訪工作：
+        <div className="text-3xl mb-3">💬</div>
+        <h3 className="text-xl font-medium text-foreground mb-2">
+          今天拍了什麼？
         </h3>
+        <p className="text-sm text-muted-foreground">
+          一句話就夠了
+        </p>
       </div>
 
       <div className="relative">
@@ -73,18 +76,18 @@ export const DescriptionInput = ({ onAnalyze, isAnalyzing }: DescriptionInputPro
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="輸入你的採訪描述..."
+          placeholder="例如：今日去政府總部採訪財政預算案..."
           className={cn(
-            "min-h-[120px] text-lg p-4 transition-all duration-300",
-            "focus:shadow-soft focus:border-primary",
-            description && "border-primary/30"
+            "min-h-[140px] text-lg p-6 transition-all duration-300 border-2",
+            "focus:shadow-soft focus:border-primary focus:scale-[1.02]",
+            description && "border-primary/40 bg-primary/5"
           )}
           disabled={isAnalyzing}
         />
         
         {showHint && !isAnalyzing && (
-          <div className="absolute -bottom-10 left-0 text-sm text-muted-foreground animate-fade-in">
-            💡 按Ctrl+Enter讓AI整理
+          <div className="absolute -bottom-10 left-0 text-sm text-primary animate-fade-in font-medium">
+            ⚡ 按Ctrl+Enter 或點下面按鈕
           </div>
         )}
       </div>
@@ -93,9 +96,10 @@ export const DescriptionInput = ({ onAnalyze, isAnalyzing }: DescriptionInputPro
         <div className="flex justify-center animate-fade-in">
           <Button 
             onClick={handleAnalyze}
-            className="bg-gradient-primary hover:scale-105 transition-transform duration-200"
+            size="lg"
+            className="bg-gradient-primary hover:scale-105 transition-transform duration-200 text-lg px-8 py-6"
           >
-            🔍 讓AI分析整理
+            ⚡ AI分析
           </Button>
         </div>
       )}

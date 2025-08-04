@@ -150,9 +150,9 @@ interface ProgramTypeTemplatesProps {
 export const ProgramTypeTemplates = ({ selectedType, onSelectTemplate }: ProgramTypeTemplatesProps) => {
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <h3 className="text-xl font-semibold mb-2">📻 電台節目工作分配範本</h3>
-        <p className="text-muted-foreground">選擇最適合的節目類型範本</p>
+      <div className="text-center mb-4">
+        <h3 className="text-lg font-semibold mb-2">🎯 選擇工作範本</h3>
+        <p className="text-sm text-muted-foreground">為你的影片選擇最合適的處理流程</p>
       </div>
 
       <div className="grid gap-6">
@@ -209,13 +209,14 @@ export const ProgramTypeTemplates = ({ selectedType, onSelectTemplate }: Program
                 </div>
               </div>
 
-              {selectedType === template.id && (
-                <div className="pt-3 border-t">
-                  <Button className="w-full bg-gradient-primary">
-                    使用此範本
-                  </Button>
-                </div>
-              )}
+              <div className="pt-4 border-t">
+                <Button 
+                  className="w-full bg-gradient-primary hover:scale-105 transition-transform"
+                  onClick={() => onSelectTemplate(template)}
+                >
+                  選用這個範本
+                </Button>
+              </div>
             </div>
           </Card>
         ))}
