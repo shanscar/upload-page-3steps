@@ -824,7 +824,17 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
           <div className="flex flex-col lg:flex-row gap-8 mb-8">
             {/* Left 1/3: Selected Memo Papers */}
             <div className="w-full lg:w-1/3">
-              <h3 className="text-xl font-bold text-amber-900 mb-4">已選擇範本</h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold text-amber-900">已選擇範本</h3>
+                <Button
+                  onClick={() => setSelectedTemplates([])}
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0 text-amber-600 hover:text-amber-800 hover:bg-amber-100"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
               <div className="space-y-4">
                 {selectedTemplates.map((templateId, index) => {
                   const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
