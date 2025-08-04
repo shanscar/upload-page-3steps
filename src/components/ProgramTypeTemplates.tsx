@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
 
 const PROGRAM_TEMPLATES = [
@@ -155,72 +156,77 @@ export const ProgramTypeTemplates = ({ selectedType, onSelectTemplate }: Program
         <p className="text-sm text-muted-foreground">為你的影片選擇最合適的處理流程</p>
       </div>
 
-      <div className="grid gap-6">
-        {PROGRAM_TEMPLATES.map(template => (
-          <Card 
-            key={template.id}
-            className={cn(
-              "p-6 cursor-pointer transition-all duration-300 hover:shadow-medium",
-              selectedType === template.id && "border-primary bg-primary/5"
-            )}
-            onClick={() => onSelectTemplate(template)}
-          >
-            <div className="space-y-4">
-              {/* Header */}
-              <div>
-                <h4 className="text-lg font-semibold mb-2">{template.title}</h4>
-                <div className="flex flex-wrap gap-2">
-                  {template.examples.map((example, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      {example}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              {/* Focus Areas */}
-              <div>
-                <p className="font-medium text-sm text-muted-foreground mb-3">重點處理：</p>
-                <div className="grid md:grid-cols-2 gap-3">
-                  {template.focus.map((item, index) => (
-                    <div key={index} className="flex items-start gap-2 text-sm">
-                      <span className="text-base">{item.icon}</span>
-                      <div>
-                        <span className="font-medium">{item.label}：</span>
-                        <span className="text-muted-foreground">{item.content}</span>
-                      </div>
+      <Carousel className="w-full max-w-6xl mx-auto">
+        <CarouselContent>
+          {PROGRAM_TEMPLATES.map(template => (
+            <CarouselItem key={template.id}>
+              <Card 
+                className={cn(
+                  "p-6 cursor-pointer transition-all duration-300 hover:shadow-medium h-full",
+                  selectedType === template.id && "border-primary bg-primary/5"
+                )}
+                onClick={() => onSelectTemplate(template)}
+              >
+                <div className="space-y-4">
+                  {/* Header */}
+                  <div>
+                    <h4 className="text-lg font-semibold mb-2">{template.title}</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {template.examples.map((example, index) => (
+                        <Badge key={index} variant="secondary" className="text-xs">
+                          {example}
+                        </Badge>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </div>
 
-              {/* Team Assignment */}
-              <div>
-                <p className="font-medium text-sm text-muted-foreground mb-3">建議分工：</p>
-                <div className="grid md:grid-cols-2 gap-3">
-                  {template.team.map((member, index) => (
-                    <div key={index} className="flex items-start gap-2 text-sm">
-                      <div>
-                        <span className="font-medium text-primary">{member.role}：</span>
-                        <span className="text-muted-foreground">{member.tasks}</span>
-                      </div>
+                  {/* Focus Areas */}
+                  <div>
+                    <p className="font-medium text-sm text-muted-foreground mb-3">重點處理：</p>
+                    <div className="grid md:grid-cols-2 gap-3">
+                      {template.focus.map((item, index) => (
+                        <div key={index} className="flex items-start gap-2 text-sm">
+                          <span className="text-base">{item.icon}</span>
+                          <div>
+                            <span className="font-medium">{item.label}：</span>
+                            <span className="text-muted-foreground">{item.content}</span>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </div>
 
-              <div className="pt-4 border-t">
-                <Button 
-                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-large hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 shadow-medium"
-                  onClick={() => onSelectTemplate(template)}
-                >
-                  選用這個範本
-                </Button>
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
+                  {/* Team Assignment */}
+                  <div>
+                    <p className="font-medium text-sm text-muted-foreground mb-3">建議分工：</p>
+                    <div className="grid md:grid-cols-2 gap-3">
+                      {template.team.map((member, index) => (
+                        <div key={index} className="flex items-start gap-2 text-sm">
+                          <div>
+                            <span className="font-medium text-primary">{member.role}：</span>
+                            <span className="text-muted-foreground">{member.tasks}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t">
+                    <Button 
+                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-large hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 shadow-medium"
+                      onClick={() => onSelectTemplate(template)}
+                    >
+                      選用這個範本
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
     </div>
   );
 };
