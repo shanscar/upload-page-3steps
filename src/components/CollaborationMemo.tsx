@@ -4,29 +4,101 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Copy, Share, Users, Calendar, Mic, FileAudio, Pin, Paperclip } from "lucide-react";
+import { Copy, Share, Users, Pin, Paperclip, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+
+// Program Templates Data
+const PROGRAM_TEMPLATES = [
+  {
+    id: "news",
+    title: "🗞️ 時事新聞評論",
+    color: "from-yellow-100 to-yellow-200 border-yellow-300",
+    titleColor: "text-yellow-900",
+    textColor: "text-yellow-800",
+    focus: "時間索引、文字稿、社媒素材、關鍵字標籤",
+    team: ["📹 剪輯師", "✍️ 時事記者", "🎨 視覺設計", "📱 社媒專員"]
+  },
+  {
+    id: "culture",
+    title: "🎨 文化藝術專訪",
+    color: "from-pink-100 to-pink-200 border-pink-300",
+    titleColor: "text-pink-900",
+    textColor: "text-pink-800",
+    focus: "作品介紹、訪談重點、創作賞析、藝術背景",
+    team: ["🎵 剪輯師", "✍️ 文化記者", "🎨 設計師", "📱 社媒專員"]
+  },
+  {
+    id: "music",
+    title: "🎵 音樂娛樂榜",
+    color: "from-purple-100 to-purple-200 border-purple-300",
+    titleColor: "text-purple-900",
+    textColor: "text-purple-800",
+    focus: "榜單介紹、歌手互動、MV精華、流行趨勢",
+    team: ["🎵 剪輯師", "✍️ 音樂記者", "🎨 設計師", "📱 社媒專員"]
+  },
+  {
+    id: "lifestyle",
+    title: "🏡 生活資訊服務",
+    color: "from-green-100 to-green-200 border-green-300",
+    titleColor: "text-green-900",
+    textColor: "text-green-800",
+    focus: "專家貼士、實用建議、健康資訊、理財指南",
+    team: ["🎵 剪輯師", "✍️ 生活記者", "🎨 設計師", "📱 社媒專員"]
+  },
+  {
+    id: "travel",
+    title: "🌏 旅遊國際視野",
+    color: "from-blue-100 to-blue-200 border-blue-300",
+    titleColor: "text-blue-900",
+    textColor: "text-blue-800",
+    focus: "目的地介紹、旅遊體驗、國際觀察、異地文化",
+    team: ["🎵 剪輯師", "✍️ 旅遊記者", "🎨 設計師", "📱 社媒專員"]
+  },
+  {
+    id: "opera",
+    title: "🎭 戲曲傳統文化",
+    color: "from-orange-100 to-orange-200 border-orange-300",
+    titleColor: "text-orange-900",
+    textColor: "text-orange-800",
+    focus: "經典演出、曲藝故事、文化傳承、戲曲名句",
+    team: ["🎵 剪輯師", "✍️ 文化記者", "🎨 設計師", "📱 社媒專員"]
+  },
+  {
+    id: "games",
+    title: "🎲 互動娛樂遊戲",
+    color: "from-indigo-100 to-indigo-200 border-indigo-300",
+    titleColor: "text-indigo-900",
+    textColor: "text-indigo-800",
+    focus: "遊戲環節、互動討論、趣味短片、娛樂精華",
+    team: ["🎵 剪輯師", "✍️ 娛樂記者", "🎨 設計師", "📱 社媒專員"]
+  },
+  {
+    id: "documentary",
+    title: "📚 專題紀實教育",
+    color: "from-teal-100 to-teal-200 border-teal-300",
+    titleColor: "text-teal-900",
+    textColor: "text-teal-800",
+    focus: "故事開端、人物描寫、深度分析、教育信息",
+    team: ["🎵 剪輯師", "✍️ 專題記者", "🎨 設計師", "📱 社媒專員"]
+  }
+];
 
 interface CollaborationMemoProps {
-  analysisData: {
-    template: string;
-    focus: string;
-    teamRoles: Array<{
+  analysisData?: {
+    template?: string;
+    focus?: string;
+    teamRoles?: Array<{
       role: string;
       tasks: string[];
     }>;
   };
-  archiveData: {
-    metadata: {
+  archiveData?: {
+    metadata?: {
       date?: string;
       customDate?: Date;
-      audioTracks?: Array<{
-        id: string;
-        language: string;
-        fileName: string;
-      }>;
     };
-    uploadedFiles: File[];
+    uploadedFiles?: File[];
   };
   onContinue: () => void;
 }
@@ -34,6 +106,7 @@ interface CollaborationMemoProps {
 export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: CollaborationMemoProps) => {
   const [colleagueEmail, setColleagueEmail] = useState("");
   const [shareMessage, setShareMessage] = useState("");
+  const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
   const { toast } = useToast();
 
   const handleCopyLink = async () => {
@@ -63,175 +136,224 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
       return;
     }
 
-    // Mock sharing functionality
+    const selectedTemplateNames = selectedTemplates.map(id => 
+      PROGRAM_TEMPLATES.find(t => t.id === id)?.title
+    ).join('、');
+
     toast({
       title: "分享成功",
-      description: `已將工作範本發送給 ${colleagueEmail}`,
+      description: `已將選中的流程範本 (${selectedTemplateNames || '無'}) 發送給 ${colleagueEmail}`,
     });
     setColleagueEmail("");
     setShareMessage("");
   };
 
-  const formatDate = () => {
-    if (archiveData.metadata?.customDate) {
-      return archiveData.metadata.customDate.toLocaleDateString('zh-TW');
-    }
-    return archiveData.metadata?.date === 'today' ? '今天' : '昨天';
+  const handleTemplateToggle = (templateId: string) => {
+    setSelectedTemplates(prev => 
+      prev.includes(templateId) 
+        ? prev.filter(id => id !== templateId)
+        : [...prev, templateId]
+    );
+  };
+
+  const handleSelectAll = () => {
+    setSelectedTemplates(PROGRAM_TEMPLATES.map(t => t.id));
+  };
+
+  const handleClearAll = () => {
+    setSelectedTemplates([]);
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      {/* Memo Header with Pin */}
-      <div className="relative">
-        <Pin className="absolute -top-2 -right-2 text-slate-400 transform rotate-45 w-6 h-6" />
-        <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-amber-200 shadow-lg transform rotate-0.5">
+    <div className="max-w-6xl mx-auto p-6">
+      {/* Memo Header */}
+      <div className="relative mb-8">
+        <Pin className="absolute -top-3 -right-3 text-slate-400 transform rotate-45 w-8 h-8 z-10" />
+        <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-amber-200 shadow-lg">
           <div className="p-6">
-            {/* Header */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <Paperclip className="w-5 h-5 text-amber-600 transform -rotate-12" />
-                <h2 className="text-2xl font-bold text-amber-900 font-handwriting">
+                <Paperclip className="w-6 h-6 text-amber-600 transform -rotate-12" />
+                <h1 className="text-3xl font-bold text-amber-900 font-handwriting">
                   工作協作備忘錄
-                </h2>
+                </h1>
               </div>
-              <div className="text-sm text-amber-700 font-mono bg-amber-100 px-2 py-1 rounded">
+              <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1 rounded">
                 {new Date().toLocaleDateString('zh-TW')}
               </div>
             </div>
+            
+            <p className="text-amber-800 text-lg font-handwriting mb-4">
+              📝 重新選擇或調整處理流程，打造最適合的工作範本
+            </p>
 
-            <Separator className="bg-amber-300 mb-4" />
-
-            {/* Project Info Section */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-amber-800 mb-3 flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
-                項目資訊
-              </h3>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="bg-amber-100 text-amber-800 border-amber-300">
-                    錄製日期: {formatDate()}
-                  </Badge>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="bg-amber-100 text-amber-800 border-amber-300">
-                    節目類型: {analysisData.template}
-                  </Badge>
-                </div>
-                <div className="flex items-center gap-2">
-                  <FileAudio className="w-4 h-4 text-amber-600" />
-                  <span className="text-amber-800">檔案數量: {archiveData.uploadedFiles.length}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Mic className="w-4 h-4 text-amber-600" />
-                  <span className="text-amber-800">
-                    音軌語言: {archiveData.metadata?.audioTracks?.map(track => track.language).join(', ') || 'N/A'}
-                  </span>
-                </div>
+            <div className="flex items-center justify-between">
+              <div className="flex gap-2">
+                <Button 
+                  onClick={handleSelectAll}
+                  variant="outline"
+                  size="sm"
+                  className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
+                >
+                  全選
+                </Button>
+                <Button 
+                  onClick={handleClearAll}
+                  variant="outline"
+                  size="sm"
+                  className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
+                >
+                  清除
+                </Button>
               </div>
-            </div>
-
-            <Separator className="bg-amber-300 mb-4" />
-
-            {/* Processing Template Section */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-amber-800 mb-3">處理流程範本</h3>
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                <div className="mb-3">
-                  <h4 className="font-medium text-amber-900 mb-2">重點處理方向:</h4>
-                  <p className="text-amber-800 text-sm leading-relaxed">{analysisData.focus}</p>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium text-amber-900 mb-2">建議分工:</h4>
-                  <div className="space-y-2">
-                    {analysisData.teamRoles && analysisData.teamRoles.length > 0 ? (
-                      analysisData.teamRoles.map((role, index) => (
-                        <div key={index} className="bg-white border border-amber-200 rounded p-3">
-                          <h5 className="font-medium text-amber-900 mb-1">{role.role}</h5>
-                          <ul className="list-disc list-inside text-sm text-amber-800 space-y-1">
-                            {role.tasks && role.tasks.map((task, taskIndex) => (
-                              <li key={taskIndex}>{task}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="bg-white border border-amber-200 rounded p-3 text-amber-700">
-                        暫無分工建議
-                      </div>
-                    )}
-                  </div>
-                </div>
+              <div className="text-sm text-amber-700">
+                已選擇 {selectedTemplates.length} / {PROGRAM_TEMPLATES.length} 個流程
               </div>
-            </div>
-
-            <Separator className="bg-amber-300 mb-4" />
-
-            {/* Collaboration Section */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-amber-800 mb-3 flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                協作分享
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Copy Link */}
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                  <h4 className="font-medium text-amber-900 mb-2">複製項目連結</h4>
-                  <p className="text-sm text-amber-700 mb-3">分享此項目連結給相關同事</p>
-                  <Button 
-                    onClick={handleCopyLink}
-                    variant="outline" 
-                    className="w-full bg-white border-amber-300 text-amber-800 hover:bg-amber-100"
-                  >
-                    <Copy className="w-4 h-4 mr-2" />
-                    複製連結
-                  </Button>
-                </div>
-
-                {/* Share to Colleague */}
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                  <h4 className="font-medium text-amber-900 mb-2">@ 分享給同事</h4>
-                  <div className="space-y-2">
-                    <Input
-                      placeholder="輸入同事郵箱"
-                      value={colleagueEmail}
-                      onChange={(e) => setColleagueEmail(e.target.value)}
-                      className="bg-white border-amber-300"
-                    />
-                    <Input
-                      placeholder="添加備註訊息 (可選)"
-                      value={shareMessage}
-                      onChange={(e) => setShareMessage(e.target.value)}
-                      className="bg-white border-amber-300"
-                    />
-                    <Button 
-                      onClick={handleShareToColleague}
-                      variant="outline"
-                      className="w-full bg-white border-amber-300 text-amber-800 hover:bg-amber-100"
-                    >
-                      <Share className="w-4 h-4 mr-2" />
-                      發送範本
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <Separator className="bg-amber-300 mb-4" />
-
-            {/* Action Footer */}
-            <div className="flex justify-end">
-              <Button 
-                onClick={onContinue}
-                className="bg-amber-600 hover:bg-amber-700 text-white"
-              >
-                完成協作設定
-              </Button>
             </div>
           </div>
         </Card>
+      </div>
+
+      {/* Process Options - Memo Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+        {PROGRAM_TEMPLATES.map((template, index) => {
+          const isSelected = selectedTemplates.includes(template.id);
+          const rotation = index % 2 === 0 ? 'rotate-1' : '-rotate-1';
+          
+          return (
+            <div key={template.id} className="relative">
+              {/* Pin for each memo */}
+              <Pin className={cn(
+                "absolute -top-2 -right-1 w-5 h-5 transform rotate-45 z-10",
+                isSelected ? "text-red-500" : "text-slate-400"
+              )} />
+              
+              {/* Memo Card */}
+              <Card 
+                className={cn(
+                  "cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg p-4 h-48",
+                  rotation,
+                  `bg-gradient-to-br ${template.color}`,
+                  isSelected && "ring-2 ring-amber-400 shadow-lg scale-105 -rotate-0"
+                )}
+                onClick={() => handleTemplateToggle(template.id)}
+              >
+                <div className="h-full flex flex-col">
+                  {/* Selection indicator */}
+                  {isSelected && (
+                    <div className="absolute top-2 left-2">
+                      <CheckCircle className="w-5 h-5 text-green-600 bg-white rounded-full" />
+                    </div>
+                  )}
+                  
+                  {/* Title */}
+                  <h3 className={cn(
+                    "text-sm font-bold font-handwriting mb-2 leading-tight",
+                    template.titleColor
+                  )}>
+                    {template.title}
+                  </h3>
+                  
+                  {/* Focus areas */}
+                  <div className="flex-1">
+                    <p className={cn("text-xs font-medium mb-1", template.textColor)}>
+                      重點處理：
+                    </p>
+                    <p className={cn("text-xs leading-tight mb-2", template.textColor)}>
+                      {template.focus}
+                    </p>
+                  </div>
+                  
+                  {/* Team */}
+                  <div>
+                    <p className={cn("text-xs font-medium mb-1", template.textColor)}>
+                      建議分工：
+                    </p>
+                    <div className="flex flex-wrap gap-1">
+                      {template.team.slice(0, 2).map((member, idx) => (
+                        <span key={idx} className={cn("text-xs", template.textColor)}>
+                          {member.split(' ')[0]}
+                        </span>
+                      ))}
+                      {template.team.length > 2 && (
+                        <span className={cn("text-xs", template.textColor)}>
+                          +{template.team.length - 2}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Collaboration Section */}
+      <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 shadow-lg mb-6">
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <Users className="w-6 h-6 text-blue-600" />
+            <h3 className="text-xl font-bold text-blue-900 font-handwriting">
+              協作分享
+            </h3>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Copy Link */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h4 className="font-medium text-blue-900 mb-2">複製項目連結</h4>
+              <p className="text-sm text-blue-700 mb-3">分享選中的流程範本給相關同事</p>
+              <Button 
+                onClick={handleCopyLink}
+                variant="outline" 
+                className="w-full bg-white border-blue-300 text-blue-800 hover:bg-blue-100"
+              >
+                <Copy className="w-4 h-4 mr-2" />
+                複製連結
+              </Button>
+            </div>
+
+            {/* Share to Colleague */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h4 className="font-medium text-blue-900 mb-2">@ 分享給同事</h4>
+              <div className="space-y-2">
+                <Input
+                  placeholder="輸入同事郵箱"
+                  value={colleagueEmail}
+                  onChange={(e) => setColleagueEmail(e.target.value)}
+                  className="bg-white border-blue-300"
+                />
+                <Input
+                  placeholder="添加備註訊息 (可選)"
+                  value={shareMessage}
+                  onChange={(e) => setShareMessage(e.target.value)}
+                  className="bg-white border-blue-300"
+                />
+                <Button 
+                  onClick={handleShareToColleague}
+                  variant="outline"
+                  className="w-full bg-white border-blue-300 text-blue-800 hover:bg-blue-100"
+                  disabled={selectedTemplates.length === 0}
+                >
+                  <Share className="w-4 h-4 mr-2" />
+                  發送範本 ({selectedTemplates.length})
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* Action Footer */}
+      <div className="flex justify-end">
+        <Button 
+          onClick={onContinue}
+          className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 text-lg"
+          disabled={selectedTemplates.length === 0}
+        >
+          完成協作設定 ({selectedTemplates.length} 個範本)
+        </Button>
       </div>
     </div>
   );
