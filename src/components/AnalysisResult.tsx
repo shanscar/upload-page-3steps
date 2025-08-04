@@ -127,7 +127,7 @@ export const AnalysisResult = ({ description, onConfirm, onEdit, onReanalyze }: 
       <Card 
         ref={metadataCardRef}
         tabIndex={0}
-        className="p-6 border-primary/30 bg-primary/5 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary/50 focus:shadow-large transition-all duration-300"
+        className="p-6 border-[hsl(var(--focus-highlight))] bg-[hsl(var(--focus-highlight)_/_0.3)] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--focus-highlight))] focus:border-[hsl(var(--focus-highlight))] focus:shadow-large transition-all duration-300"
       >
         <div className="space-y-4">
           <div className="flex items-center gap-3">
