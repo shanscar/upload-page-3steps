@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -195,36 +196,36 @@ const PROGRAM_TEMPLATES = [
         role: '🎵 剪輯師',
         emoji: '📹',
         tasks: [
-          { task: '貼士剪輯' },
-          { task: '實用段落編輯' },
-          { task: '專家訪談剪輯' }
+          { task: '貼士剪輯', timeEstimate: '1.5小時', priority: 'high' as const },
+          { task: '實用段落編輯', timeEstimate: '1小時', priority: 'medium' as const },
+          { task: '專家訪談剪輯', timeEstimate: '1小時', priority: 'medium' as const }
         ]
       },
       {
         role: '✍️ 生活記者',
         emoji: '📋',
         tasks: [
-          { task: '指引內容整理' },
-          { task: '知識整理' },
-          { task: '專家資料核實' }
+          { task: '指引內容整理', timeEstimate: '2小時', priority: 'high' as const },
+          { task: '知識整理', timeEstimate: '1.5小時', priority: 'high' as const },
+          { task: '專家資料核實', timeEstimate: '45分鐘', priority: 'medium' as const }
         ]
       },
       {
         role: '🎨 設計師',
         emoji: '💡',
         tasks: [
-          { task: '資訊圖卡設計' },
-          { task: '健康視覺設計' },
-          { task: '數據圖表製作' }
+          { task: '資訊圖卡設計', timeEstimate: '2小時', priority: 'medium' as const },
+          { task: '健康視覺設計', timeEstimate: '1.5小時', priority: 'medium' as const },
+          { task: '數據圖表製作', timeEstimate: '1小時', priority: 'low' as const }
         ]
       },
       {
         role: '📱 社媒專員',
         emoji: '🔔',
         tasks: [
-          { task: '生活建議推廣' },
-          { task: '資訊重點包裝' },
-          { task: '用戶諮詢回應' }
+          { task: '生活建議推廣', timeEstimate: '45分鐘', priority: 'high' as const },
+          { task: '資訊重點包裝', timeEstimate: '30分鐘', priority: 'medium' as const },
+          { task: '用戶諮詢回應', timeEstimate: '持續進行', priority: 'medium' as const }
         ]
       }
     ]
@@ -249,36 +250,36 @@ const PROGRAM_TEMPLATES = [
         role: '🎵 剪輯師',
         emoji: '🌍',
         tasks: [
-          { task: '遊歷故事剪輯' },
-          { task: '旅遊片段編輯' },
-          { task: '景點介紹製作' }
+          { task: '遊歷故事剪輯', timeEstimate: '2小時', priority: 'high' as const },
+          { task: '旅遊片段編輯', timeEstimate: '1.5小時', priority: 'high' as const },
+          { task: '景點介紹製作', timeEstimate: '1小時', priority: 'medium' as const }
         ]
       },
       {
         role: '✍️ 旅遊／國際記者',
         emoji: '✈️',
         tasks: [
-          { task: '異地分析' },
-          { task: '文化觀察' },
-          { task: '旅遊資訊整理' }
+          { task: '異地分析', timeEstimate: '2小時', priority: 'high' as const },
+          { task: '文化觀察', timeEstimate: '1.5小時', priority: 'high' as const },
+          { task: '旅遊資訊整理', timeEstimate: '1小時', priority: 'medium' as const }
         ]
       },
       {
         role: '🎨 設計師',
         emoji: '🗺️',
         tasks: [
-          { task: '地圖設計' },
-          { task: '景點圖片處理' },
-          { task: '旅遊視覺包裝' }
+          { task: '地圖設計', timeEstimate: '2小時', priority: 'medium' as const },
+          { task: '景點圖片處理', timeEstimate: '1.5小時', priority: 'medium' as const },
+          { task: '旅遊視覺包裝', timeEstimate: '1小時', priority: 'low' as const }
         ]
       },
       {
         role: '📱 社媒專員',
         emoji: '🏖️',
         tasks: [
-          { task: '國際內容分享' },
-          { task: '旅遊推廣' },
-          { task: '旅友互動管理' }
+          { task: '國際內容分享', timeEstimate: '45分鐘', priority: 'high' as const },
+          { task: '旅遊推廣', timeEstimate: '30分鐘', priority: 'medium' as const },
+          { task: '旅友互動管理', timeEstimate: '持續進行', priority: 'medium' as const }
         ]
       }
     ]
@@ -303,36 +304,36 @@ const PROGRAM_TEMPLATES = [
         role: '🎵 剪輯師',
         emoji: '🎬',
         tasks: [
-          { task: '戲曲片段剪輯' },
-          { task: '名段精華製作' },
-          { task: '背景音樂處理' }
+          { task: '戲曲片段剪輯', timeEstimate: '2.5小時', priority: 'high' as const },
+          { task: '名段精華製作', timeEstimate: '1.5小時', priority: 'high' as const },
+          { task: '背景音樂處理', timeEstimate: '45分鐘', priority: 'medium' as const }
         ]
       },
       {
         role: '✍️ 文化記者',
         emoji: '📜',
         tasks: [
-          { task: '曲藝介紹撰寫' },
-          { task: '藝人資料整理' },
-          { task: '文化背景研究' }
+          { task: '曲藝介紹撰寫', timeEstimate: '2小時', priority: 'high' as const },
+          { task: '藝人資料整理', timeEstimate: '1.5小時', priority: 'medium' as const },
+          { task: '文化背景研究', timeEstimate: '1小時', priority: 'medium' as const }
         ]
       },
       {
         role: '🎨 設計師',
         emoji: '🎨',
         tasks: [
-          { task: '戲曲主題視覺' },
-          { task: '文化推廣圖設計' },
-          { task: '傳統元素包裝' }
+          { task: '戲曲主題視覺', timeEstimate: '2小時', priority: 'medium' as const },
+          { task: '文化推廣圖設計', timeEstimate: '1.5小時', priority: 'medium' as const },
+          { task: '傳統元素包裝', timeEstimate: '1小時', priority: 'low' as const }
         ]
       },
       {
         role: '📱 社媒專員',
         emoji: '🏮',
         tasks: [
-          { task: '戲曲推介' },
-          { task: '歷史故事散播' },
-          { task: '文化社群維護' }
+          { task: '戲曲推介', timeEstimate: '45分鐘', priority: 'high' as const },
+          { task: '歷史故事散播', timeEstimate: '30分鐘', priority: 'medium' as const },
+          { task: '文化社群維護', timeEstimate: '持續進行', priority: 'medium' as const }
         ]
       }
     ]
@@ -357,36 +358,36 @@ const PROGRAM_TEMPLATES = [
         role: '🎵 剪輯師',
         emoji: '🎮',
         tasks: [
-          { task: '趣味段落剪輯' },
-          { task: '互動精華製作' },
-          { task: '搞笑時刻集錦' }
+          { task: '趣味段落剪輯', timeEstimate: '2小時', priority: 'high' as const },
+          { task: '互動精華製作', timeEstimate: '1.5小時', priority: 'high' as const },
+          { task: '搞笑時刻集錦', timeEstimate: '1小時', priority: 'medium' as const }
         ]
       },
       {
         role: '✍️ 娛樂記者',
         emoji: '🎪',
         tasks: [
-          { task: '有趣內容整理' },
-          { task: '遊戲規則說明' },
-          { task: '娛樂趨勢分析' }
+          { task: '有趣內容整理', timeEstimate: '1.5小時', priority: 'high' as const },
+          { task: '遊戲規則說明', timeEstimate: '1小時', priority: 'medium' as const },
+          { task: '娛樂趨勢分析', timeEstimate: '45分鐘', priority: 'low' as const }
         ]
       },
       {
         role: '🎨 設計師',
         emoji: '🎨',
         tasks: [
-          { task: '遊戲視覺設計' },
-          { task: '趣味圖卡製作' },
-          { task: '互動元素設計' }
+          { task: '遊戲視覺設計', timeEstimate: '2小時', priority: 'medium' as const },
+          { task: '趣味圖卡製作', timeEstimate: '1.5小時', priority: 'medium' as const },
+          { task: '互動元素設計', timeEstimate: '1小時', priority: 'low' as const }
         ]
       },
       {
         role: '📱 社媒專員',
         emoji: '🎉',
         tasks: [
-          { task: '娛樂推廣' },
-          { task: '爆笑短片製作' },
-          { task: '遊戲互動管理' }
+          { task: '娛樂推廣', timeEstimate: '45分鐘', priority: 'high' as const },
+          { task: '爆笑短片製作', timeEstimate: '30分鐘', priority: 'medium' as const },
+          { task: '遊戲互動管理', timeEstimate: '持續進行', priority: 'medium' as const }
         ]
       }
     ]
@@ -411,148 +412,202 @@ const PROGRAM_TEMPLATES = [
         role: '🎵 剪輯師',
         emoji: '📽️',
         tasks: [
-          { task: '紀實片段剪輯' },
-          { task: '教育內容編輯' },
-          { task: '專題故事製作' }
+          { task: '故事精華剪輯', timeEstimate: '3小時', priority: 'high' as const },
+          { task: '人物訪談編輯', timeEstimate: '2小時', priority: 'high' as const },
+          { task: '紀實場景製作', timeEstimate: '1.5小時', priority: 'medium' as const }
         ]
       },
       {
         role: '✍️ 專題記者',
         emoji: '🔍',
         tasks: [
-          { task: '深度調研' },
-          { task: '專題撰寫' },
-          { task: '事實驗證' }
+          { task: '深度分析撰寫', timeEstimate: '3小時', priority: 'high' as const },
+          { task: '內容梳理', timeEstimate: '2小時', priority: 'high' as const },
+          { task: '事實查證', timeEstimate: '1小時', priority: 'medium' as const }
         ]
       },
       {
         role: '🎨 設計師',
         emoji: '📊',
         tasks: [
-          { task: '專題視覺設計' },
-          { task: '教育圖表製作' },
-          { task: '紀實包裝設計' }
+          { task: '紀實圖像設計', timeEstimate: '2小時', priority: 'medium' as const },
+          { task: '教育圖卡製作', timeEstimate: '1.5小時', priority: 'medium' as const },
+          { task: '專題視覺包裝', timeEstimate: '1小時', priority: 'low' as const }
         ]
       },
       {
         role: '📱 社媒專員',
-        emoji: '📚',
+        emoji: '📖',
         tasks: [
-          { task: '教育內容推廣' },
-          { task: '專題分享' },
-          { task: '知識社群維護' }
+          { task: '故事推廣', timeEstimate: '1小時', priority: 'high' as const },
+          { task: '教育資源分享', timeEstimate: '45分鐘', priority: 'medium' as const },
+          { task: '社會議題討論', timeEstimate: '持續進行', priority: 'medium' as const }
         ]
       }
     ]
   }
 ];
 
-// Interfaces
 interface CollaborationMemoProps {
-  analysisData?: any;
-  archiveData?: any;
-  onContinue: (data: any) => void;
+  analysisData?: {
+    template?: string;
+    focus?: string;
+    teamRoles?: Array<{
+      role: string;
+      tasks: string[];
+    }>;
+  };
+  archiveData?: {
+    metadata?: {
+      date?: string;
+      customDate?: Date;
+    };
+    uploadedFiles?: File[];
+  };
+  onContinue: (sentStatus?: SentStatus) => void;
 }
 
 interface SentStatus {
-  [key: string]: boolean;
+  timestamp: string;
+  recipientCount: number;
 }
 
-const CollaborationMemo = ({ analysisData, archiveData, onContinue }: CollaborationMemoProps) => {
+export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: CollaborationMemoProps) => {
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
-  const [taskAssignments, setTaskAssignments] = useState<{[key: string]: string}>({});
-  const [customTasks, setCustomTasks] = useState<Array<{id: string, task: string, assignee?: string}>>([]);
-  const [newTask, setNewTask] = useState('');
-  const [newAssignee, setNewAssignee] = useState('');
-  const [assigningTask, setAssigningTask] = useState<string | null>(null);
-  const [assigneeInput, setAssigneeInput] = useState('');
-  const [sentStatuses, setSentStatuses] = useState<SentStatus>({});
-  const { toast } = useToast();
   
-  const handleCopyLink = () => {
-    const followUpTasks = getFollowUpTasks();
-    const projectUrl = "https://radio-content-hub.lovableproject.com";
+  // Auto-scroll to top when component loads
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<typeof PROGRAM_TEMPLATES[0] | null>(null);
+  const [assigningTask, setAssigningTask] = useState<string | null>(null);
+  const [assigneeName, setAssigneeName] = useState<string>('');
+  const [assignedTasks, setAssignedTasks] = useState<Array<{
+    taskKey: string;
+    taskName: string;
+    assignee: string;
+    role: string;
+    emoji: string;
+    priority: 'high' | 'medium' | 'low';
+  }>>([]);
+  const [sentStatus, setSentStatus] = useState<SentStatus | null>(null);
+  const [customTaskDialogOpen, setCustomTaskDialogOpen] = useState(false);
+  const [customTaskName, setCustomTaskName] = useState('');
+  const [customTaskAssignee, setCustomTaskAssignee] = useState('');
+  const [isAddingCustomTask, setIsAddingCustomTask] = useState(false);
+  const [customTaskInput, setCustomTaskInput] = useState('');
+  const [programModalOpen, setProgramModalOpen] = useState(false);
+  const [programModalData, setProgramModalData] = useState<{ title: string; examples: string[] } | null>(null);
+  const { toast } = useToast();
+
+  const handleCopyLink = async () => {
+    const projectUrl = window.location.href;
     
-    let message = `🎙️ 電台內容協作計劃\n\n`;
-    message += `💻 專案連結: ${projectUrl}\n\n`;
+    // Create WhatsApp-style message with assignments
+    let message = `📋 工作協作備忘錄\n${projectUrl}\n\n`;
     
-    if (followUpTasks.length > 0) {
-      message += `📋 指派任務：\n`;
-      followUpTasks.forEach((task, index) => {
-        const assignee = taskAssignments[task.id] || '待指派';
-        message += `${index + 1}. ${task.task}${assignee !== '待指派' ? ` - ${assignee}` : ''}\n`;
+    if (assignedTasks.length > 0) {
+      message += "✅ 已指派任務：\n";
+      
+      // Group assignments by task
+      const taskGroups = assignedTasks.reduce((acc, task) => {
+        if (!acc[task.taskKey]) {
+          acc[task.taskKey] = {
+            taskName: task.taskName,
+            emoji: task.emoji,
+            assignees: []
+          };
+        }
+        acc[task.taskKey].assignees.push(task.assignee);
+        return acc;
+      }, {} as Record<string, { taskName: string; emoji: string; assignees: string[] }>);
+      
+      Object.values(taskGroups).forEach((group, index) => {
+        message += `${index + 1}. ${group.emoji} ${group.taskName}\n`;
+        group.assignees.forEach(assignee => {
+          message += `   👤 @${assignee}\n`;
+        });
+        message += "\n";
       });
+    } else {
+      message += "📝 尚未指派任務\n\n";
     }
     
-    if (customTasks.length > 0) {
-      message += `\n🔧 自定義任務：\n`;
-      customTasks.forEach((task, index) => {
-        message += `${index + 1}. ${task.task}${task.assignee ? ` - ${task.assignee}` : ''}\n`;
+    message += `📅 ${new Date().toLocaleDateString("zh-TW")}`;
+    
+    try {
+      await navigator.clipboard.writeText(message);
+      toast({
+        title: "協作內容已複製",
+        description: "包含連結和任務指派的完整內容已複製到剪貼板",
+      });
+    } catch (err) {
+      toast({
+        title: "複製失敗",
+        description: "無法複製內容，請手動複製",
+        variant: "destructive",
       });
     }
-    
-    message += `\n🚀 讓我們開始協作吧！`;
-    
-    navigator.clipboard.writeText(message);
-    toast({
-      title: "複製成功",
-      description: "協作連結已複製到剪貼板",
-    });
   };
 
-  const handleSendNotification = () => {
-    const followUpTasks = getFollowUpTasks();
-    const allTasks = [...followUpTasks, ...customTasks];
+  const handleSendNotification = async () => {
+    const currentUrl = window.location.href;
+    const projectUrl = currentUrl.split('?')[0];
     
-    const assignedTasks = allTasks.filter(task => {
-      const assignee = 'assignee' in task ? task.assignee : taskAssignments[task.id];
-      return assignee && assignee !== '待指派';
-    });
-    
-    if (assignedTasks.length === 0) {
-      toast({
-        title: "提醒",
-        description: "請至少指派一個任務才能發送通知",
-        variant: "destructive"
+    // Group assigned tasks by assignee
+    const tasksByAssignee = assignedTasks.reduce((acc, task) => {
+      if (!acc[task.assignee]) {
+        acc[task.assignee] = [];
+      }
+      acc[task.assignee].push(task);
+      return acc;
+    }, {} as Record<string, typeof assignedTasks>);
+
+    const message = `🎯 協作任務分配通知
+
+📋 專案連結: ${projectUrl}
+
+👥 任務分配詳情:
+${Object.entries(tasksByAssignee).map(([assignee, tasks]) => 
+  `${assignee}:
+${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
+).join('\n\n')}
+
+🔗 請點擊上方連結查看完整專案詳情`;
+
+    try {
+      await navigator.clipboard.writeText(message);
+      
+      // Record sent status
+      const timestamp = new Date().toLocaleString('zh-TW', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
       });
-      return;
+      
+      const newSentStatus = {
+        timestamp,
+        recipientCount: Object.keys(tasksByAssignee).length
+      };
+      
+      setSentStatus(newSentStatus);
+      onContinue(newSentStatus);
+      
+      toast({
+        title: "通知已發送",
+        description: `已複製協作訊息並記錄發送狀態 (${Object.keys(tasksByAssignee).length} 位協作者)`,
+      });
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+      toast({
+        title: "發送失敗",
+        description: "無法複製到剪貼板，請手動複製",
+        variant: "destructive",
+      });
     }
-    
-    let message = `🎙️ 電台內容製作通知\n\n`;
-    message += `您有新的任務指派：\n\n`;
-    
-    assignedTasks.forEach((task, index) => {
-      const assignee = 'assignee' in task ? task.assignee : taskAssignments[task.id];
-      message += `📌 ${task.task}\n`;
-      message += `👤 負責人：${assignee}\n\n`;
-    });
-    
-    message += `💻 請前往協作平台查看詳細資訊並開始工作\n`;
-    message += `🔗 https://radio-content-hub.lovableproject.com`;
-    
-    navigator.clipboard.writeText(message);
-    
-    // Mark all assigned tasks as sent
-    const newSentStatuses = { ...sentStatuses };
-    assignedTasks.forEach(task => {
-      newSentStatuses[task.id] = true;
-    });
-    setSentStatuses(newSentStatuses);
-    
-    toast({
-      title: "通知已複製",
-      description: "團隊通知訊息已複製到剪貼板，請發送給相關成員",
-    });
-    
-    // Continue to next step
-    onContinue({
-      selectedTemplates: selectedTemplates,
-      taskAssignments: taskAssignments,
-      customTasks: customTasks,
-      type: 'collaboration-memo'
-    });
   };
 
   const handleTemplateToggle = (templateId: string) => {
@@ -563,454 +618,849 @@ const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Collaborat
     );
   };
 
-  const handleMemoDoubleClick = (template: any) => {
+
+  const handleMemoDoubleClick = (template: typeof PROGRAM_TEMPLATES[0]) => {
     setSelectedTemplate(template);
-    setIsModalOpen(true);
+    setDetailModalOpen(true);
   };
 
-  const handleAssignTask = (taskId: string) => {
-    setAssigningTask(taskId);
-    setAssigneeInput(taskAssignments[taskId] || '');
-  };
-
-  const handleSaveAssignee = (taskId: string) => {
-    if (assigneeInput.trim()) {
-      setTaskAssignments(prev => ({
-        ...prev,
-        [taskId]: assigneeInput.trim()
-      }));
-    } else {
-      setTaskAssignments(prev => {
-        const updated = { ...prev };
-        delete updated[taskId];
-        return updated;
-      });
+  const handleModalToggleSelection = () => {
+    if (selectedTemplate) {
+      handleTemplateToggle(selectedTemplate.id);
     }
-    setAssigningTask(null);
-    setAssigneeInput('');
+  };
+
+  const handleResetSelection = () => {
+    setSelectedTemplates([]);
+  };
+
+  const handleAssignTask = (taskKey: string) => {
+    setAssigningTask(taskKey);
+    setAssigneeName('@');
+  };
+
+  const handleSaveAssignee = () => {
+    if (assigneeName.trim() && assigneeName.trim() !== '@' && assigningTask) {
+      // Check if it's a processing area task assignment (format: templateId-areaIndex-taskIndex)
+      if (assigningTask.includes('-') && assigningTask.split('-').length === 3) {
+        const [templateId, areaIndex, taskIndex] = assigningTask.split('-');
+        const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
+        
+        if (template && template.processingAreas[parseInt(areaIndex)]) {
+          const area = template.processingAreas[parseInt(areaIndex)];
+          const tasks = area.content.split('、');
+          const taskName = tasks[parseInt(taskIndex)]?.trim();
+          
+          if (taskName) {
+            const newAssignment = {
+              taskKey: assigningTask,
+              taskName: taskName,
+              assignee: assigneeName.replace(/^@/, ''),
+              role: area.label,
+              emoji: area.icon,
+              priority: 'medium' as const
+            };
+            
+            setAssignedTasks(prev => [...prev, newAssignment]);
+            setAssigningTask(null);
+            setAssigneeName('');
+            
+            toast({
+              title: "任務已指派",
+              description: `「${taskName}」已指派給 ${assigneeName.replace(/^@/, '')}`,
+            });
+            return;
+          }
+        }
+      }
+      
+      // Check if it's a processing area assignment (format: templateId-areaIndex)
+      if (assigningTask.includes('-') && assigningTask.split('-').length === 2) {
+        const [templateId, areaIndex] = assigningTask.split('-');
+        const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
+        
+        if (template && template.processingAreas[parseInt(areaIndex)]) {
+          const area = template.processingAreas[parseInt(areaIndex)];
+          const newAssignment = {
+            taskKey: assigningTask,
+            taskName: area.label,
+            assignee: assigneeName.replace(/^@/, ''),
+            role: '處理領域',
+            emoji: area.icon,
+            priority: 'medium' as const
+          };
+          
+          setAssignedTasks(prev => [...prev, newAssignment]);
+          setAssigningTask(null);
+          setAssigneeName('');
+          
+          toast({
+            title: "處理領域已指派",
+            description: `「${area.label}」已指派給 ${assigneeName.replace(/^@/, '')}`,
+          });
+          return;
+        }
+      }
+      
+      // Find the task details for regular tasks
+      const allTasks = getPrioritizedTasks();
+      let taskDetails = null;
+      let roleDetails = null;
+      
+      for (const roleGroup of allTasks) {
+        const taskIndex = parseInt(assigningTask.split('-').pop() || '0');
+        if (assigningTask.startsWith(roleGroup.role) && roleGroup.tasks[taskIndex]) {
+          taskDetails = roleGroup.tasks[taskIndex];
+          roleDetails = roleGroup;
+          break;
+        }
+      }
+      
+      if (taskDetails && roleDetails) {
+        // Check if this task already has assignments
+        const existingAssignments = assignedTasks.filter(task => task.taskKey === assigningTask);
+        
+        const newAssignment = {
+          taskKey: assigningTask,
+          taskName: taskDetails.task,
+          assignee: assigneeName.replace(/^@/, ''),
+          role: roleDetails.role,
+          emoji: roleDetails.emoji,
+          priority: taskDetails.priority
+        };
+        
+        setAssignedTasks(prev => [...prev, newAssignment]);
+        
+        toast({
+          title: "已指派任務",
+          description: `任務「${taskDetails.task}」已指派給 ${assigneeName.replace(/^@/, '')}`,
+        });
+        
+        // Reset assignment state
+        setAssigningTask(null);
+        setAssigneeName('');
+      }
+    }
   };
 
   const handleCancelAssign = () => {
     setAssigningTask(null);
-    setAssigneeInput('');
+    setAssigneeName('');
   };
 
-  const handleRemoveAssignment = (taskId: string) => {
-    setTaskAssignments(prev => {
-      const updated = { ...prev };
-      delete updated[taskId];
-      return updated;
-    });
-    
-    setSentStatuses(prev => {
-      const updated = { ...prev };
-      delete updated[taskId];
-      return updated;
+  const handleRemoveAssignment = (taskKey: string) => {
+    setAssignedTasks(prev => prev.filter(task => task.taskKey !== taskKey));
+    toast({
+      title: "已移除指派",
+      description: "任務指派已移除",
     });
   };
 
   const handleAddCustomTask = () => {
-    if (newTask.trim()) {
-      const taskId = `custom-${Date.now()}`;
-      setCustomTasks(prev => [...prev, {
-        id: taskId,
-        task: newTask.trim(),
-        assignee: newAssignee.trim() || undefined
-      }]);
-      setNewTask('');
-      setNewAssignee('');
+    const input = customTaskInput.trim();
+    if (!input) return;
+
+    // Parse input for task name and assignee using @ID format
+    const atIndex = input.lastIndexOf('@');
+    let taskName = input;
+    let assignee = '';
+
+    if (atIndex > 0) {
+      taskName = input.substring(0, atIndex).trim();
+      assignee = input.substring(atIndex + 1).trim();
+    }
+
+    if (taskName) {
+      const customTaskKey = `custom-${Date.now()}`;
+      const newCustomTask = {
+        taskKey: customTaskKey,
+        taskName: taskName,
+        assignee: assignee || '未指派',
+        role: '自定義任務',
+        emoji: '📝',
+        priority: 'medium' as const
+      };
+      
+      setAssignedTasks(prev => [...prev, newCustomTask]);
+      setCustomTaskInput('');
+      setIsAddingCustomTask(false);
+      
+      toast({
+        title: "已新增自定義任務",
+        description: assignee 
+          ? `任務「${taskName}」已指派給 ${assignee}`
+          : `任務「${taskName}」已新增，未指派負責人`,
+      });
     }
   };
 
+  const handleCustomTaskKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleAddCustomTask();
+    } else if (e.key === 'Escape') {
+      setIsAddingCustomTask(false);
+      setCustomTaskInput('');
+    }
+  };
+
+  // Extract follow-up tasks from selected templates
   const getFollowUpTasks = () => {
-    const tasks: Array<{id: string, task: string, templateTitle: string, role: string}> = [];
+    const allTasks: string[] = [];
     
     selectedTemplates.forEach(templateId => {
       const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
-      if (template) {
+      if (template?.detailedTeam) {
         template.detailedTeam.forEach(teamMember => {
-          teamMember.tasks.forEach((task, taskIndex) => {
-            tasks.push({
-              id: `${templateId}-${teamMember.role}-${taskIndex}`,
-              task: task.task,
-              templateTitle: template.title,
-              role: teamMember.role
+          teamMember.tasks.forEach(task => {
+            if (!allTasks.includes(task.task)) {
+              allTasks.push(task.task);
+            }
+          });
+        });
+      }
+    });
+    
+    return allTasks;
+  };
+
+  const selectedTemplateNames = selectedTemplates.map(id => 
+    PROGRAM_TEMPLATES.find(t => t.id === id)?.title
+  ).filter(Boolean);
+
+  const getPrioritizedTasks = () => {
+    const allTasks: Array<{
+      role: string;
+      emoji: string;
+      task: string;
+    }> = [];
+    
+    selectedTemplates.forEach(templateId => {
+      const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
+      if (template?.detailedTeam) {
+        template.detailedTeam.forEach(teamMember => {
+          teamMember.tasks.forEach(task => {
+            allTasks.push({
+              role: teamMember.role,
+              emoji: teamMember.emoji,
+              task: task.task
             });
           });
         });
       }
     });
     
-    return tasks;
+    // Group by role
+    const tasksByRole = allTasks.reduce((acc, task) => {
+      const roleKey = task.role;
+      if (!acc[roleKey]) {
+        acc[roleKey] = {
+          role: task.role,
+          emoji: task.emoji,
+          tasks: []
+        };
+      }
+      acc[roleKey].tasks.push(task);
+      return acc;
+    }, {} as Record<string, { role: string; emoji: string; tasks: typeof allTasks }>);
+    
+    return Object.values(tasksByRole);
   };
-
-  const getPrioritizedTasks = () => {
-    return getFollowUpTasks();
-  };
-
-  if (selectedTemplates.length === 0) {
-    return (
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">協作備忘錄</h2>
-          <p className="text-lg text-gray-600">選擇適合的節目類別，開始團隊協作</p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {PROGRAM_TEMPLATES.map((template) => (
-            <Card 
-              key={template.id}
-              className={cn(
-                "cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105",
-                "bg-gradient-to-br", template.color
-              )}
-              onClick={() => handleTemplateToggle(template.id)}
-              onDoubleClick={() => handleMemoDoubleClick(template)}
-            >
-              <div className="p-6">
-                <h3 className={cn("text-lg font-semibold mb-4", template.titleColor)}>
-                  {template.title}
-                </h3>
-                
-                <div className="space-y-3">
-                  <div>
-                    <span className={cn("text-sm font-medium", template.textColor)}>重點：</span>
-                    <p className={cn("text-sm mt-1", template.textColor)}>{template.focus}</p>
-                  </div>
-                  
-                  <div>
-                    <span className={cn("text-sm font-medium", template.textColor)}>團隊角色：</span>
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {template.team.map((role, index) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
-                          {role}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="mt-4 text-center">
-                  <span className={cn("text-xs", template.textColor)}>
-                    雙擊查看詳細資訊
-                  </span>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-        
-        <MemoDetailModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          template={selectedTemplate}
-          isSelected={selectedTemplate ? selectedTemplates.includes(selectedTemplate.id) : false}
-          onToggleSelection={selectedTemplate ? () => handleTemplateToggle(selectedTemplate.id) : () => {}}
-        />
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-7xl mx-auto p-6">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">協作備忘錄</h2>
-        <p className="text-gray-600">管理選定的節目類別和任務指派</p>
-      </div>
+      {selectedTemplates.length === 0 ? (
+        // Template Selection Mode
+        <>
+          {/* Memo Header with Collaboration */}
+          <div className="relative mb-8">
+            <Pin className="absolute -top-3 -right-3 text-slate-400 transform rotate-45 w-8 h-8 z-10" />
+            <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-amber-200 shadow-lg">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <Paperclip className="w-6 h-6 text-amber-600 transform -rotate-12" />
+                    <h1 className="text-3xl font-bold text-amber-900 font-handwriting">
+                      開工備忘錄
+                    </h1>
+                  </div>
+                  
+                   {/* Collaboration Section - Integrated into header */}
+                   <div className="flex items-center gap-3">
+                      {/* Hidden Copy Button - Shows when tasks are assigned */}
+                      {assignedTasks.length > 0 && (
+                        <Button
+                          onClick={handleCopyLink}
+                          variant="outline"
+                          size="sm"
+                          className="flex items-center gap-2 bg-amber-50 border-amber-300 text-amber-800 hover:bg-amber-100 px-3 py-1.5 rounded-md text-sm h-auto"
+                        >
+                          <Copy className="w-4 h-4" />
+                          <span>複製</span>
+                        </Button>
+                      )}
+                      
+                      <div className="flex items-center gap-2 bg-amber-100 border border-amber-300 text-amber-800 px-3 py-1.5 rounded-md text-sm">
+                        <Hand className="w-4 h-4 text-green-600" />
+                        <span>選擇範本</span>
+                      </div>
+                    
+                     <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1.5 rounded-md border border-amber-300">
+                      {new Date().toLocaleDateString('zh-TW')}
+                    </div>
+                  </div>
+                 </div>
+                 
+                 {/* Assigned Tasks integrated in memo card */}
+                 <div className="border-t border-amber-200 pt-4 mt-4">
+                   <div className="flex flex-wrap gap-2">
+                     {assignedTasks.map((task, index) => (
+                       <div
+                          key={index}
+                          className="relative group bg-amber-100/50 rounded-lg px-3 py-1.5 flex items-center gap-2 text-sm animate-fade-in"
+                        >
+                          <span className="text-sm">{task.emoji}</span>
+                          <span className="font-medium text-amber-800">{task.taskName}</span>
+                          <span className="text-amber-700">@{task.assignee}</span>
+                         <Button
+                           size="sm"
+                           variant="ghost"
+                           onClick={() => handleRemoveAssignment(task.taskKey)}
+                           className="opacity-0 group-hover:opacity-100 transition-opacity h-3 w-3 p-0 text-amber-600 hover:text-red-500 hover:bg-amber-200 ml-1"
+                         >
+                           <X className="h-2 w-2" />
+                         </Button>
+                       </div>
+                     ))}
+                     
+                     {/* Add Custom Task - Inline Input or Button */}
+                     {isAddingCustomTask ? (
+                       <div className="bg-amber-50 rounded-lg px-3 py-1.5 flex items-center gap-2 text-sm border border-amber-300 min-w-0 flex-1">
+                         <span className="text-lg">📝</span>
+                         <Input
+                           value={customTaskInput}
+                           onChange={(e) => setCustomTaskInput(e.target.value)}
+                           onKeyDown={handleCustomTaskKeyPress}
+                           onBlur={() => {
+                             if (!customTaskInput.trim()) {
+                               setIsAddingCustomTask(false);
+                             }
+                           }}
+                           placeholder="任務名稱 @負責人"
+                           className="border-0 bg-transparent p-0 h-auto text-sm focus-visible:ring-0 placeholder:text-amber-500"
+                           autoFocus
+                         />
+                       </div>
+                     ) : (
+                       <Button
+                         size="sm"
+                         variant="outline"
+                         onClick={() => setIsAddingCustomTask(true)}
+                         className="rounded-lg px-3 py-1.5 flex items-center gap-2 text-sm border-dashed border-amber-300 text-amber-700 hover:bg-amber-50 hover:border-amber-400"
+                       >
+                         <span className="text-lg">+</span>
+                         <span>自定義任務</span>
+                       </Button>
+                     )}
+                   </div>
+                 </div>
+                 
+                 {/* Complete Assignment & Send Message Button */}
+                 {assignedTasks.length > 0 && (
+                   <Button
+                      onClick={handleSendNotification}
+                     className="absolute bottom-4 right-4 h-12 w-12 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+                     title="提交任務分配"
+                   >
+                     <ArrowUp className="h-6 w-6" />
+                   </Button>
+                 )}
+               </div>
+             </Card>
+           </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column - Selected Templates */}
-        <div className="lg:col-span-1">
-          <Card className="h-fit">
-            <div className="p-4">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">已選節目類別</h3>
-                <Badge variant="secondary">{selectedTemplates.length}</Badge>
-              </div>
+          {/* Process Options - Memo Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {PROGRAM_TEMPLATES.map((template, index) => {
+              const isSelected = selectedTemplates.includes(template.id);
+              const rotation = index % 2 === 0 ? 'rotate-1' : '-rotate-1';
               
-              <div className="space-y-3">
-                {selectedTemplates.map(templateId => {
+              return (
+                <div key={template.id} className="relative">
+                  {/* Pin for each memo */}
+                  <Pin className={cn(
+                    "absolute -top-2 -right-1 w-5 h-5 transform rotate-45 z-10",
+                    isSelected ? "text-red-500" : "text-slate-400"
+                  )} />
+                  
+                  {/* Memo Card */}
+                  <Card 
+                    className={cn(
+                      "cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg p-4 h-64 group relative overflow-hidden",
+                      rotation,
+                      `bg-gradient-to-br ${template.color}`,
+                      isSelected && "ring-2 ring-amber-400 shadow-lg scale-105 -rotate-0"
+                    )}
+                    onClick={() => handleTemplateToggle(template.id)}
+                    onDoubleClick={() => handleMemoDoubleClick(template)}
+                  >
+
+                    <div className="h-full flex flex-col">
+                      
+                      {/* Title */}
+                      <h3 className={cn(
+                        "text-base font-extrabold font-sans mb-4 leading-tight",
+                        template.titleColor
+                      )}>
+                        {template.title}
+                      </h3>
+                      
+                      {/* Focus areas */}
+                      <div className="flex-1 mt-2">
+                        <p className={cn("text-xs font-medium mb-1", template.textColor)}>
+                          重點處理：
+                        </p>
+                        <p className={cn("text-xs leading-tight mb-3", template.textColor)}>
+                          {template.focus}
+                        </p>
+                       </div>
+                       
+                       {/* Programs */}
+                        <div>
+                          <p className={cn("text-xs font-medium mb-1", template.textColor)}>
+                            建議節目：
+                          </p>
+                          <div className="flex flex-wrap gap-1">
+                            {template.examples.slice(0, 5).map((example, idx) => (
+                              <span key={idx} className={cn("text-xs", template.textColor)}>
+                                {example}{idx < 4 && idx < template.examples.slice(0, 5).length - 1 ? ", " : ""}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                    </div>
+                  </Card>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      ) : (
+        // Collaboration Layout Mode (Left memo + Right tasks by role)
+        <>
+           {/* Header */}
+          <div className="relative mb-8">
+            <Pin className="absolute -top-3 -right-3 text-slate-400 transform rotate-45 w-8 h-8 z-10" />
+            <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-amber-200 shadow-lg">
+               <div className="p-6 relative">
+                 <div className="flex items-center justify-between mb-4">
+                   <div className="flex items-center gap-3">
+                     <Paperclip className="w-6 h-6 text-amber-600 transform -rotate-12" />
+                    <h1 className="text-3xl font-bold text-amber-900 font-handwriting">
+                      開工備忘錄
+                    </h1>
+                   </div>
+                   <div className="flex items-center gap-3">
+                      <Button 
+                        onClick={handleCopyLink}
+                        variant="outline"
+                        className="flex items-center gap-2 bg-amber-50 border-amber-300 text-amber-800 hover:bg-amber-100 px-3 py-1.5 rounded-md text-sm h-auto"
+                      >
+                        <Copy className="w-4 h-4" />
+                        <span>複製</span>
+                      </Button>
+                      <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1.5 rounded-md border border-amber-300">
+                        {new Date().toLocaleDateString('zh-TW')}
+                      </div>
+                    </div>
+                  </div>
+                 
+                  {/* Assigned Tasks integrated in memo card */}
+                  <div className="border-t border-amber-200 pt-4 mt-4">
+                    <div className="flex flex-wrap gap-2">
+                      {assignedTasks.map((task, index) => (
+                        <div
+                           key={index}
+                           className="relative group bg-amber-100/50 rounded-lg px-3 py-1.5 flex items-center gap-2 text-sm animate-fade-in"
+                         >
+                           <span className="text-sm">{task.emoji}</span>
+                           <span className="font-medium text-amber-800">{task.taskName}</span>
+                           <span className="text-amber-700">@{task.assignee}</span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleRemoveAssignment(task.taskKey)}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity h-3 w-3 p-0 text-amber-600 hover:text-red-500 hover:bg-amber-200 ml-1"
+                          >
+                            <X className="h-2 w-2" />
+                          </Button>
+                        </div>
+                      ))}
+                      
+                      {/* Add Custom Task - Inline Input or Button */}
+                      {isAddingCustomTask ? (
+                        <div className="bg-amber-50 rounded-lg px-3 py-1.5 flex items-center gap-2 text-sm border border-amber-300 min-w-0 flex-1">
+                          <span className="text-lg">📝</span>
+                          <Input
+                            value={customTaskInput}
+                            onChange={(e) => setCustomTaskInput(e.target.value)}
+                            onKeyDown={handleCustomTaskKeyPress}
+                            onBlur={() => {
+                              if (!customTaskInput.trim()) {
+                                setIsAddingCustomTask(false);
+                              }
+                            }}
+                            placeholder="任務名稱 @負責人"
+                            className="border-0 bg-transparent p-0 h-auto text-sm focus-visible:ring-0 placeholder:text-amber-500"
+                            autoFocus
+                          />
+                        </div>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setIsAddingCustomTask(true)}
+                          className="rounded-lg px-3 py-1.5 flex items-center gap-2 text-sm border-dashed border-amber-300 text-amber-700 hover:bg-amber-50 hover:border-amber-400"
+                        >
+                          <span className="text-lg">+</span>
+                          <span>自定義任務</span>
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                 
+                 {/* Complete Assignment & Send Message Button */}
+                 {assignedTasks.length > 0 && (
+                   <Button
+                      onClick={handleSendNotification}
+                     className="absolute bottom-4 right-4 h-12 w-12 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+                      title="提交任務分配"
+                    >
+                      <ArrowUp className="h-6 w-6" />
+                    </Button>
+                 )}
+                </div>
+            </Card>
+          </div>
+
+          {/* Main Layout: Left 1/3 Selected Memo + Right 2/3 Role Tasks */}
+          <div className="flex flex-col lg:flex-row gap-8 mb-8">
+            {/* Left 1/3: Selected Memo Papers */}
+            <div className="w-full lg:w-1/3">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold text-amber-900">已選擇範本</h3>
+                <Button
+                  onClick={() => setSelectedTemplates([])}
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0 text-amber-600 hover:text-amber-800 hover:bg-amber-100"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="space-y-4">
+                {selectedTemplates.map((templateId, index) => {
                   const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
                   if (!template) return null;
                   
+                  const rotation = index % 2 === 0 ? 'rotate-1' : '-rotate-1';
+                  
                   return (
-                    <Card key={templateId} className={cn("bg-gradient-to-br", template.color)}>
-                      <div className="p-3">
-                        <div className="flex items-start justify-between">
-                          <h4 className={cn("font-medium text-sm", template.titleColor)}>
-                            {template.title}
-                          </h4>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleTemplateToggle(templateId)}
-                            className="h-6 w-6 p-0"
-                          >
-                            <X className="h-3 w-3" />
-                          </Button>
-                        </div>
-                        
-                        <div className="mt-2">
-                          <div className="flex flex-wrap gap-1">
-                            {template.team.map((role, index) => (
-                              <Badge key={index} variant="outline" className="text-xs">
-                                {role}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  );
-                })}
-              </div>
-              
-              <Separator className="my-4" />
-              
-              <Button 
-                onClick={() => setSelectedTemplates([])}
-                variant="outline" 
-                className="w-full"
-                disabled={selectedTemplates.length === 0}
-              >
-                清除全部選擇
-              </Button>
-            </div>
-          </Card>
-        </div>
-
-        {/* Right Column - Tabbed Content */}
-        <div className="lg:col-span-2">
-          <Tabs defaultValue="processing" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="processing">重點處理範疇</TabsTrigger>
-              <TabsTrigger value="tasks">任務指派</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="processing" className="space-y-4">
-              <Card>
-                <div className="p-6">
-                  <h3 className="text-lg font-semibold mb-4">重點處理範疇總覽</h3>
-                  
-                  {selectedTemplates.map(templateId => {
-                    const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
-                    if (!template) return null;
-                    
-                    return (
-                      <div key={templateId} className="mb-6 last:mb-0">
-                        <h4 className={cn("font-medium text-base mb-3", template.titleColor)}>
-                          {template.title}
-                        </h4>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {template.processingAreas.map((area, index) => (
-                            <Card key={index} className="border-l-4 border-l-blue-400">
-                              <div className="p-3">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <span className="text-lg">{area.icon}</span>
-                                  <span className="font-medium text-sm">{area.label}</span>
-                                </div>
-                                <p className="text-sm text-gray-600">{area.content}</p>
-                              </div>
-                            </Card>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="tasks" className="space-y-4">
-              <Card>
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold">任務指派管理</h3>
-                    <div className="flex gap-2">
-                      <Button onClick={handleCopyLink} variant="outline" size="sm">
-                        <Copy className="h-4 w-4 mr-2" />
-                        複製連結
-                      </Button>
-                      <Button onClick={handleSendNotification} size="sm">
-                        <Hand className="h-4 w-4 mr-2" />
-                        發送通知
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  {/* Tasks from selected templates */}
-                  <div className="space-y-4">
-                    {selectedTemplates.map(templateId => {
-                      const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
-                      if (!template) return null;
-                      
-                      return (
-                        <div key={templateId}>
-                          <h4 className={cn("font-medium text-base mb-3", template.titleColor)}>
+                    <div key={template.id} className="relative">
+                      <Pin className="absolute -top-2 -right-1 w-5 h-5 text-red-500 transform rotate-45 z-10" />
+                      <Card 
+                        className={cn(
+                          "p-4 h-64 relative overflow-hidden shadow-lg",
+                          rotation,
+                          `bg-gradient-to-br ${template.color}`,
+                          "ring-2 ring-amber-400"
+                        )}
+                      >
+                        <div className="h-full flex flex-col">
+                          
+                          <h4 className={cn(
+                            "text-base font-bold font-handwriting mb-5 leading-tight pr-6",
+                            template.titleColor
+                          )}>
                             {template.title}
                           </h4>
                           
-                          <div className="space-y-3">
-                            {template.detailedTeam.map((teamMember, teamIndex) => (
-                              <div key={teamIndex}>
-                                <h5 className="font-medium text-sm text-gray-700 mb-2 flex items-center gap-2">
-                                  <span>{teamMember.emoji}</span>
-                                  {teamMember.role}
-                                </h5>
-                                
-                                <div className="space-y-2 ml-6">
-                                  {teamMember.tasks.map((task, taskIndex) => {
-                                    const taskId = `${templateId}-${teamMember.role}-${taskIndex}`;
-                                    const isAssigned = taskAssignments[taskId];
-                                    const isSent = sentStatuses[taskId];
-                                    
-                                    return (
-                                      <div key={taskIndex} className="flex items-center gap-2 p-2 bg-gray-50 rounded">
-                                        <div className="flex-1">
-                                          <span className="text-sm">{task.task}</span>
-                                        </div>
-                                        
-                                        <div className="flex items-center gap-2">
-                                          {assigningTask === taskId ? (
-                                            <div className="flex items-center gap-2">
-                                              <Input
-                                                value={assigneeInput}
-                                                onChange={(e) => setAssigneeInput(e.target.value)}
-                                                placeholder="輸入負責人"
-                                                className="w-32 h-8"
-                                                onKeyPress={(e) => {
-                                                  if (e.key === 'Enter') {
-                                                    handleSaveAssignee(taskId);
-                                                  }
-                                                }}
-                                              />
-                                              <Button
-                                                onClick={() => handleSaveAssignee(taskId)}
-                                                size="sm"
-                                                className="h-8 px-2"
-                                              >
-                                                <Check className="h-3 w-3" />
-                                              </Button>
-                                              <Button
-                                                onClick={handleCancelAssign}
-                                                variant="outline"
-                                                size="sm"
-                                                className="h-8 px-2"
-                                              >
-                                                <X className="h-3 w-3" />
-                                              </Button>
+                          <div className="flex-1 mt-1">
+                            <p className={cn("text-sm font-medium mb-2", template.textColor)}>
+                              重點處理：
+                            </p>
+                            <p className={cn("text-sm leading-tight mb-4", template.textColor)}>
+                              {template.focus}
+                            </p>
+                          </div>
+                          
+                           <div>
+                              <p className={cn("text-sm font-medium mb-2", template.textColor)}>
+                                建議節目：
+                              </p>
+                              <div className="flex flex-wrap gap-1">
+                                {template.examples.slice(0, 3).map((example, idx) => (
+                                  <Badge key={idx} variant="secondary" className="text-xs whitespace-normal">
+                                    {example}
+                                  </Badge>
+                                ))}
+                                {template.examples.length > 3 && (
+                                  <Dialog>
+                                    <DialogTrigger asChild>
+                                      <Badge variant="outline" className="text-xs cursor-pointer hover:bg-gray-100">
+                                        +{template.examples.length - 3}更多
+                                      </Badge>
+                                    </DialogTrigger>
+                                    <DialogContent className="max-w-lg">
+                                      <DialogHeader>
+                                        <DialogTitle>{template.title.replace(/🗞️|🎨|🎵|🏡|🌏|🎭|🎲|📚/, '').trim()} - 完整節目清單</DialogTitle>
+                                      </DialogHeader>
+                                      <div className="max-h-96 overflow-y-auto">
+                                        <div className="grid grid-cols-1 gap-2">
+                                          {template.examples.map((example, idx) => (
+                                            <div key={idx} className="text-sm text-gray-700 py-2 px-3 bg-gray-50 rounded-md">
+                                              • {example}
                                             </div>
-                                          ) : (
-                                            <>
-                                              {isAssigned ? (
-                                                <div className="flex items-center gap-2">
-                                                  <Badge variant={isSent ? "default" : "secondary"} className="text-xs">
-                                                    {isAssigned}
-                                                    {isSent && <CheckCircle className="h-3 w-3 ml-1" />}
-                                                  </Badge>
-                                                  <Button
-                                                    onClick={() => handleRemoveAssignment(taskId)}
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="h-8 px-2"
-                                                  >
-                                                    <X className="h-3 w-3" />
-                                                  </Button>
-                                                </div>
-                                              ) : (
-                                                <Button
-                                                  onClick={() => handleAssignTask(taskId)}
-                                                  variant="outline"
-                                                  size="sm"
-                                                  className="h-8 px-2"
-                                                >
-                                                  <UserPlus className="h-3 w-3" />
-                                                </Button>
-                                              )}
-                                            </>
-                                          )}
+                                          ))}
                                         </div>
                                       </div>
-                                    );
-                                  })}
-                                </div>
+                                    </DialogContent>
+                                  </Dialog>
+                                )}
                               </div>
-                            ))}
-                          </div>
+                            </div>
                         </div>
-                      );
+                      </Card>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            
+            {/* Right 2/3: Tabbed Content */}
+            <div className="w-full lg:w-2/3">
+              <Tabs defaultValue="key-processing" className="w-full animate-fade-in">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="key-processing">重點處理</TabsTrigger>
+                  <TabsTrigger value="task-assignment">分工任務</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="key-processing" className="mt-6 animate-fade-in">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {selectedTemplates.flatMap(templateId => {
+                      const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
+                      if (!template) return [];
+                      
+                      return template.processingAreas.map((area, areaIndex) => {
+                        const areaKey = `${template.id}-${areaIndex}`;
+                        const isAssigning = assigningTask === areaKey;
+                        const isAssigned = assignedTasks.some(assignedTask => assignedTask.taskKey === areaKey);
+                        
+                        return (
+                          <Card key={areaKey} className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 shadow-lg">
+                            <div className="p-4">
+                              <div className="flex items-center gap-3 mb-4">
+                                <span className="text-2xl">{area.icon}</span>
+                                <h4 className="text-lg font-bold text-green-900">
+                                  {area.label}
+                                </h4>
+                              </div>
+                              
+                               <div className="space-y-2">
+                                 {area.content.split('、').map((task, taskIndex) => {
+                                   const taskKey = `${template.id}-${areaIndex}-${taskIndex}`;
+                                   const isTaskAssigning = assigningTask === taskKey;
+                                   const isTaskAssigned = assignedTasks.some(assignedTask => assignedTask.taskKey === taskKey);
+                                   
+                                   return (
+                                     <div key={taskIndex} className="bg-white rounded-lg p-3 border border-green-200">
+                                       {isTaskAssigning ? (
+                                         <div className="space-y-3">
+                                           <p className="text-green-800 font-medium text-sm">
+                                             {task.trim()}
+                                           </p>
+                                           <div className="flex items-center gap-2">
+                                              <Input
+                                                value={assigneeName}
+                                                onChange={(e) => setAssigneeName(e.target.value)}
+                                                onKeyDown={(e) => {
+                                                  if (e.key === 'Enter') {
+                                                    handleSaveAssignee();
+                                                  }
+                                                }}
+                                                placeholder="@輸入人名 (Enter確認)"
+                                                className="flex-1 text-sm"
+                                                autoFocus
+                                              />
+                                             <Button
+                                               size="sm"
+                                               onClick={handleSaveAssignee}
+                                               className="h-8 w-8 p-0 text-green-600 hover:bg-green-100"
+                                               variant="ghost"
+                                             >
+                                               <Check className="h-4 w-4" />
+                                             </Button>
+                                             <Button
+                                               size="sm"
+                                               variant="ghost"
+                                               onClick={handleCancelAssign}
+                                               className="h-8 w-8 p-0 text-gray-600 hover:bg-gray-100"
+                                             >
+                                               <X className="h-4 w-4" />
+                                             </Button>
+                                           </div>
+                                         </div>
+                                       ) : (
+                                         <div className="flex items-start justify-between">
+                                           <div className="flex-1">
+                                             <p className="text-green-800 font-medium text-sm mb-1">
+                                               {task.trim()}
+                                             </p>
+                                            </div>
+                                            {isTaskAssigned ? (
+                                              <div className="ml-2 flex items-center gap-1 text-green-600">
+                                                <CheckCircle className="h-4 w-4" />
+                                                <span className="text-xs font-medium">已指派</span>
+                                              </div>
+                                            ) : (
+                                              <Button
+                                                size="sm"
+                                                variant="ghost"
+                                                onClick={() => handleAssignTask(taskKey)}
+                                                className="ml-2 p-1 h-8 w-8 text-green-600 hover:text-green-800 hover:bg-green-100"
+                                              >
+                                                <UserPlus className="h-4 w-4" />
+                                              </Button>
+                                            )}
+                                         </div>
+                                       )}
+                                     </div>
+                                   );
+                                 })}
+                               </div>
+                            </div>
+                          </Card>
+                        );
+                      });
                     })}
                   </div>
                   
-                  {/* Custom Task Addition */}
-                  <Separator className="my-6" />
-                  
-                  <div>
-                    <h4 className="font-medium text-base mb-3">新增自定義任務</h4>
-                    
-                    <div className="flex gap-2 mb-4">
-                      <Input
-                        value={newTask}
-                        onChange={(e) => setNewTask(e.target.value)}
-                        placeholder="輸入任務內容"
-                        className="flex-1"
-                      />
-                      <Input
-                        value={newAssignee}
-                        onChange={(e) => setNewAssignee(e.target.value)}
-                        placeholder="負責人 (可選)"
-                        className="w-32"
-                      />
-                      <Button 
-                        onClick={handleAddCustomTask}
-                        disabled={!newTask.trim()}
-                      >
-                        新增
-                      </Button>
+                  {selectedTemplates.length === 0 && (
+                    <div className="text-center py-8 text-slate-500">
+                      <p>請先選擇程式類別以查看重點處理項目</p>
                     </div>
-                    
-                    {customTasks.length > 0 && (
-                      <div className="space-y-2">
-                        <h5 className="font-medium text-sm text-gray-700">自定義任務</h5>
-                        {customTasks.map((task) => (
-                          <div key={task.id} className="flex items-center gap-2 p-2 bg-blue-50 rounded">
-                            <Paperclip className="h-4 w-4 text-blue-600" />
-                            <div className="flex-1">
-                              <span className="text-sm">{task.task}</span>
-                            </div>
-                            {task.assignee && (
-                              <Badge variant="secondary" className="text-xs">
-                                {task.assignee}
-                              </Badge>
-                            )}
-                            <Button
-                              onClick={() => setCustomTasks(prev => prev.filter(t => t.id !== task.id))}
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 px-2"
-                            >
-                              <X className="h-3 w-3" />
-                            </Button>
+                  )}
+                </TabsContent>
+                
+                <TabsContent value="task-assignment" className="mt-6 animate-fade-in">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {getPrioritizedTasks().map((roleGroup, index) => (
+                      <Card key={index} className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 shadow-lg">
+                        <div className="p-4">
+                          <div className="flex items-center gap-3 mb-4">
+                            <span className="text-2xl">{roleGroup.emoji}</span>
+                            <h4 className="text-lg font-bold text-green-900">
+                              {roleGroup.role.replace(/^[🎵📹✍️🎨📱]+ /, '')}
+                            </h4>
                           </div>
-                        ))}
-                      </div>
-                    )}
+                          
+                          <div className="space-y-3">
+                            {roleGroup.tasks.map((task, taskIndex) => {
+                              const taskKey = `${roleGroup.role}-${taskIndex}`;
+                              const isAssigning = assigningTask === taskKey;
+                              const isAssigned = assignedTasks.some(assignedTask => assignedTask.taskKey === taskKey);
+                              
+                              return (
+                                <div key={taskIndex} className="bg-white rounded-lg p-3 border border-green-200">
+                                  {isAssigning ? (
+                                    <div className="space-y-3">
+                                      <p className="text-green-800 font-medium text-sm">
+                                        {task.task}
+                                      </p>
+                                      <div className="flex items-center gap-2">
+                                         <Input
+                                           value={assigneeName}
+                                           onChange={(e) => setAssigneeName(e.target.value)}
+                                           onKeyDown={(e) => {
+                                             if (e.key === 'Enter') {
+                                               handleSaveAssignee();
+                                             }
+                                           }}
+                                           placeholder="@輸入人名 (Enter確認)"
+                                           className="flex-1 text-sm"
+                                           autoFocus
+                                         />
+                                        <Button
+                                          size="sm"
+                                          onClick={handleSaveAssignee}
+                                          className="h-8 w-8 p-0 text-green-600 hover:bg-green-100"
+                                          variant="ghost"
+                                        >
+                                          <Check className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                          size="sm"
+                                          variant="ghost"
+                                          onClick={handleCancelAssign}
+                                          className="h-8 w-8 p-0 text-gray-600 hover:bg-gray-100"
+                                        >
+                                          <X className="h-4 w-4" />
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="flex items-start justify-between">
+                                      <div className="flex-1">
+                                        <p className="text-green-800 font-medium text-sm mb-1">
+                                          {task.task}
+                                        </p>
+                                       </div>
+                                       {isAssigned ? (
+                                         <div className="ml-2 flex items-center gap-1 text-green-600">
+                                           <CheckCircle className="h-4 w-4" />
+                                           <span className="text-xs font-medium">已指派</span>
+                                         </div>
+                                       ) : (
+                                         <Button
+                                           size="sm"
+                                           variant="ghost"
+                                           onClick={() => handleAssignTask(taskKey)}
+                                           className="ml-2 p-1 h-8 w-8 text-green-600 hover:text-green-800 hover:bg-green-100"
+                                         >
+                                           <UserPlus className="h-4 w-4" />
+                                         </Button>
+                                       )}
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
                   </div>
-                </div>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </div>
-      
+                  
+                  {selectedTemplates.length === 0 && (
+                    <div className="text-center py-8 text-slate-500">
+                      <p>請先選擇程式類別以查看任務分工</p>
+                    </div>
+                  )}
+                </TabsContent>
+              </Tabs>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Detail Modal */}
       <MemoDetailModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={detailModalOpen}
+        onClose={() => setDetailModalOpen(false)}
         template={selectedTemplate}
         isSelected={selectedTemplate ? selectedTemplates.includes(selectedTemplate.id) : false}
-        onToggleSelection={selectedTemplate ? () => handleTemplateToggle(selectedTemplate.id) : () => {}}
+        onToggleSelection={handleModalToggleSelection}
       />
+
     </div>
   );
 };
