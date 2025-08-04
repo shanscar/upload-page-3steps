@@ -1054,9 +1054,9 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                  <div className="flex items-center justify-between mb-4">
                    <div className="flex items-center gap-3">
                      <Paperclip className="w-6 h-6 text-amber-600 transform -rotate-12" />
-                     <h1 className="text-3xl font-bold text-amber-900 font-handwriting">
-                       工作協作備忘錄
-                     </h1>
+                    <h1 className="text-3xl font-bold text-amber-900 font-handwriting">
+                      開工備忘錄
+                    </h1>
                    </div>
                    <div className="flex items-center gap-3">
                      <Button 
