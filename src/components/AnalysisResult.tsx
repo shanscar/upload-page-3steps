@@ -125,28 +125,28 @@ export const AnalysisResult = ({ description, onConfirm, onEdit, onReanalyze }: 
     let location = "未知地點";
     let type = "一般訪問";
     let people = ["相關人士"];
-    let template = "標準採訪流程";
+    let template = "🎨 文化藝術／人物專訪類";
 
     if (desc.includes("政府總部") || desc.includes("財政預算")) {
       location = "政府總部西翼";
       type = "新聞類 > 政府記者會";
       people = ["財政司司長", "在場記者"];
-      template = "政府記者會標準流程";
+      template = "🗞️ 時事新聞／評論類";
     } else if (desc.includes("中大") || desc.includes("教授")) {
       location = "中文大學";
       type = "學術類 > 專家訪問";
       people = ["陳教授", "研究團隊"];
-      template = "學術專訪流程";
+      template = "📚 專題／紀實／教育類";
     } else if (desc.includes("突發") || desc.includes("意外")) {
       location = "旺角街頭";
       type = "突發新聞 > 現場報導";
       people = ["目擊者", "警方"];
-      template = "突發新聞標準流程";
+      template = "🗞️ 時事新聞／評論類";
     } else if (desc.includes("直播室") || desc.includes("醫生")) {
       location = "S5直播室";
       type = "醫療類 > 專家訪問";
       people = ["李醫生", "主持人"];
-      template = "醫療專訪流程";
+      template = "🏡 生活資訊／服務類";
     }
 
     return {
@@ -386,11 +386,14 @@ export const AnalysisResult = ({ description, onConfirm, onEdit, onReanalyze }: 
                     <SelectValue placeholder="選擇範本" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="政府記者會標準流程">政府記者會標準流程</SelectItem>
-                    <SelectItem value="學術專訪流程">學術專訪流程</SelectItem>
-                    <SelectItem value="突發新聞標準流程">突發新聞標準流程</SelectItem>
-                    <SelectItem value="醫療專訪流程">醫療專訪流程</SelectItem>
-                    <SelectItem value="標準採訪流程">標準採訪流程</SelectItem>
+                    <SelectItem value="🗞️ 時事新聞／評論類">🗞️ 時事新聞／評論類</SelectItem>
+                    <SelectItem value="🎨 文化藝術／人物專訪類">🎨 文化藝術／人物專訪類</SelectItem>
+                    <SelectItem value="🎵 音樂娛樂／流行榜類">🎵 音樂娛樂／流行榜類</SelectItem>
+                    <SelectItem value="🏡 生活資訊／服務類">🏡 生活資訊／服務類</SelectItem>
+                    <SelectItem value="🌏 旅遊／國際視野類">🌏 旅遊／國際視野類</SelectItem>
+                    <SelectItem value="🎭 戲曲／傳統文化類">🎭 戲曲／傳統文化類</SelectItem>
+                    <SelectItem value="🎲 互動娛樂／遊戲類">🎲 互動娛樂／遊戲類</SelectItem>
+                    <SelectItem value="📚 專題／紀實／教育類">📚 專題／紀實／教育類</SelectItem>
                   </SelectContent>
                 </Select>
               ) : (
