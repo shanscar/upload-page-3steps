@@ -894,10 +894,75 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                       {new Date().toLocaleDateString('zh-TW')}
                     </div>
                   </div>
-                </div>
-              </div>
-            </Card>
-          </div>
+                 </div>
+                 
+                 {/* Assigned Tasks integrated in memo card */}
+                 <div className="border-t border-amber-200 pt-4 mt-4">
+                   <div className="flex flex-wrap gap-2">
+                     {assignedTasks.map((task, index) => (
+                       <div
+                          key={index}
+                          className="relative group bg-amber-100/50 rounded-lg px-3 py-1.5 flex items-center gap-2 text-sm animate-fade-in"
+                        >
+                          <span className="text-sm">{task.emoji}</span>
+                          <span className="font-medium text-amber-800">{task.taskName}</span>
+                          <span className="text-amber-700">@{task.assignee}</span>
+                         <Button
+                           size="sm"
+                           variant="ghost"
+                           onClick={() => handleRemoveAssignment(task.taskKey)}
+                           className="opacity-0 group-hover:opacity-100 transition-opacity h-3 w-3 p-0 text-amber-600 hover:text-red-500 hover:bg-amber-200 ml-1"
+                         >
+                           <X className="h-2 w-2" />
+                         </Button>
+                       </div>
+                     ))}
+                     
+                     {/* Add Custom Task - Inline Input or Button */}
+                     {isAddingCustomTask ? (
+                       <div className="bg-amber-50 rounded-lg px-3 py-1.5 flex items-center gap-2 text-sm border border-amber-300 min-w-0 flex-1">
+                         <span className="text-lg">📝</span>
+                         <Input
+                           value={customTaskInput}
+                           onChange={(e) => setCustomTaskInput(e.target.value)}
+                           onKeyDown={handleCustomTaskKeyPress}
+                           onBlur={() => {
+                             if (!customTaskInput.trim()) {
+                               setIsAddingCustomTask(false);
+                             }
+                           }}
+                           placeholder="任務名稱 @負責人"
+                           className="border-0 bg-transparent p-0 h-auto text-sm focus-visible:ring-0 placeholder:text-amber-500"
+                           autoFocus
+                         />
+                       </div>
+                     ) : (
+                       <Button
+                         size="sm"
+                         variant="outline"
+                         onClick={() => setIsAddingCustomTask(true)}
+                         className="rounded-lg px-3 py-1.5 flex items-center gap-2 text-sm border-dashed border-amber-300 text-amber-700 hover:bg-amber-50 hover:border-amber-400"
+                       >
+                         <span className="text-lg">+</span>
+                         <span>自定義任務</span>
+                       </Button>
+                     )}
+                   </div>
+                 </div>
+                 
+                 {/* Complete Assignment & Send Message Button */}
+                 {assignedTasks.length > 0 && (
+                   <Button
+                      onClick={handleSendNotification}
+                     className="absolute bottom-4 right-4 h-12 w-12 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+                     title="提交任務分配"
+                   >
+                     <ArrowUp className="h-6 w-6" />
+                   </Button>
+                 )}
+               </div>
+             </Card>
+           </div>
 
           {/* Process Options - Memo Grid */}
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
