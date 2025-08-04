@@ -855,16 +855,27 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                                </div>
                              </div>
                            </HoverCardTrigger>
-                           <HoverCardContent className="w-80 p-4 bg-white/95 backdrop-blur-sm border border-gray-200 shadow-xl z-50">
-                             <h4 className="font-semibold text-gray-900 mb-2">{template.title} - 完整節目清單</h4>
-                             <div className="grid grid-cols-1 gap-1 max-h-48 overflow-y-auto">
-                               {template.examples.map((example, idx) => (
-                                 <div key={idx} className="text-sm text-gray-700 py-1 border-b border-gray-100 last:border-0">
-                                   {example}
-                                 </div>
-                               ))}
-                             </div>
-                           </HoverCardContent>
+                            <HoverCardContent 
+                              className="w-72 p-3 bg-white border border-gray-300 shadow-2xl z-[9999] fixed"
+                              side="top"
+                              align="start"
+                              sideOffset={5}
+                              avoidCollisions={true}
+                              style={{ 
+                                position: 'fixed',
+                                zIndex: 9999,
+                                maxHeight: '300px'
+                              }}
+                            >
+                              <h4 className="font-semibold text-gray-900 mb-2 text-sm">{template.title.replace(/🗞️|🎨|🎵|🏡|🌏|🎭|🎲|📚/, '').trim()}</h4>
+                              <div className="grid grid-cols-1 gap-0.5 max-h-52 overflow-y-auto">
+                                {template.examples.map((example, idx) => (
+                                  <div key={idx} className="text-xs text-gray-700 py-1 px-1 hover:bg-gray-50 rounded">
+                                    • {example}
+                                  </div>
+                                ))}
+                              </div>
+                            </HoverCardContent>
                          </HoverCard>
                        </div>
                     </div>
@@ -1019,16 +1030,27 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                                    </div>
                                  </div>
                                </HoverCardTrigger>
-                               <HoverCardContent className="w-80 p-4 bg-white/95 backdrop-blur-sm border border-gray-200 shadow-xl z-50">
-                                 <h4 className="font-semibold text-gray-900 mb-2">{template.title} - 完整節目清單</h4>
-                                 <div className="grid grid-cols-1 gap-1 max-h-48 overflow-y-auto">
-                                   {template.examples.map((example, idx) => (
-                                     <div key={idx} className="text-sm text-gray-700 py-1 border-b border-gray-100 last:border-0">
-                                       {example}
-                                     </div>
-                                   ))}
-                                 </div>
-                               </HoverCardContent>
+                                <HoverCardContent 
+                                  className="w-72 p-3 bg-white border border-gray-300 shadow-2xl z-[9999] fixed"
+                                  side="top"
+                                  align="start"
+                                  sideOffset={5}
+                                  avoidCollisions={true}
+                                  style={{ 
+                                    position: 'fixed',
+                                    zIndex: 9999,
+                                    maxHeight: '300px'
+                                  }}
+                                >
+                                  <h4 className="font-semibold text-gray-900 mb-2 text-sm">{template.title.replace(/🗞️|🎨|🎵|🏡|🌏|🎭|🎲|📚/, '').trim()}</h4>
+                                  <div className="grid grid-cols-1 gap-0.5 max-h-52 overflow-y-auto">
+                                    {template.examples.map((example, idx) => (
+                                      <div key={idx} className="text-xs text-gray-700 py-1 px-1 hover:bg-gray-50 rounded">
+                                        • {example}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </HoverCardContent>
                              </HoverCard>
                            </div>
                         </div>
