@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -474,6 +474,11 @@ interface SentStatus {
 
 export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: CollaborationMemoProps) => {
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
+  
+  // Auto-scroll to top when component loads
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<typeof PROGRAM_TEMPLATES[0] | null>(null);
   const [assigningTask, setAssigningTask] = useState<string | null>(null);

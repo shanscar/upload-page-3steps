@@ -194,6 +194,10 @@ const Index = () => {
     }));
     // Skip archive-processing and go directly to collaboration
     setCurrentState('work-collaboration');
+    // Scroll to top when entering collaboration step
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
     // Start background processing
     startBackgroundProcessing();
   };
@@ -228,6 +232,10 @@ const Index = () => {
       setCurrentState('archive-upload');
     } else if (stepNumber === 3 && archiveState.uploadedFiles.length > 0) {
       setCurrentState('work-collaboration');
+      // Scroll to top when navigating to collaboration step
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
     }
   };
   const handleArrowClick = (direction: 'next' | 'prev', fromStep: number) => {
@@ -236,6 +244,10 @@ const Index = () => {
         setCurrentState('archive-upload');
       } else if (fromStep === 2 && archiveState.uploadedFiles.length > 0) {
         setCurrentState('work-collaboration');
+        // Scroll to top when navigating to collaboration step
+        setTimeout(() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 100);
       }
     } else if (direction === 'prev') {
       if (fromStep === 2) {
