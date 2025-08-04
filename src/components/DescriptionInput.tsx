@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
@@ -20,6 +20,14 @@ export const DescriptionInput = ({ onAnalyze, isAnalyzing }: DescriptionInputPro
   const [description, setDescription] = useState("");
   const [showHint, setShowHint] = useState(false);
   const [typingTimer, setTypingTimer] = useState<NodeJS.Timeout | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto focus on mount
+  useEffect(() => {
+    if (textareaRef.current && !isAnalyzing) {
+      textareaRef.current.focus();
+    }
+  }, [isAnalyzing]);
 
   useEffect(() => {
     if (typingTimer) {
@@ -45,6 +53,13 @@ export const DescriptionInput = ({ onAnalyze, isAnalyzing }: DescriptionInputPro
   const handleExampleClick = (example: string) => {
     setDescription(example);
     setShowHint(true);
+    // Focus and position cursor at end
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+        textareaRef.current.setSelectionRange(example.length, example.length);
+      }
+    }, 0);
   };
 
   const handleAnalyze = () => {
@@ -54,9 +69,11 @@ export const DescriptionInput = ({ onAnalyze, isAnalyzing }: DescriptionInputPro
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && e.ctrlKey) {
+    if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
       handleAnalyze();
     }
+    // Ctrl+Enter or Cmd+Enter for newline (default behavior)
   };
 
   return (
@@ -73,6 +90,7 @@ export const DescriptionInput = ({ onAnalyze, isAnalyzing }: DescriptionInputPro
 
       <div className="relative">
         <Textarea
+          ref={textareaRef}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -80,6 +98,7 @@ export const DescriptionInput = ({ onAnalyze, isAnalyzing }: DescriptionInputPro
           className={cn(
             "min-h-[140px] text-lg p-6 transition-all duration-300 border-2 shadow-sm",
             "bg-card focus:shadow-medium focus:border-primary focus:scale-[1.02]",
+            "caret-primary animate-pulse shadow-[0_0_15px_hsl(var(--primary)/0.2)]",
             description && "border-primary/40 bg-primary/5 shadow-md"
           )}
           disabled={isAnalyzing}
@@ -88,7 +107,7 @@ export const DescriptionInput = ({ onAnalyze, isAnalyzing }: DescriptionInputPro
         {showHint && !isAnalyzing && (
           <div className="absolute -bottom-12 left-0 text-sm animate-fade-in">
             <div className="bg-foreground text-background border border-foreground px-3 py-2 rounded-lg font-medium shadow-sm">
-              ⚡ 按Ctrl+Enter 或點下面按鈕
+              ⚡ 按Enter 或點下面按鈕
             </div>
           </div>
         )}
