@@ -536,8 +536,51 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
     PROGRAM_TEMPLATES.find(t => t.id === id)?.title
   ).filter(Boolean);
 
+  const getPrioritizedTasks = () => {
+    const allTasks: Array<{
+      role: string;
+      emoji: string;
+      task: string;
+      timeEstimate: string;
+      priority: 'high' | 'medium' | 'low';
+    }> = [];
+    
+    selectedTemplates.forEach(templateId => {
+      const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
+      if (template?.detailedTeam) {
+        template.detailedTeam.forEach(teamMember => {
+          teamMember.tasks.forEach(task => {
+            allTasks.push({
+              role: teamMember.role,
+              emoji: teamMember.emoji,
+              task: task.task,
+              timeEstimate: task.timeEstimate,
+              priority: task.priority
+            });
+          });
+        });
+      }
+    });
+    
+    // Group by role
+    const tasksByRole = allTasks.reduce((acc, task) => {
+      const roleKey = task.role;
+      if (!acc[roleKey]) {
+        acc[roleKey] = {
+          role: task.role,
+          emoji: task.emoji,
+          tasks: []
+        };
+      }
+      acc[roleKey].tasks.push(task);
+      return acc;
+    }, {} as Record<string, { role: string; emoji: string; tasks: typeof allTasks }>);
+    
+    return Object.values(tasksByRole);
+  };
+
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto p-6">
       {selectedTemplates.length === 0 ? (
         // Template Selection Mode
         <>
@@ -653,9 +696,9 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
           </div>
         </>
       ) : (
-        // Follow-up Items Mode
+        // Collaboration Layout Mode (Left memo + Right tasks by role)
         <>
-          {/* Simplified Memo Header */}
+          {/* Header */}
           <div className="relative mb-8">
             <Pin className="absolute -top-3 -right-3 text-slate-400 transform rotate-45 w-8 h-8 z-10" />
             <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-amber-200 shadow-lg">
@@ -681,49 +724,116 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
                     </div>
                   </div>
                 </div>
-                
-                {/* Selected Templates Summary */}
-                <div className="mb-4">
-                  <p className="text-amber-800 text-sm font-medium mb-2">已選範本：</p>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedTemplateNames.map((name, index) => (
-                      <Badge key={index} variant="secondary" className="bg-amber-100 text-amber-800">
-                        {name}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
               </div>
             </Card>
           </div>
 
-          {/* Follow-up Items */}
-          <Card className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 shadow-lg mb-8">
-            <div className="p-6">
-              <h3 className="text-xl font-bold text-green-900 font-handwriting mb-4">
-                📋 跟進事項
-              </h3>
-              
-              <div className="space-y-3">
-                {getFollowUpTasks().map((task, index) => (
-                  <div key={index} className="flex items-start gap-3 p-3 bg-white rounded-lg border border-green-200">
-                    <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-green-700 text-sm font-bold">{index + 1}</span>
+          {/* Main Layout: Left 1/3 Selected Memo + Right 2/3 Role Tasks */}
+          <div className="flex flex-col lg:flex-row gap-8 mb-8">
+            {/* Left 1/3: Selected Memo Papers */}
+            <div className="w-full lg:w-1/3">
+              <h3 className="text-xl font-bold text-amber-900 mb-4">已選擇範本</h3>
+              <div className="space-y-4">
+                {selectedTemplates.map((templateId, index) => {
+                  const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
+                  if (!template) return null;
+                  
+                  const rotation = index % 2 === 0 ? 'rotate-1' : '-rotate-1';
+                  
+                  return (
+                    <div key={template.id} className="relative">
+                      <Pin className="absolute -top-2 -right-1 w-5 h-5 text-red-500 transform rotate-45 z-10" />
+                      <Card 
+                        className={cn(
+                          "p-4 h-56 relative overflow-hidden shadow-lg",
+                          rotation,
+                          `bg-gradient-to-br ${template.color}`,
+                          "ring-2 ring-amber-400"
+                        )}
+                      >
+                        <div className="h-full flex flex-col">
+                          <div className="absolute top-2 left-2 z-10">
+                            <CheckCircle className="w-5 h-5 text-green-600 bg-white rounded-full" />
+                          </div>
+                          
+                          <h4 className={cn(
+                            "text-base font-bold font-handwriting mb-3 leading-tight pr-6",
+                            template.titleColor
+                          )}>
+                            {template.title}
+                          </h4>
+                          
+                          <div className="flex-1">
+                            <p className={cn("text-sm font-medium mb-2", template.textColor)}>
+                              重點處理：
+                            </p>
+                            <p className={cn("text-sm leading-tight mb-3", template.textColor)}>
+                              {template.focus}
+                            </p>
+                          </div>
+                          
+                          <div>
+                            <p className={cn("text-sm font-medium mb-2", template.textColor)}>
+                              建議分工：
+                            </p>
+                            <div className="flex flex-wrap gap-1">
+                              {template.team.map((member, idx) => (
+                                <Badge key={idx} variant="secondary" className="text-xs">
+                                  {member}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </Card>
                     </div>
-                    <div className="flex-1">
-                      <p className="text-green-800 font-medium">{task}</p>
+                  );
+                })}
+              </div>
+            </div>
+            
+            {/* Right 2/3: Tasks by Role */}
+            <div className="w-full lg:w-2/3">
+              <h3 className="text-xl font-bold text-green-900 mb-4">分工任務</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {getPrioritizedTasks().map((roleGroup, index) => (
+                  <Card key={index} className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 shadow-lg">
+                    <div className="p-4">
+                      <div className="flex items-center gap-3 mb-4">
+                        <span className="text-2xl">{roleGroup.emoji}</span>
+                        <h4 className="text-lg font-bold text-green-900">
+                          {roleGroup.role.replace(/^[🎵📹✍️🎨📱]+ /, '')}
+                        </h4>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        {roleGroup.tasks.map((task, taskIndex) => (
+                          <div key={taskIndex} className="bg-white rounded-lg p-3 border border-green-200">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <p className="text-green-800 font-medium text-sm mb-1">
+                                  {task.task}
+                                </p>
+                                <div className="flex items-center gap-2 text-xs text-green-600">
+                                  <Badge 
+                                    variant={task.priority === 'high' ? 'destructive' : task.priority === 'medium' ? 'default' : 'secondary'}
+                                    className="text-xs"
+                                  >
+                                    {task.priority === 'high' ? '高' : task.priority === 'medium' ? '中' : '低'}
+                                  </Badge>
+                                  <span>{task.timeEstimate}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  </Card>
                 ))}
               </div>
-              
-              {getFollowUpTasks().length === 0 && (
-                <p className="text-green-700 text-center py-8 italic">
-                  暫無跟進事項，請先選擇範本
-                </p>
-              )}
             </div>
-          </Card>
+          </div>
         </>
       )}
 
