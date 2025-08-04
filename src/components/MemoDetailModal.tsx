@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Pin, Clock, Star, CheckCircle2 } from "lucide-react";
+import { Pin, Clock, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface TaskDetail {
