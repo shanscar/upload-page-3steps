@@ -863,12 +863,6 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                   >
 
                     <div className="h-full flex flex-col">
-                      {/* Selection indicator */}
-                      {isSelected && (
-                        <div className="absolute top-2 left-2 z-10">
-                          <CheckCircle className="w-5 h-5 text-green-600 bg-white rounded-full" />
-                        </div>
-                      )}
                       
                       {/* Title */}
                       <h3 className={cn(
@@ -1042,9 +1036,6 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                         )}
                       >
                         <div className="h-full flex flex-col">
-                          <div className="absolute top-2 left-2 z-10">
-                            <CheckCircle className="w-5 h-5 text-green-600 bg-white rounded-full" />
-                          </div>
                           
                           <h4 className={cn(
                             "text-base font-bold font-handwriting mb-5 leading-tight pr-6",
