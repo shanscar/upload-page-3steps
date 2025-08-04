@@ -2,10 +2,19 @@ import { Progress } from "@/components/ui/progress";
 import { CompactStepSummary } from "@/components/CompactStepSummary";
 import { cn } from "@/lib/utils";
 
+interface AnalysisData {
+  location: string;
+  type: string;
+  people: string[];
+  date: string;
+  template: string;
+}
+
 interface CompletedStepData {
   step: number;
   title: string;
-  summary: string;
+  summary?: string;
+  analysisData?: AnalysisData;
 }
 
 interface WorkflowProgressBarProps {
@@ -81,6 +90,7 @@ export const WorkflowProgressBar = ({ currentStep, completedSteps = [], onEditSt
               step={stepData.step}
               title={stepData.title}
               summary={stepData.summary}
+              analysisData={stepData.analysisData}
               isCompleted={true}
               onEdit={() => onEditStep?.(stepData.step)}
             />
