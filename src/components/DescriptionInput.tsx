@@ -99,7 +99,7 @@ export const DescriptionInput = ({ onAnalyze, isAnalyzing }: DescriptionInputPro
           <Button 
             onClick={handleAnalyze}
             size="lg"
-            className="bg-gradient-primary hover:scale-105 transition-transform duration-200 text-lg px-8 py-6"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-large hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 text-lg px-8 py-6 shadow-medium"
           >
             ⚡ AI分析
           </Button>
