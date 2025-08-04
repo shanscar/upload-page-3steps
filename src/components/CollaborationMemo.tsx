@@ -785,7 +785,7 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
           </div>
 
           {/* Process Options - Memo Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {PROGRAM_TEMPLATES.map((template, index) => {
               const isSelected = selectedTemplates.includes(template.id);
               const rotation = index % 2 === 0 ? 'rotate-1' : '-rotate-1';
