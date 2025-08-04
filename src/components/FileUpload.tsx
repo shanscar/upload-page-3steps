@@ -383,22 +383,31 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
                     )}
                     
                     {/* Track header */}
-                    <div className="flex items-center justify-between mb-3">
+                    <div className="mb-3">
                       <span className="font-semibold text-lg">音軌 {track.id}</span>
+                    </div>
+                    
+                    {/* Waveform visualization */}
+                    <div className="flex items-center gap-1 mb-4 h-12 justify-center">
+                      {generateWaveform()}
+                    </div>
+                    
+                    {/* Channel type selector */}
+                    <div className="mb-4">
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-auto p-1 gap-2 text-xs text-muted-foreground hover:text-foreground"
+                            className="h-auto p-2 gap-2 text-xs text-muted-foreground hover:text-foreground border border-border/50 hover:border-border w-full"
                             onClick={(e) => e.stopPropagation()}
                           >
                             {getChannelIcon(track.channelType)}
                             <span className="uppercase">{track.channelType}</span>
-                            <ChevronDown className="w-3 h-3" />
+                            <ChevronDown className="w-3 h-3 ml-auto" />
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-40 p-2" align="end">
+                        <PopoverContent className="w-40 p-2" align="start">
                           <div className="space-y-1">
                             {CHANNEL_OPTIONS.map(option => (
                               <Button
@@ -423,11 +432,6 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
                           </div>
                         </PopoverContent>
                       </Popover>
-                    </div>
-                    
-                    {/* Waveform visualization */}
-                    <div className="flex items-center gap-1 mb-4 h-12 justify-center">
-                      {generateWaveform()}
                     </div>
                     
                     {/* Language selector */}
