@@ -778,12 +778,12 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
                   </div>
                   <div className="flex items-center gap-3">
                     <Button 
-                      onClick={handleResetSelection}
+                      onClick={handleCopyLink}
                       variant="outline"
                       size="sm"
                       className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
                     >
-                      重新選擇範本
+                      <Copy className="w-4 h-4" />
                     </Button>
                     <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1 rounded">
                       {new Date().toLocaleDateString('zh-TW')}
