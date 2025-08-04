@@ -820,18 +820,18 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                       
                       {/* Title */}
                       <h3 className={cn(
-                        "text-base font-extrabold font-sans mb-3 leading-tight",
+                        "text-base font-extrabold font-sans mb-4 leading-tight",
                         template.titleColor
                       )}>
                         {template.title}
                       </h3>
                       
                       {/* Focus areas */}
-                      <div className="flex-1">
+                      <div className="flex-1 mt-2">
                         <p className={cn("text-xs font-medium mb-1", template.textColor)}>
                           重點處理：
                         </p>
-                        <p className={cn("text-xs leading-tight mb-2", template.textColor)}>
+                        <p className={cn("text-xs leading-tight mb-3", template.textColor)}>
                           {template.focus}
                         </p>
                        </div>
@@ -996,17 +996,17 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                           </div>
                           
                           <h4 className={cn(
-                            "text-base font-bold font-handwriting mb-3 leading-tight pr-6",
+                            "text-base font-bold font-handwriting mb-5 leading-tight pr-6",
                             template.titleColor
                           )}>
                             {template.title}
                           </h4>
                           
-                          <div className="flex-1">
+                          <div className="flex-1 mt-1">
                             <p className={cn("text-sm font-medium mb-2", template.textColor)}>
                               重點處理：
                             </p>
-                            <p className={cn("text-sm leading-tight mb-3", template.textColor)}>
+                            <p className={cn("text-sm leading-tight mb-4", template.textColor)}>
                               {template.focus}
                             </p>
                           </div>
