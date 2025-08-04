@@ -806,55 +806,66 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
           <div className="relative mb-8">
             <Pin className="absolute -top-3 -right-3 text-slate-400 transform rotate-45 w-8 h-8 z-10" />
             <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-amber-200 shadow-lg">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <Paperclip className="w-6 h-6 text-amber-600 transform -rotate-12" />
-                    <h1 className="text-3xl font-bold text-amber-900 font-handwriting">
-                      工作協作備忘錄
-                    </h1>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Button 
-                      onClick={handleCopyLink}
-                      variant="outline"
-                      size="sm"
-                      className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
-                    >
-                      <Copy className="w-4 h-4" />
-                    </Button>
-                    <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1 rounded">
-                      {new Date().toLocaleDateString('zh-TW')}
-                    </div>
-                  </div>
+               <div className="p-6 relative">
+                 <div className="flex items-center justify-between mb-4">
+                   <div className="flex items-center gap-3">
+                     <Paperclip className="w-6 h-6 text-amber-600 transform -rotate-12" />
+                     <h1 className="text-3xl font-bold text-amber-900 font-handwriting">
+                       工作協作備忘錄
+                     </h1>
+                   </div>
+                   <div className="flex items-center gap-3">
+                     <Button 
+                       onClick={handleCopyLink}
+                       variant="outline"
+                       size="sm"
+                       className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
+                     >
+                       <Copy className="w-4 h-4" />
+                     </Button>
+                     <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1 rounded">
+                       {new Date().toLocaleDateString('zh-TW')}
+                     </div>
+                   </div>
+                 </div>
+                 
+                 {/* Assigned Tasks integrated in memo card */}
+                 {assignedTasks.length > 0 && (
+                   <div className="border-t border-amber-200 pt-4 mt-4">
+                     <div className="flex flex-wrap gap-2">
+                       {assignedTasks.map((task, index) => (
+                         <div
+                           key={index}
+                           className="relative group bg-amber-100/50 rounded-lg px-3 py-1.5 flex items-center gap-2 text-sm animate-fade-in"
+                         >
+                           <span className="text-sm">{task.emoji}</span>
+                           <span className="font-medium text-amber-800">{task.taskName}</span>
+                           <span className="text-amber-700">@{task.assignee}</span>
+                           <Button
+                             size="sm"
+                             variant="ghost"
+                             onClick={() => handleRemoveAssignment(task.taskKey)}
+                             className="opacity-0 group-hover:opacity-100 transition-opacity h-3 w-3 p-0 text-amber-600 hover:text-red-500 hover:bg-amber-200 ml-1"
+                           >
+                             <X className="h-2 w-2" />
+                           </Button>
+                         </div>
+                       ))}
+                     </div>
+                   </div>
+                 )}
+                 
+                 {/* Complete Assignment & Send Message Button */}
+                 {assignedTasks.length > 0 && (
+                   <Button
+                     onClick={handleCopyLink}
+                     className="absolute bottom-4 right-4 h-12 w-12 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+                     title="完成指派並發送訊息"
+                   >
+                     <CheckCircle className="h-6 w-6" />
+                   </Button>
+                 )}
                 </div>
-                
-                {/* Assigned Tasks integrated in memo card */}
-                {assignedTasks.length > 0 && (
-                  <div className="border-t border-amber-200 pt-4 mt-4">
-                    <div className="flex flex-wrap gap-2">
-                      {assignedTasks.map((task, index) => (
-                        <div
-                          key={index}
-                          className="relative group bg-amber-100/50 rounded-lg px-3 py-1.5 flex items-center gap-2 text-sm animate-fade-in"
-                        >
-                          <span className="text-sm">{task.emoji}</span>
-                          <span className="font-medium text-amber-800">{task.taskName}</span>
-                          <span className="text-amber-700">@{task.assignee}</span>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => handleRemoveAssignment(task.taskKey)}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity h-3 w-3 p-0 text-amber-600 hover:text-red-500 hover:bg-amber-200 ml-1"
-                          >
-                            <X className="h-2 w-2" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
             </Card>
           </div>
 
