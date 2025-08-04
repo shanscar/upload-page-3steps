@@ -73,10 +73,10 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
   };
 
   const formatDate = () => {
-    if (archiveData.metadata.customDate) {
+    if (archiveData.metadata?.customDate) {
       return archiveData.metadata.customDate.toLocaleDateString('zh-TW');
     }
-    return archiveData.metadata.date === 'today' ? '今天' : '昨天';
+    return archiveData.metadata?.date === 'today' ? '今天' : '昨天';
   };
 
   return (
@@ -125,7 +125,7 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
                 <div className="flex items-center gap-2">
                   <Mic className="w-4 h-4 text-amber-600" />
                   <span className="text-amber-800">
-                    音軌語言: {archiveData.metadata.audioTracks?.map(track => track.language).join(', ') || 'N/A'}
+                    音軌語言: {archiveData.metadata?.audioTracks?.map(track => track.language).join(', ') || 'N/A'}
                   </span>
                 </div>
               </div>
@@ -145,16 +145,22 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
                 <div>
                   <h4 className="font-medium text-amber-900 mb-2">建議分工:</h4>
                   <div className="space-y-2">
-                    {analysisData.teamRoles.map((role, index) => (
-                      <div key={index} className="bg-white border border-amber-200 rounded p-3">
-                        <h5 className="font-medium text-amber-900 mb-1">{role.role}</h5>
-                        <ul className="list-disc list-inside text-sm text-amber-800 space-y-1">
-                          {role.tasks.map((task, taskIndex) => (
-                            <li key={taskIndex}>{task}</li>
-                          ))}
-                        </ul>
+                    {analysisData.teamRoles && analysisData.teamRoles.length > 0 ? (
+                      analysisData.teamRoles.map((role, index) => (
+                        <div key={index} className="bg-white border border-amber-200 rounded p-3">
+                          <h5 className="font-medium text-amber-900 mb-1">{role.role}</h5>
+                          <ul className="list-disc list-inside text-sm text-amber-800 space-y-1">
+                            {role.tasks && role.tasks.map((task, taskIndex) => (
+                              <li key={taskIndex}>{task}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="bg-white border border-amber-200 rounded p-3 text-amber-700">
+                        暫無分工建議
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
               </div>
