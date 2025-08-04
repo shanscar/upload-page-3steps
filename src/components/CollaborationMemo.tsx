@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Copy, Pin, Paperclip, CheckCircle } from "lucide-react";
+import { Copy, Pin, Paperclip, CheckCircle, UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { MemoDetailModal } from "./MemoDetailModal";
@@ -468,6 +468,8 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<typeof PROGRAM_TEMPLATES[0] | null>(null);
+  const [assigningTask, setAssigningTask] = useState<string | null>(null);
+  const [assigneeName, setAssigneeName] = useState<string>('');
   const { toast } = useToast();
 
   const handleCopyLink = async () => {
@@ -510,6 +512,27 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
 
   const handleResetSelection = () => {
     setSelectedTemplates([]);
+  };
+
+  const handleAssignTask = (taskKey: string) => {
+    setAssigningTask(taskKey);
+    setAssigneeName('@');
+  };
+
+  const handleSaveAssignee = () => {
+    if (assigneeName.trim() && assigneeName.trim() !== '@') {
+      toast({
+        title: "已指派任務",
+        description: `任務已指派給 ${assigneeName}`,
+      });
+    }
+    setAssigningTask(null);
+    setAssigneeName('');
+  };
+
+  const handleCancelAssign = () => {
+    setAssigningTask(null);
+    setAssigneeName('');
   };
 
   // Extract follow-up tasks from selected templates
@@ -807,26 +830,71 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
                       </div>
                       
                       <div className="space-y-3">
-                        {roleGroup.tasks.map((task, taskIndex) => (
-                          <div key={taskIndex} className="bg-white rounded-lg p-3 border border-green-200">
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <p className="text-green-800 font-medium text-sm mb-1">
-                                  {task.task}
-                                </p>
-                                <div className="flex items-center gap-2 text-xs text-green-600">
-                                  <Badge 
-                                    variant={task.priority === 'high' ? 'destructive' : task.priority === 'medium' ? 'default' : 'secondary'}
-                                    className="text-xs"
-                                  >
-                                    {task.priority === 'high' ? '高' : task.priority === 'medium' ? '中' : '低'}
-                                  </Badge>
-                                  <span>{task.timeEstimate}</span>
+                        {roleGroup.tasks.map((task, taskIndex) => {
+                          const taskKey = `${roleGroup.role}-${taskIndex}`;
+                          const isAssigning = assigningTask === taskKey;
+                          
+                          return (
+                            <div key={taskIndex} className="bg-white rounded-lg p-3 border border-green-200">
+                              {isAssigning ? (
+                                <div className="space-y-3">
+                                  <p className="text-green-800 font-medium text-sm">
+                                    {task.task}
+                                  </p>
+                                  <div className="flex items-center gap-2">
+                                    <Input
+                                      value={assigneeName}
+                                      onChange={(e) => setAssigneeName(e.target.value)}
+                                      placeholder="@輸入人名"
+                                      className="flex-1 text-sm"
+                                      autoFocus
+                                    />
+                                    <Button
+                                      size="sm"
+                                      onClick={handleSaveAssignee}
+                                      className="bg-green-600 hover:bg-green-700 text-white px-3"
+                                    >
+                                      確定
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={handleCancelAssign}
+                                      className="px-3"
+                                    >
+                                      取消
+                                    </Button>
+                                  </div>
                                 </div>
-                              </div>
+                              ) : (
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1">
+                                    <p className="text-green-800 font-medium text-sm mb-1">
+                                      {task.task}
+                                    </p>
+                                    <div className="flex items-center gap-2 text-xs text-green-600">
+                                      <Badge 
+                                        variant={task.priority === 'high' ? 'destructive' : task.priority === 'medium' ? 'default' : 'secondary'}
+                                        className="text-xs"
+                                      >
+                                        {task.priority === 'high' ? '高' : task.priority === 'medium' ? '中' : '低'}
+                                      </Badge>
+                                      <span>{task.timeEstimate}</span>
+                                    </div>
+                                  </div>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => handleAssignTask(taskKey)}
+                                    className="ml-2 p-1 h-8 w-8 text-green-600 hover:text-green-800 hover:bg-green-100"
+                                  >
+                                    <UserPlus className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              )}
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   </Card>
