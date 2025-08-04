@@ -12,6 +12,7 @@ interface WorkflowProgressBarProps {
   currentStep: number;
   completedSteps?: CompletedStepData[];
   onEditStep?: (stepNumber: number) => void;
+  onViewStep?: (stepNumber: number) => void;
   className?: string;
 }
 
@@ -21,7 +22,7 @@ const steps = [
   { id: 3, emoji: "🚀", label: "開工" }
 ];
 
-export const WorkflowProgressBar = ({ currentStep, completedSteps = [], onEditStep, className }: WorkflowProgressBarProps) => {
+export const WorkflowProgressBar = ({ currentStep, completedSteps = [], onEditStep, onViewStep, className }: WorkflowProgressBarProps) => {
   const progress = ((currentStep - 1) / (steps.length - 1)) * 100;
 
   return (
@@ -83,6 +84,7 @@ export const WorkflowProgressBar = ({ currentStep, completedSteps = [], onEditSt
               summary={stepData.summary}
               isCompleted={true}
               onEdit={() => onEditStep?.(stepData.step)}
+              onView={() => onViewStep?.(stepData.step)}
             />
           ))}
         </div>

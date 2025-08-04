@@ -24,9 +24,12 @@ interface AnalysisResultProps {
   onConfirm: (data: AnalysisData) => void;
   onEdit: () => void;
   onReanalyze: (description: string) => void;
+  viewOnly?: boolean;
+  onBack?: () => void;
+  initialData?: AnalysisData;
 }
 
-export const AnalysisResult = ({ description, onConfirm, onEdit, onReanalyze }: AnalysisResultProps) => {
+export const AnalysisResult = ({ description, onConfirm, onEdit, onReanalyze, viewOnly = false, onBack, initialData }: AnalysisResultProps) => {
   const [progress, setProgress] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null);
@@ -159,6 +162,13 @@ export const AnalysisResult = ({ description, onConfirm, onEdit, onReanalyze }: 
   };
 
   useEffect(() => {
+    if (viewOnly && initialData) {
+      // If in view mode, use the provided data directly
+      setAnalysisData(initialData);
+      setShowResult(true);
+      return;
+    }
+
     // Simulate AI analysis progress
     const timer = setInterval(() => {
       setProgress(prev => {
@@ -177,7 +187,7 @@ export const AnalysisResult = ({ description, onConfirm, onEdit, onReanalyze }: 
     }, 200);
 
     return () => clearInterval(timer);
-  }, [description]);
+  }, [description, viewOnly, initialData]);
 
   // Auto-focus the metadata card when analysis completes
   useEffect(() => {
@@ -205,18 +215,30 @@ export const AnalysisResult = ({ description, onConfirm, onEdit, onReanalyze }: 
 
   return (
     <div className="space-y-8 animate-slide-up">
-      {/* Input available for re-analysis after completion */}
-      <DescriptionInput 
-        onAnalyze={onReanalyze}
-        isAnalyzing={false}
-        showExamples={false}
-        showProgressBar={false}
-        initialValue={description}
-      />
-      
-      <div className="text-center">
-        <h3 className="text-xl font-medium text-success">✨ 分析完成！請檢查或修改描述重新分析</h3>
-      </div>
+      {/* Show description in view mode */}
+      {viewOnly && (
+        <Card className="p-6 bg-muted/30">
+          <h4 className="text-lg font-semibold mb-3">原始描述</h4>
+          <p className="text-foreground leading-relaxed">{description}</p>
+        </Card>
+      )}
+
+      {/* Input available for re-analysis after completion - only in normal mode */}
+      {!viewOnly && (
+        <>
+          <DescriptionInput 
+            onAnalyze={onReanalyze}
+            isAnalyzing={false}
+            showExamples={false}
+            showProgressBar={false}
+            initialValue={description}
+          />
+          
+          <div className="text-center">
+            <h3 className="text-xl font-medium text-success">✨ 分析完成！請檢查或修改描述重新分析</h3>
+          </div>
+        </>
+      )}
 
       <Card 
         ref={metadataCardRef}
@@ -400,7 +422,25 @@ export const AnalysisResult = ({ description, onConfirm, onEdit, onReanalyze }: 
       </Card>
 
       <div className="flex gap-4 justify-center">
-        {isEditMode ? (
+        {viewOnly ? (
+          <>
+            <Button 
+              onClick={onBack}
+              variant="outline"
+              size="lg"
+              className="hover:scale-105 transition-transform px-8 py-3"
+            >
+              ← 返回
+            </Button>
+            <Button 
+              onClick={onEdit}
+              size="lg"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-large hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 px-8 py-3 shadow-medium"
+            >
+              ✏️ 編輯
+            </Button>
+          </>
+        ) : isEditMode ? (
           <>
             <Button 
               onClick={handleSaveEdit}
