@@ -87,7 +87,7 @@ export const DescriptionInput = ({ onAnalyze, isAnalyzing }: DescriptionInputPro
         
         {showHint && !isAnalyzing && (
           <div className="absolute -bottom-12 left-0 text-sm animate-fade-in">
-            <div className="bg-primary/10 text-primary border border-primary/30 px-3 py-2 rounded-lg font-medium shadow-sm">
+            <div className="bg-foreground text-background border border-foreground px-3 py-2 rounded-lg font-medium shadow-sm">
               ⚡ 按Ctrl+Enter 或點下面按鈕
             </div>
           </div>
@@ -118,7 +118,7 @@ export const DescriptionInput = ({ onAnalyze, isAnalyzing }: DescriptionInputPro
                 "bg-card hover:bg-accent hover:text-accent-foreground hover:shadow-sm",
                 "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
                 "border-border hover:border-accent-foreground/20",
-                description === example && "bg-primary/10 text-primary border-primary/40 shadow-sm"
+                description === example && "bg-primary/10 text-primary-text border-primary/40 shadow-sm"
               )}
               disabled={isAnalyzing}
             >
