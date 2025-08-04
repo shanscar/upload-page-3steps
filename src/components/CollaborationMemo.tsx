@@ -820,7 +820,7 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                       
                       {/* Title */}
                       <h3 className={cn(
-                        "text-sm font-bold font-handwriting mb-2 leading-tight",
+                        "text-base font-extrabold font-sans mb-3 leading-tight",
                         template.titleColor
                       )}>
                         {template.title}
