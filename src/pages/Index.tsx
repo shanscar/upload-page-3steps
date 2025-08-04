@@ -75,20 +75,10 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Progress Bar as Header */}
       <div className="bg-gradient-card border-b shadow-soft">
-        <div className="max-w-4xl mx-auto px-6 py-12">
-          <WorkflowProgressBar 
-            currentStep={getCurrentStep()} 
-            className="scale-110"
-          />
-        </div>
-      </div>
-
-      {/* Progress Bar - Desktop Only */}
-      {!isMobile && (
         <div className="max-w-4xl mx-auto px-6 py-8">
           <WorkflowProgressBar currentStep={getCurrentStep()} />
         </div>
-      )}
+      </div>
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-6 py-8">
