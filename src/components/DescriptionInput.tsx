@@ -116,7 +116,7 @@ export const DescriptionInput = ({
       <div className="text-center">
         <div className="text-3xl mb-3">💬</div>
         <h3 className="text-xl font-medium text-foreground mb-2">
-          說說今日的拍攝情況
+          講講今日的拍攝情況
         </h3>
         <p className="text-sm text-muted-foreground">
           越詳細越好：時間、地點、人物、事件
