@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Copy, Pin, Paperclip, CheckCircle, UserPlus, Check, X } from "lucide-react";
+import { Copy, Pin, Paperclip, CheckCircle, UserPlus, Check, X, ArrowUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { MemoDetailModal } from "./MemoDetailModal";
@@ -1054,10 +1054,10 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                    <Button
                       onClick={handleSendNotification}
                      className="absolute bottom-4 right-4 h-12 w-12 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
-                     title="完成指派並發送訊息"
-                   >
-                     <CheckCircle className="h-6 w-6" />
-                   </Button>
+                      title="提交任務分配"
+                    >
+                      <ArrowUp className="h-6 w-6" />
+                    </Button>
                  )}
                 </div>
             </Card>
