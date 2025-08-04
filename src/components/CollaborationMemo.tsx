@@ -34,36 +34,36 @@ const PROGRAM_TEMPLATES = [
         role: '📹 剪輯師',
         emoji: '🎬',
         tasks: [
-          { task: '新聞重點剪輯', timeEstimate: '2-3小時', priority: 'high' as const },
-          { task: '聽眾來電整理', timeEstimate: '1-2小時', priority: 'medium' as const },
-          { task: '議題精華製作', timeEstimate: '1小時', priority: 'medium' as const }
+          { task: '新聞重點剪輯' },
+          { task: '聽眾來電整理' },
+          { task: '議題精華製作' }
         ]
       },
       {
         role: '✍️ 時事記者',
         emoji: '📰',
         tasks: [
-          { task: '觀點提煉', timeEstimate: '2小時', priority: 'high' as const },
-          { task: '事實核查', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '背景資料整理', timeEstimate: '1小時', priority: 'medium' as const }
+          { task: '觀點提煉' },
+          { task: '事實核查' },
+          { task: '背景資料整理' }
         ]
       },
       {
         role: '🎨 視覺設計',
         emoji: '🖼️',
         tasks: [
-          { task: '政策對比圖', timeEstimate: '1.5小時', priority: 'medium' as const },
-          { task: '時事資訊卡', timeEstimate: '1小時', priority: 'medium' as const },
-          { task: '數據圖表設計', timeEstimate: '2小時', priority: 'low' as const }
+          { task: '政策對比圖' },
+          { task: '時事資訊卡' },
+          { task: '數據圖表設計' }
         ]
       },
       {
         role: '📱 社媒專員',
         emoji: '📲',
         tasks: [
-          { task: '網上話題包裝', timeEstimate: '1小時', priority: 'high' as const },
-          { task: '焦點推廣', timeEstimate: '30分鐘', priority: 'medium' as const },
-          { task: '輿論監測', timeEstimate: '持續進行', priority: 'medium' as const }
+          { task: '網上話題包裝' },
+          { task: '焦點推廣' },
+          { task: '輿論監測' }
         ]
       }
     ]
@@ -88,36 +88,36 @@ const PROGRAM_TEMPLATES = [
         role: '🎵 剪輯師',
         emoji: '✂️',
         tasks: [
-          { task: '重點訪談剪輯', timeEstimate: '2-3小時', priority: 'high' as const },
-          { task: '創作片段編輯', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '背景音樂配置', timeEstimate: '45分鐘', priority: 'low' as const }
+          { task: '重點訪談剪輯' },
+          { task: '創作片段編輯' },
+          { task: '背景音樂配置' }
         ]
       },
       {
         role: '✍️ 文化記者',
         emoji: '🎭',
         tasks: [
-          { task: '背景分析', timeEstimate: '2小時', priority: 'high' as const },
-          { task: '深度整理', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '文化脈絡研究', timeEstimate: '1小時', priority: 'medium' as const }
+          { task: '背景分析' },
+          { task: '深度整理' },
+          { task: '文化脈絡研究' }
         ]
       },
       {
         role: '🎨 設計師',
         emoji: '🖌️',
         tasks: [
-          { task: '藝術宣傳圖', timeEstimate: '2小時', priority: 'medium' as const },
-          { task: '故事圖像化', timeEstimate: '1.5小時', priority: 'medium' as const },
-          { task: '作品展示設計', timeEstimate: '1小時', priority: 'low' as const }
+          { task: '藝術宣傳圖' },
+          { task: '故事圖像化' },
+          { task: '作品展示設計' }
         ]
       },
       {
         role: '📱 社媒專員',
         emoji: '🌟',
         tasks: [
-          { task: '深度人物推廣', timeEstimate: '1小時', priority: 'high' as const },
-          { task: '專訪精華分享', timeEstimate: '45分鐘', priority: 'medium' as const },
-          { task: '藝術社群互動', timeEstimate: '持續進行', priority: 'medium' as const }
+          { task: '深度人物推廣' },
+          { task: '專訪精華分享' },
+          { task: '藝術社群互動' }
         ]
       }
     ]
@@ -142,36 +142,36 @@ const PROGRAM_TEMPLATES = [
         role: '🎵 剪輯師',
         emoji: '🎧',
         tasks: [
-          { task: '熱門片段剪輯', timeEstimate: '2小時', priority: 'high' as const },
-          { task: 'Live演出編輯', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '音效後製', timeEstimate: '1小時', priority: 'medium' as const }
+          { task: '熱門片段剪輯' },
+          { task: 'Live演出編輯' },
+          { task: '音效後製' }
         ]
       },
       {
         role: '✍️ 音樂記者',
         emoji: '🎤',
         tasks: [
-          { task: '流行分析', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '新碟資料整理', timeEstimate: '1小時', priority: 'medium' as const },
-          { task: '音樂趨勢研究', timeEstimate: '45分鐘', priority: 'medium' as const }
+          { task: '流行分析' },
+          { task: '新碟資料整理' },
+          { task: '音樂趨勢研究' }
         ]
       },
       {
         role: '🎨 設計師',
         emoji: '🎨',
         tasks: [
-          { task: '榜單圖像設計', timeEstimate: '2小時', priority: 'medium' as const },
-          { task: '藝人宣傳設計', timeEstimate: '1.5小時', priority: 'medium' as const },
-          { task: 'MV視覺包裝', timeEstimate: '1小時', priority: 'low' as const }
+          { task: '榜單圖像設計' },
+          { task: '藝人宣傳設計' },
+          { task: 'MV視覺包裝' }
         ]
       },
       {
         role: '📱 社媒專員',
         emoji: '🎶',
         tasks: [
-          { task: '音樂精華推廣', timeEstimate: '45分鐘', priority: 'high' as const },
-          { task: '榜單內容分享', timeEstimate: '30分鐘', priority: 'medium' as const },
-          { task: '粉絲互動管理', timeEstimate: '持續進行', priority: 'medium' as const }
+          { task: '音樂精華推廣' },
+          { task: '榜單內容分享' },
+          { task: '粉絲互動管理' }
         ]
       }
     ]
@@ -832,8 +832,6 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
       role: string;
       emoji: string;
       task: string;
-      timeEstimate: string;
-      priority: 'high' | 'medium' | 'low';
     }> = [];
     
     selectedTemplates.forEach(templateId => {
@@ -844,9 +842,7 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
             allTasks.push({
               role: teamMember.role,
               emoji: teamMember.emoji,
-              task: task.task,
-              timeEstimate: task.timeEstimate,
-              priority: task.priority
+              task: task.task
             });
           });
         });

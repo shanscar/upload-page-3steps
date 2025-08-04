@@ -3,13 +3,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Pin, Clock, CheckCircle2 } from "lucide-react";
+import { Pin, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface TaskDetail {
   task: string;
-  timeEstimate: string;
-  priority: 'high' | 'medium' | 'low';
   completed?: boolean;
   selected?: boolean;
 }
@@ -80,21 +78,6 @@ export const MemoDetailModal = ({
     }));
   };
 
-  const getPriorityColor = (priority: 'high' | 'medium' | 'low') => {
-    switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800 border-red-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low': return 'bg-green-100 text-green-800 border-green-200';
-    }
-  };
-
-  const getPriorityIcon = (priority: 'high' | 'medium' | 'low') => {
-    switch (priority) {
-      case 'high': return '🔥';
-      case 'medium': return '⚡';
-      case 'low': return '🌱';
-    }
-  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
