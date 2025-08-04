@@ -26,7 +26,7 @@ interface WorkflowProgressBarProps {
 }
 
 const steps = [
-  { id: 1, emoji: "💬", label: "說話" },
+  { id: 1, emoji: "🗣️", label: "述說" },
   { id: 2, emoji: "📁", label: "入檔" },
   { id: 3, emoji: "🚀", label: "開工" }
 ];
