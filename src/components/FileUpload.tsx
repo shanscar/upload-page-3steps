@@ -299,7 +299,7 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
 
           {/* Date Selection */}
           <Card className="p-4">
-            <h4 className="font-medium mb-3">📅 錄製日期：</h4>
+            <h4 className="font-medium mb-3">🎬 錄製日期：</h4>
             <div className="flex gap-2 flex-wrap">
               {[
                 { value: "today", label: "今天" },
