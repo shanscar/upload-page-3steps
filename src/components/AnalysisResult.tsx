@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -24,6 +24,7 @@ export const AnalysisResult = ({ description, onConfirm, onEdit, onReanalyze }: 
   const [progress, setProgress] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null);
+  const metadataCardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Simulate AI analysis progress
@@ -45,6 +46,15 @@ export const AnalysisResult = ({ description, onConfirm, onEdit, onReanalyze }: 
 
     return () => clearInterval(timer);
   }, [description]);
+
+  // Auto-focus the metadata card when analysis completes
+  useEffect(() => {
+    if (showResult && metadataCardRef.current) {
+      setTimeout(() => {
+        metadataCardRef.current?.focus();
+      }, 500);
+    }
+  }, [showResult]);
 
   const generateMockAnalysis = (desc: string): AnalysisData => {
     // Simple keyword matching for demo
@@ -116,7 +126,11 @@ export const AnalysisResult = ({ description, onConfirm, onEdit, onReanalyze }: 
         <p className="text-sm text-muted-foreground">檢查一下對不對，或在上面修改描述重新分析</p>
       </div>
 
-      <Card className="p-6 border-success/30 bg-success/5">
+      <Card 
+        ref={metadataCardRef}
+        tabIndex={0}
+        className="p-6 border-success/30 bg-success/5 animate-pulse-glow focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary/50 focus:shadow-large transition-all duration-300"
+      >
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <span className="text-lg">📍</span>
