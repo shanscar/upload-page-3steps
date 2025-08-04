@@ -853,7 +853,7 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                   {/* Memo Card */}
                   <Card 
                     className={cn(
-                      "cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg p-4 h-56 group relative overflow-hidden",
+                      "cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg p-4 h-64 group relative overflow-hidden",
                       rotation,
                       `bg-gradient-to-br ${template.color}`,
                       isSelected && "ring-2 ring-amber-400 shadow-lg scale-105 -rotate-0"
@@ -894,42 +894,11 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                             建議節目：
                           </p>
                           <div className="flex flex-wrap gap-1">
-                            {template.examples.slice(0, 3).map((example, idx) => (
+                            {template.examples.slice(0, 5).map((example, idx) => (
                               <span key={idx} className={cn("text-xs", template.textColor)}>
-                                {example}{idx < 2 && idx < template.examples.slice(0, 3).length - 1 ? ", " : ""}
+                                {example}{idx < 4 && idx < template.examples.slice(0, 5).length - 1 ? ", " : ""}
                               </span>
                             ))}
-                            {template.examples.length > 3 && (
-                              <Dialog>
-                                <DialogTrigger asChild>
-                                  <button
-                                    className={cn("text-xs font-medium underline cursor-pointer hover:opacity-80", template.textColor)}
-                                    onClick={() => {
-                                      setProgramModalData({
-                                        title: template.title,
-                                        examples: template.examples
-                                      });
-                                    }}
-                                  >
-                                    +{template.examples.length - 3}更多
-                                  </button>
-                                </DialogTrigger>
-                                <DialogContent className="max-w-lg">
-                                  <DialogHeader>
-                                    <DialogTitle>{template.title.replace(/🗞️|🎨|🎵|🏡|🌏|🎭|🎲|📚/, '').trim()} - 完整節目清單</DialogTitle>
-                                  </DialogHeader>
-                                  <div className="max-h-96 overflow-y-auto">
-                                    <div className="grid grid-cols-1 gap-2">
-                                      {template.examples.map((example, idx) => (
-                                        <div key={idx} className="text-sm text-gray-700 py-2 px-3 bg-gray-50 rounded-md">
-                                          • {example}
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                </DialogContent>
-                              </Dialog>
-                            )}
                           </div>
                         </div>
                     </div>
@@ -1066,7 +1035,7 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                       <Pin className="absolute -top-2 -right-1 w-5 h-5 text-red-500 transform rotate-45 z-10" />
                       <Card 
                         className={cn(
-                          "p-4 h-56 relative overflow-hidden shadow-lg",
+                          "p-4 h-64 relative overflow-hidden shadow-lg",
                           rotation,
                           `bg-gradient-to-br ${template.color}`,
                           "ring-2 ring-amber-400"
