@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Copy, Pin, Paperclip, CheckCircle, UserPlus, Check, X, ArrowUp } from "lucide-react";
+import { Copy, Pin, Paperclip, CheckCircle, UserPlus, Check, X, ArrowUp, MousePointer } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { MemoDetailModal } from "./MemoDetailModal";
@@ -899,7 +899,7 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                       )}
                       
                       <div className="flex items-center gap-2 bg-amber-100 border border-amber-300 text-amber-800 px-3 py-1.5 rounded-md text-sm">
-                        <CheckCircle className="w-4 h-4 text-green-600" />
+                        <MousePointer className="w-4 h-4 text-green-600" />
                         <span>選擇範本</span>
                       </div>
                     
