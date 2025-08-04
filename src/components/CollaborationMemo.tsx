@@ -470,7 +470,6 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<typeof PROGRAM_TEMPLATES[0] | null>(null);
-  const [selectedTasks, setSelectedTasks] = useState<{[key: string]: boolean}>({});
   const { toast } = useToast();
 
   const handleCopyLink = async () => {
@@ -539,147 +538,8 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
     }
   };
 
-  const handleReturnToSelection = () => {
-    setSelectedTemplates([]);
-    setSelectedTasks({});
-  };
-
-  const getSelectedTemplateData = () => {
-    return selectedTemplates.map(id => 
-      PROGRAM_TEMPLATES.find(t => t.id === id)
-    ).filter(Boolean);
-  };
-
-  const renderWorkAssignment = () => {
-    const selectedTemplateData = getSelectedTemplateData();
-    
-    return (
-      <div className="space-y-6">
-        {/* Work Assignment Header */}
-        <div className="relative mb-8">
-          <Pin className="absolute -top-3 -right-3 text-slate-400 transform rotate-45 w-8 h-8 z-10" />
-          <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-amber-200 shadow-lg">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <Paperclip className="w-6 h-6 text-amber-600 transform -rotate-12" />
-                  <h1 className="text-3xl font-bold text-amber-900 font-handwriting">
-                    工作協作備忘錄
-                  </h1>
-                </div>
-                <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1 rounded">
-                  {new Date().toLocaleDateString('zh-TW')}
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <p className="text-amber-800 text-lg font-handwriting">
-                  🎯 工作分工及跟進事項
-                </p>
-                <Button 
-                  onClick={handleReturnToSelection}
-                  variant="outline"
-                  size="sm"
-                  className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
-                >
-                  重新選擇範本
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        {/* Selected Templates Summary */}
-        <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 shadow-lg">
-          <div className="p-6">
-            <h3 className="text-xl font-bold text-green-900 font-handwriting mb-4">
-              📋 已選擇的處理範本
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {selectedTemplateData.map((template) => (
-                <div key={template?.id} className="bg-white rounded-lg p-4 border border-green-200">
-                  <h4 className="font-bold text-green-800 mb-2">{template?.title}</h4>
-                  <p className="text-sm text-green-700 mb-2">{template?.focus}</p>
-                  <div className="flex flex-wrap gap-1">
-                    {template?.team.map((member, idx) => (
-                      <Badge key={idx} variant="secondary" className="text-xs bg-green-100 text-green-800">
-                        {member}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Card>
-
-        {/* Work Assignment by Role */}
-        <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 shadow-lg">
-          <div className="p-6">
-            <h3 className="text-xl font-bold text-blue-900 font-handwriting mb-6">
-              👥 角色分工及待跟進任務
-            </h3>
-            
-            <div className="space-y-6">
-              {selectedTemplateData.map((template) => (
-                <div key={template?.id} className="space-y-4">
-                  <h4 className="text-lg font-bold text-blue-800 border-b border-blue-200 pb-2">
-                    {template?.title}
-                  </h4>
-                  
-                  <div className="grid gap-4">
-                    {template?.detailedTeam.map((teamMember, idx) => (
-                      <div key={idx} className="bg-white rounded-lg p-4 border border-blue-200">
-                        <div className="flex items-center gap-2 mb-3">
-                          <span className="text-2xl">{teamMember.emoji}</span>
-                          <h5 className="font-bold text-blue-900">{teamMember.role}</h5>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          {teamMember.tasks.map((task, taskIdx) => {
-                            const taskKey = `${template?.id}-${idx}-${taskIdx}`;
-                            const isSelected = selectedTasks[taskKey] !== false; // Default to true
-                            
-                            return (
-                              <div 
-                                key={taskIdx}
-                                className={cn(
-                                  "p-3 rounded-lg border cursor-pointer transition-all text-center",
-                                  isSelected 
-                                    ? "bg-blue-50 border-blue-300 text-blue-900" 
-                                    : "bg-gray-50 border-gray-300 text-gray-500 opacity-60"
-                                )}
-                                onClick={() => setSelectedTasks(prev => ({
-                                  ...prev,
-                                  [taskKey]: !isSelected
-                                }))}
-                              >
-                                <div className="flex items-center justify-center gap-2">
-                                  {isSelected ? (
-                                    <CheckCircle className="w-4 h-4 text-blue-600" />
-                                  ) : (
-                                    <div className="w-4 h-4 border border-gray-400 rounded-full" />
-                                  )}
-                                  <span className="font-medium">{task.task}</span>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Card>
-      </div>
-    );
-  };
-
-  const renderTemplateSelection = () => (
-    <div>
+  return (
+    <div className="max-w-6xl mx-auto p-6">
       {/* Memo Header */}
       <div className="relative mb-8">
         <Pin className="absolute -top-3 -right-3 text-slate-400 transform rotate-45 w-8 h-8 z-10" />
@@ -813,71 +673,62 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
           );
         })}
       </div>
-    </div>
-  );
 
-  return (
-    <div className="max-w-6xl mx-auto p-6">
-      {/* Conditional rendering based on selected templates */}
-      {selectedTemplates.length === 0 ? renderTemplateSelection() : renderWorkAssignment()}
-
-      {/* Collaboration Section - Only show in template selection mode */}
-      {selectedTemplates.length === 0 && (
-        <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 shadow-lg mb-6">
-          <div className="p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <Users className="w-6 h-6 text-blue-600" />
-              <h3 className="text-xl font-bold text-blue-900 font-handwriting">
-                協作分享
-              </h3>
+      {/* Collaboration Section */}
+      <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 shadow-lg mb-6">
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <Users className="w-6 h-6 text-blue-600" />
+            <h3 className="text-xl font-bold text-blue-900 font-handwriting">
+              協作分享
+            </h3>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Copy Link */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h4 className="font-medium text-blue-900 mb-2">複製項目連結</h4>
+              <p className="text-sm text-blue-700 mb-3">分享選中的流程範本給相關同事</p>
+              <Button 
+                onClick={handleCopyLink}
+                variant="outline" 
+                className="w-full bg-white border-blue-300 text-blue-800 hover:bg-blue-100"
+              >
+                <Copy className="w-4 h-4 mr-2" />
+                複製連結
+              </Button>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Copy Link */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="font-medium text-blue-900 mb-2">複製項目連結</h4>
-                <p className="text-sm text-blue-700 mb-3">分享選中的流程範本給相關同事</p>
-                <Button 
-                  onClick={handleCopyLink}
-                  variant="outline" 
-                  className="w-full bg-white border-blue-300 text-blue-800 hover:bg-blue-100"
-                >
-                  <Copy className="w-4 h-4 mr-2" />
-                  複製連結
-                </Button>
-              </div>
 
-              {/* Share to Colleague */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="font-medium text-blue-900 mb-2">@ 分享給同事</h4>
-                <div className="space-y-2">
-                  <Input
-                    placeholder="輸入同事郵箱"
-                    value={colleagueEmail}
-                    onChange={(e) => setColleagueEmail(e.target.value)}
-                    className="bg-white border-blue-300"
-                  />
-                  <Input
-                    placeholder="添加備註訊息 (可選)"
-                    value={shareMessage}
-                    onChange={(e) => setShareMessage(e.target.value)}
-                    className="bg-white border-blue-300"
-                  />
-                  <Button 
-                    onClick={handleShareToColleague}
-                    variant="outline"
-                    className="w-full bg-white border-blue-300 text-blue-800 hover:bg-blue-100"
-                    disabled={selectedTemplates.length === 0}
-                  >
-                    <Share className="w-4 h-4 mr-2" />
-                    發送範本 ({selectedTemplates.length})
-                  </Button>
-                </div>
+            {/* Share to Colleague */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h4 className="font-medium text-blue-900 mb-2">@ 分享給同事</h4>
+              <div className="space-y-2">
+                <Input
+                  placeholder="輸入同事郵箱"
+                  value={colleagueEmail}
+                  onChange={(e) => setColleagueEmail(e.target.value)}
+                  className="bg-white border-blue-300"
+                />
+                <Input
+                  placeholder="添加備註訊息 (可選)"
+                  value={shareMessage}
+                  onChange={(e) => setShareMessage(e.target.value)}
+                  className="bg-white border-blue-300"
+                />
+                <Button 
+                  onClick={handleShareToColleague}
+                  variant="outline"
+                  className="w-full bg-white border-blue-300 text-blue-800 hover:bg-blue-100"
+                  disabled={selectedTemplates.length === 0}
+                >
+                  <Share className="w-4 h-4 mr-2" />
+                  發送範本 ({selectedTemplates.length})
+                </Button>
               </div>
             </div>
           </div>
-        </Card>
-      )}
+        </div>
+      </Card>
 
       {/* Action Footer */}
       <div className="flex justify-end">
@@ -886,10 +737,7 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
           className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 text-lg"
           disabled={selectedTemplates.length === 0}
         >
-          {selectedTemplates.length === 0 
-            ? "完成協作設定" 
-            : `確認工作分工 (${selectedTemplates.length} 個範本)`
-          }
+          完成協作設定 ({selectedTemplates.length} 個範本)
         </Button>
       </div>
 
