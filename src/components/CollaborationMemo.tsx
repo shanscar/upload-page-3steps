@@ -605,7 +605,7 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
               {/* Memo Card */}
               <Card 
                 className={cn(
-                  "cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg p-4 h-48 group",
+                  "cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg p-4 h-48 group relative overflow-hidden",
                   rotation,
                   `bg-gradient-to-br ${template.color}`,
                   isSelected && "ring-2 ring-amber-400 shadow-lg scale-105 -rotate-0"
@@ -613,14 +613,20 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
                 onClick={() => handleTemplateToggle(template.id)}
                 onDoubleClick={() => handleMemoDoubleClick(template)}
               >
-                {/* Double-click hint */}
-                <div className="absolute top-1 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Eye className="w-3 h-3 text-slate-500" />
+                {/* Hover overlay with eye icon and instruction */}
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
+                  <div className="text-center text-white drop-shadow-lg">
+                    <Eye className="w-8 h-8 mx-auto mb-2" />
+                    <span className="text-sm font-medium bg-black/40 px-3 py-1 rounded">
+                      雙擊查看詳情
+                    </span>
+                  </div>
                 </div>
-                <div className="h-full flex flex-col">
+
+                <div className="h-full flex flex-col group-hover:opacity-60 transition-opacity duration-300">
                   {/* Selection indicator */}
                   {isSelected && (
-                    <div className="absolute top-2 left-2">
+                    <div className="absolute top-2 left-2 z-10">
                       <CheckCircle className="w-5 h-5 text-green-600 bg-white rounded-full" />
                     </div>
                   )}
@@ -660,13 +666,6 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
                         </span>
                       )}
                     </div>
-                  </div>
-                  
-                  {/* Double-click instruction */}
-                  <div className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className={cn("text-xs", template.textColor)}>
-                      雙擊查看詳情
-                    </span>
                   </div>
                 </div>
               </Card>
