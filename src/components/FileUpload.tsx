@@ -1,8 +1,9 @@
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent } from "@/components/ui/card";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { AudioWaveform, Circle, CircleDot, Check, ChevronDown } from "lucide-react";
 
 interface FileUploadProps {
   expectedFileType: string;
@@ -13,6 +14,8 @@ interface AudioTrack {
   id: number;
   language: string;
   isSelected: boolean;
+  channelType: 'mono' | 'stereo' | 'surround';
+  volumeLevel: number; // 0-100 for waveform height
 }
 
 export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
@@ -51,12 +54,12 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
 
   const handleFiles = (files: File[]) => {
     setUploadedFiles(files);
-    // Mock audio track detection
+    // Mock audio track detection with enhanced properties
     const mockTracks: AudioTrack[] = [
-      { id: 1, language: "粵語", isSelected: true },
-      { id: 2, language: "英語", isSelected: false },
-      { id: 3, language: "普通話", isSelected: false },
-      { id: 4, language: "環境聲", isSelected: false }
+      { id: 1, language: "粵語", isSelected: true, channelType: "stereo", volumeLevel: 85 },
+      { id: 2, language: "英語", isSelected: false, channelType: "stereo", volumeLevel: 72 },
+      { id: 3, language: "普通話", isSelected: false, channelType: "mono", volumeLevel: 68 },
+      { id: 4, language: "環境聲", isSelected: false, channelType: "surround", volumeLevel: 45 }
     ];
     setAudioTracks(mockTracks);
   };
@@ -90,6 +93,48 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
   };
 
   const LANGUAGE_OPTIONS = ["粵語", "英語", "普通話", "環境聲", "其他"];
+  
+  // Language color mapping
+  const getLanguageColor = (language: string) => {
+    const colors = {
+      "粵語": "bg-emerald-500 text-white border-emerald-600",
+      "英語": "bg-blue-500 text-white border-blue-600", 
+      "普通話": "bg-red-500 text-white border-red-600",
+      "環境聲": "bg-gray-500 text-white border-gray-600",
+      "其他": "bg-violet-500 text-white border-violet-600"
+    };
+    return colors[language as keyof typeof colors] || colors["其他"];
+  };
+
+  // Channel type icon
+  const getChannelIcon = (channelType: string) => {
+    switch (channelType) {
+      case 'mono': return <Circle className="w-3 h-3" />;
+      case 'stereo': return <div className="flex gap-1"><CircleDot className="w-3 h-3" /><CircleDot className="w-3 h-3" /></div>;
+      case 'surround': return <div className="flex gap-0.5"><Circle className="w-2 h-2" /><Circle className="w-2 h-2" /><Circle className="w-2 h-2" /><Circle className="w-2 h-2" /></div>;
+      default: return <Circle className="w-3 h-3" />;
+    }
+  };
+
+  // Generate waveform bars based on volume level
+  const generateWaveform = (volumeLevel: number) => {
+    const bars = [];
+    for (let i = 0; i < 8; i++) {
+      const height = Math.max(20, (volumeLevel / 100) * 40 * (Math.random() * 0.4 + 0.8));
+      bars.push(
+        <div
+          key={i}
+          className="bg-current transition-all duration-300"
+          style={{
+            width: '2px',
+            height: `${height}px`,
+            opacity: 0.6 + (volumeLevel / 100) * 0.4
+          }}
+        />
+      );
+    }
+    return bars;
+  };
 
   return (
     <div className="space-y-6">
@@ -187,31 +232,110 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
             </div>
           </Card>
 
-          {/* Audio Tracks */}
-          <Card className="p-4">
-            <h4 className="font-medium mb-3">🎵 音軌：偵測到 {audioTracks.length} 個音軌</h4>
-            <div className="space-y-3">
+          {/* Interactive Audio Tracks */}
+          <Card className="p-6">
+            <h4 className="font-medium mb-4 flex items-center gap-2">
+              <AudioWaveform className="w-5 h-5 text-primary" />
+              音軌：偵測到 {audioTracks.length} 個音軌
+            </h4>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
               {audioTracks.map(track => (
-                <div key={track.id} className="flex items-center gap-4 p-3 border rounded-lg">
-                  <Checkbox
-                    checked={track.isSelected}
-                    onCheckedChange={() => toggleTrackSelection(track.id)}
-                  />
-                  <span className="font-medium">音軌 {track.id}</span>
-                  <div className="flex gap-2">
-                    {LANGUAGE_OPTIONS.map(lang => (
-                      <Button
-                        key={lang}
-                        variant={track.language === lang ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => toggleTrackLanguage(track.id, lang)}
-                      >
-                        {lang}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
+                <Card
+                  key={track.id}
+                  className={cn(
+                    "relative cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg",
+                    track.isSelected 
+                      ? "ring-2 ring-primary bg-primary/5 shadow-md" 
+                      : "hover:bg-muted/50"
+                  )}
+                  onClick={() => toggleTrackSelection(track.id)}
+                >
+                  <CardContent className="p-4">
+                    {/* Selection indicator */}
+                    {track.isSelected && (
+                      <div className="absolute top-2 right-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                        <Check className="w-4 h-4 text-primary-foreground" />
+                      </div>
+                    )}
+                    
+                    {/* Track header */}
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="font-semibold text-lg">音軌 {track.id}</span>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        {getChannelIcon(track.channelType)}
+                        <span className="uppercase">{track.channelType}</span>
+                      </div>
+                    </div>
+                    
+                    {/* Waveform visualization */}
+                    <div className="flex items-center gap-1 mb-4 h-12 justify-center">
+                      {generateWaveform(track.volumeLevel)}
+                    </div>
+                    
+                    {/* Language selector */}
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-between",
+                            getLanguageColor(track.language)
+                          )}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <span>{track.language}</span>
+                          <ChevronDown className="w-4 h-4" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-48 p-2" align="start">
+                        <div className="space-y-1">
+                          {LANGUAGE_OPTIONS.map(lang => (
+                            <Button
+                              key={lang}
+                              variant="ghost"
+                              size="sm"
+                              className={cn(
+                                "w-full justify-start",
+                                track.language === lang && "bg-primary/10"
+                              )}
+                              onClick={() => {
+                                toggleTrackLanguage(track.id, lang);
+                              }}
+                            >
+                              <div className={cn(
+                                "w-3 h-3 rounded-full mr-2",
+                                getLanguageColor(lang).split(' ')[0]
+                              )} />
+                              {lang}
+                              {track.language === lang && (
+                                <Check className="w-4 h-4 ml-auto" />
+                              )}
+                            </Button>
+                          ))}
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                    
+                    {/* Volume indicator */}
+                    <div className="mt-3 text-xs text-muted-foreground text-center">
+                      音量: {track.volumeLevel}%
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
+            </div>
+            
+            {/* Selection summary */}
+            <div className="mt-4 p-3 bg-muted/30 rounded-lg">
+              <div className="text-sm text-muted-foreground">
+                已選擇 {audioTracks.filter(t => t.isSelected).length} / {audioTracks.length} 個音軌
+                {audioTracks.filter(t => t.isSelected).length > 0 && (
+                  <span className="ml-2">
+                    ({audioTracks.filter(t => t.isSelected).map(t => t.language).join(', ')})
+                  </span>
+                )}
+              </div>
             </div>
           </Card>
 
