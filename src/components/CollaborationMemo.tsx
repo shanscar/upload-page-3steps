@@ -1097,105 +1097,174 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
               </div>
             </div>
             
-            {/* Right 2/3: Tasks by Role */}
+            {/* Right 2/3: Tabbed Content */}
             <div className="w-full lg:w-2/3">
-              <h3 className="text-xl font-bold text-green-900 mb-4">分工任務</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {getPrioritizedTasks().map((roleGroup, index) => (
-                  <Card key={index} className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 shadow-lg">
-                    <div className="p-4">
-                      <div className="flex items-center gap-3 mb-4">
-                        <span className="text-2xl">{roleGroup.emoji}</span>
-                        <h4 className="text-lg font-bold text-green-900">
-                          {roleGroup.role.replace(/^[🎵📹✍️🎨📱]+ /, '')}
-                        </h4>
-                      </div>
+              <Tabs defaultValue="key-processing" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="key-processing">重點處理</TabsTrigger>
+                  <TabsTrigger value="task-assignment">分工任務</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="key-processing" className="mt-6">
+                  <Card>
+                    <div className="p-6">
+                      <h3 className="text-lg font-semibold mb-4 text-blue-900">重點處理項目</h3>
                       
-                      <div className="space-y-3">
-                        {roleGroup.tasks.map((task, taskIndex) => {
-                          const taskKey = `${roleGroup.role}-${taskIndex}`;
-                          const isAssigning = assigningTask === taskKey;
-                          const isAssigned = assignedTasks.some(assignedTask => assignedTask.taskKey === taskKey);
+                      <div className="space-y-6">
+                        {selectedTemplates.map(templateId => {
+                          const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
+                          if (!template) return null;
                           
                           return (
-                            <div key={taskIndex} className="bg-white rounded-lg p-3 border border-green-200">
-                              {isAssigning ? (
-                                <div className="space-y-3">
-                                  <p className="text-green-800 font-medium text-sm">
-                                    {task.task}
-                                  </p>
-                                  <div className="flex items-center gap-2">
-                                     <Input
-                                       value={assigneeName}
-                                       onChange={(e) => setAssigneeName(e.target.value)}
-                                       onKeyDown={(e) => {
-                                         if (e.key === 'Enter') {
-                                           handleSaveAssignee();
-                                         }
-                                       }}
-                                       placeholder="@輸入人名 (Enter確認)"
-                                       className="flex-1 text-sm"
-                                       autoFocus
-                                     />
-                                    <Button
-                                      size="sm"
-                                      onClick={handleSaveAssignee}
-                                      className="h-8 w-8 p-0 text-green-600 hover:bg-green-100"
-                                      variant="ghost"
-                                    >
-                                      <Check className="h-4 w-4" />
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      variant="ghost"
-                                      onClick={handleCancelAssign}
-                                      className="h-8 w-8 p-0 text-gray-600 hover:bg-gray-100"
-                                    >
-                                      <X className="h-4 w-4" />
-                                    </Button>
-                                  </div>
-                                </div>
-                              ) : (
-                                <div className="flex items-start justify-between">
-                                  <div className="flex-1">
-                                    <p className="text-green-800 font-medium text-sm mb-1">
-                                      {task.task}
-                                    </p>
-                                    <div className="flex items-center gap-2 text-xs text-green-600">
-                                      <Badge 
-                                        variant={task.priority === 'high' ? 'destructive' : task.priority === 'medium' ? 'default' : 'secondary'}
-                                        className="text-xs"
-                                      >
-                                        {task.priority === 'high' ? '高' : task.priority === 'medium' ? '中' : '低'}
-                                      </Badge>
-                                      <span>{task.timeEstimate}</span>
+                            <div key={template.id} className="border rounded-lg p-4 bg-slate-50">
+                              <div className="flex items-center gap-2 mb-3">
+                                <h4 className="font-medium text-slate-900">{template.title}</h4>
+                              </div>
+                              
+                              {/* Focus Area */}
+                              <div className="mb-4">
+                                <h5 className="text-sm font-medium text-slate-700 mb-2">處理重點</h5>
+                                <p className="text-sm text-slate-600 bg-blue-50 p-3 rounded border-l-4 border-blue-200">
+                                  {template.focus}
+                                </p>
+                              </div>
+                              
+                              {/* Processing Areas */}
+                              <div>
+                                <h5 className="text-sm font-medium text-slate-700 mb-3">處理領域</h5>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                  {template.processingAreas.map((area, index) => (
+                                    <div key={index} className="bg-white border rounded-lg p-3">
+                                      <div className="flex items-center gap-2 mb-2">
+                                        <span className="text-lg">{area.icon}</span>
+                                        <span className="font-medium text-sm text-slate-800">{area.label}</span>
+                                      </div>
+                                      <p className="text-xs text-slate-600 leading-relaxed">
+                                        {area.content}
+                                      </p>
                                     </div>
-                                   </div>
-                                   {isAssigned ? (
-                                     <div className="ml-2 flex items-center gap-1 text-green-600">
-                                       <CheckCircle className="h-4 w-4" />
-                                       <span className="text-xs font-medium">已指派</span>
-                                     </div>
-                                   ) : (
-                                     <Button
-                                       size="sm"
-                                       variant="ghost"
-                                       onClick={() => handleAssignTask(taskKey)}
-                                       className="ml-2 p-1 h-8 w-8 text-green-600 hover:text-green-800 hover:bg-green-100"
-                                     >
-                                       <UserPlus className="h-4 w-4" />
-                                     </Button>
-                                   )}
+                                  ))}
                                 </div>
-                              )}
+                              </div>
                             </div>
                           );
                         })}
                       </div>
+                      
+                      {selectedTemplates.length === 0 && (
+                        <div className="text-center py-8 text-slate-500">
+                          <p>請先選擇程式類別以查看重點處理項目</p>
+                        </div>
+                      )}
                     </div>
                   </Card>
-                ))}
-              </div>
+                </TabsContent>
+                
+                <TabsContent value="task-assignment" className="mt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {getPrioritizedTasks().map((roleGroup, index) => (
+                      <Card key={index} className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 shadow-lg">
+                        <div className="p-4">
+                          <div className="flex items-center gap-3 mb-4">
+                            <span className="text-2xl">{roleGroup.emoji}</span>
+                            <h4 className="text-lg font-bold text-green-900">
+                              {roleGroup.role.replace(/^[🎵📹✍️🎨📱]+ /, '')}
+                            </h4>
+                          </div>
+                          
+                          <div className="space-y-3">
+                            {roleGroup.tasks.map((task, taskIndex) => {
+                              const taskKey = `${roleGroup.role}-${taskIndex}`;
+                              const isAssigning = assigningTask === taskKey;
+                              const isAssigned = assignedTasks.some(assignedTask => assignedTask.taskKey === taskKey);
+                              
+                              return (
+                                <div key={taskIndex} className="bg-white rounded-lg p-3 border border-green-200">
+                                  {isAssigning ? (
+                                    <div className="space-y-3">
+                                      <p className="text-green-800 font-medium text-sm">
+                                        {task.task}
+                                      </p>
+                                      <div className="flex items-center gap-2">
+                                         <Input
+                                           value={assigneeName}
+                                           onChange={(e) => setAssigneeName(e.target.value)}
+                                           onKeyDown={(e) => {
+                                             if (e.key === 'Enter') {
+                                               handleSaveAssignee();
+                                             }
+                                           }}
+                                           placeholder="@輸入人名 (Enter確認)"
+                                           className="flex-1 text-sm"
+                                           autoFocus
+                                         />
+                                        <Button
+                                          size="sm"
+                                          onClick={handleSaveAssignee}
+                                          className="h-8 w-8 p-0 text-green-600 hover:bg-green-100"
+                                          variant="ghost"
+                                        >
+                                          <Check className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                          size="sm"
+                                          variant="ghost"
+                                          onClick={handleCancelAssign}
+                                          className="h-8 w-8 p-0 text-gray-600 hover:bg-gray-100"
+                                        >
+                                          <X className="h-4 w-4" />
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="flex items-start justify-between">
+                                      <div className="flex-1">
+                                        <p className="text-green-800 font-medium text-sm mb-1">
+                                          {task.task}
+                                        </p>
+                                        <div className="flex items-center gap-2 text-xs text-green-600">
+                                          <Badge 
+                                            variant={task.priority === 'high' ? 'destructive' : task.priority === 'medium' ? 'default' : 'secondary'}
+                                            className="text-xs"
+                                          >
+                                            {task.priority === 'high' ? '高' : task.priority === 'medium' ? '中' : '低'}
+                                          </Badge>
+                                          <span>{task.timeEstimate}</span>
+                                        </div>
+                                       </div>
+                                       {isAssigned ? (
+                                         <div className="ml-2 flex items-center gap-1 text-green-600">
+                                           <CheckCircle className="h-4 w-4" />
+                                           <span className="text-xs font-medium">已指派</span>
+                                         </div>
+                                       ) : (
+                                         <Button
+                                           size="sm"
+                                           variant="ghost"
+                                           onClick={() => handleAssignTask(taskKey)}
+                                           className="ml-2 p-1 h-8 w-8 text-green-600 hover:text-green-800 hover:bg-green-100"
+                                         >
+                                           <UserPlus className="h-4 w-4" />
+                                         </Button>
+                                       )}
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                  
+                  {selectedTemplates.length === 0 && (
+                    <div className="text-center py-8 text-slate-500">
+                      <p>請先選擇程式類別以查看任務分工</p>
+                    </div>
+                  )}
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
         </>
@@ -1213,3 +1282,5 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
     </div>
   );
 };
+
+export default CollaborationMemo;
