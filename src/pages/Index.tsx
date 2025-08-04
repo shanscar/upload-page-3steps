@@ -112,7 +112,7 @@ const Index = () => {
       completed.push({
         step: 1,
         title: "說說今天拍了什麼",
-        analysisData: analysisData
+        summary: `${analysisData.location} - ${analysisData.type}${analysisData.people ? ` (${analysisData.people.length}人)` : ''}`
       });
     }
     
