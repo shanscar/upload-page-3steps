@@ -486,6 +486,9 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
     priority: 'high' | 'medium' | 'low';
   }>>([]);
   const [sentStatus, setSentStatus] = useState<SentStatus | null>(null);
+  const [customTaskDialogOpen, setCustomTaskDialogOpen] = useState(false);
+  const [customTaskName, setCustomTaskName] = useState('');
+  const [customTaskAssignee, setCustomTaskAssignee] = useState('');
   const [programModalOpen, setProgramModalOpen] = useState(false);
   const [programModalData, setProgramModalData] = useState<{ title: string; examples: string[] } | null>(null);
   const { toast } = useToast();
@@ -681,6 +684,30 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
       title: "已移除指派",
       description: "任務指派已移除",
     });
+  };
+
+  const handleAddCustomTask = () => {
+    if (customTaskName.trim() && customTaskAssignee.trim()) {
+      const customTaskKey = `custom-${Date.now()}`;
+      const newCustomTask = {
+        taskKey: customTaskKey,
+        taskName: customTaskName.trim(),
+        assignee: customTaskAssignee.trim().replace(/^@/, ''),
+        role: '自定義任務',
+        emoji: '📝',
+        priority: 'medium' as const
+      };
+      
+      setAssignedTasks(prev => [...prev, newCustomTask]);
+      setCustomTaskName('');
+      setCustomTaskAssignee('');
+      setCustomTaskDialogOpen(false);
+      
+      toast({
+        title: "已新增自定義任務",
+        description: `任務「${customTaskName}」已指派給 ${customTaskAssignee.replace(/^@/, '')}`,
+      });
+    }
   };
 
   // Extract follow-up tasks from selected templates
@@ -919,28 +946,39 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                  
                  {/* Assigned Tasks integrated in memo card */}
                  {assignedTasks.length > 0 && (
-                   <div className="border-t border-amber-200 pt-4 mt-4">
-                     <div className="flex flex-wrap gap-2">
-                       {assignedTasks.map((task, index) => (
-                         <div
-                            key={index}
-                            className="relative group bg-amber-100/50 rounded-lg px-3 py-1.5 flex items-center gap-2 text-sm animate-fade-in"
-                          >
-                            <span className="text-sm">{task.emoji}</span>
-                            <span className="font-medium text-amber-800">{task.taskName}</span>
-                            <span className="text-amber-700">@{task.assignee}</span>
-                           <Button
-                             size="sm"
-                             variant="ghost"
-                             onClick={() => handleRemoveAssignment(task.taskKey)}
-                             className="opacity-0 group-hover:opacity-100 transition-opacity h-3 w-3 p-0 text-amber-600 hover:text-red-500 hover:bg-amber-200 ml-1"
+                    <div className="border-t border-amber-200 pt-4 mt-4">
+                      <div className="flex flex-wrap gap-2">
+                        {assignedTasks.map((task, index) => (
+                          <div
+                             key={index}
+                             className="relative group bg-amber-100/50 rounded-lg px-3 py-1.5 flex items-center gap-2 text-sm animate-fade-in"
                            >
-                             <X className="h-2 w-2" />
-                           </Button>
-                         </div>
-                       ))}
-                     </div>
-                   </div>
+                             <span className="text-sm">{task.emoji}</span>
+                             <span className="font-medium text-amber-800">{task.taskName}</span>
+                             <span className="text-amber-700">@{task.assignee}</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleRemoveAssignment(task.taskKey)}
+                              className="opacity-0 group-hover:opacity-100 transition-opacity h-3 w-3 p-0 text-amber-600 hover:text-red-500 hover:bg-amber-200 ml-1"
+                            >
+                              <X className="h-2 w-2" />
+                            </Button>
+                          </div>
+                        ))}
+                        
+                        {/* Add Custom Task Button */}
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setCustomTaskDialogOpen(true)}
+                          className="rounded-lg px-3 py-1.5 flex items-center gap-2 text-sm border-dashed border-amber-300 text-amber-700 hover:bg-amber-50 hover:border-amber-400"
+                        >
+                          <span className="text-lg">+</span>
+                          <span>自定義任務</span>
+                        </Button>
+                      </div>
+                    </div>
                  )}
                  
                  {/* Complete Assignment & Send Message Button */}
@@ -1166,6 +1204,54 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
         isSelected={selectedTemplate ? selectedTemplates.includes(selectedTemplate.id) : false}
         onToggleSelection={handleModalToggleSelection}
       />
+
+      {/* Custom Task Dialog */}
+      <Dialog open={customTaskDialogOpen} onOpenChange={setCustomTaskDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>新增自定義任務</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium mb-2 block">任務名稱</label>
+              <Input
+                value={customTaskName}
+                onChange={(e) => setCustomTaskName(e.target.value)}
+                placeholder="輸入任務名稱..."
+                className="w-full"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-2 block">指派給</label>
+              <Input
+                value={customTaskAssignee}
+                onChange={(e) => setCustomTaskAssignee(e.target.value)}
+                placeholder="輸入負責人姓名..."
+                className="w-full"
+              />
+            </div>
+            <div className="flex gap-2 justify-end pt-4">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setCustomTaskDialogOpen(false);
+                  setCustomTaskName('');
+                  setCustomTaskAssignee('');
+                }}
+              >
+                取消
+              </Button>
+              <Button
+                onClick={handleAddCustomTask}
+                disabled={!customTaskName.trim() || !customTaskAssignee.trim()}
+                className="bg-amber-600 hover:bg-amber-700"
+              >
+                新增任務
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
