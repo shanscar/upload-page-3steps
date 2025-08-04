@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Copy, Share, Users, Pin, Paperclip, CheckCircle } from "lucide-react";
+import { Copy, Share, Users, Pin, Paperclip, CheckCircle, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { MemoDetailModal } from "./MemoDetailModal";
 
 // Program Templates Data
 const PROGRAM_TEMPLATES = [
@@ -17,7 +18,49 @@ const PROGRAM_TEMPLATES = [
     titleColor: "text-yellow-900",
     textColor: "text-yellow-800",
     focus: "時間索引、文字稿、社媒素材、關鍵字標籤",
-    team: ["📹 剪輯師", "✍️ 時事記者", "🎨 視覺設計", "📱 社媒專員"]
+    team: ["📹 剪輯師", "✍️ 時事記者", "🎨 視覺設計", "📱 社媒專員"],
+    detailedTeam: [
+      {
+        role: "剪輯師",
+        emoji: "📹",
+        tasks: [
+          { task: "建立時間索引標記系統", timeEstimate: "2-3小時", priority: "high" as const },
+          { task: "剪輯新聞重點片段", timeEstimate: "4-5小時", priority: "high" as const },
+          { task: "製作開場和結尾動畫", timeEstimate: "1-2小時", priority: "medium" as const },
+          { task: "音效和背景音樂調整", timeEstimate: "1小時", priority: "low" as const }
+        ]
+      },
+      {
+        role: "時事記者",
+        emoji: "✍️",
+        tasks: [
+          { task: "撰寫完整文字稿", timeEstimate: "3-4小時", priority: "high" as const },
+          { task: "事實查核和資料來源確認", timeEstimate: "2-3小時", priority: "high" as const },
+          { task: "準備相關背景資料", timeEstimate: "1-2小時", priority: "medium" as const },
+          { task: "撰寫社媒推廣文案", timeEstimate: "30分鐘", priority: "low" as const }
+        ]
+      },
+      {
+        role: "視覺設計師",
+        emoji: "🎨",
+        tasks: [
+          { task: "設計新聞圖表和資訊圖", timeEstimate: "2-3小時", priority: "high" as const },
+          { task: "製作縮圖和封面設計", timeEstimate: "1-2小時", priority: "high" as const },
+          { task: "準備視覺素材庫", timeEstimate: "1小時", priority: "medium" as const },
+          { task: "品牌一致性檢查", timeEstimate: "30分鐘", priority: "low" as const }
+        ]
+      },
+      {
+        role: "社媒專員",
+        emoji: "📱",
+        tasks: [
+          { task: "規劃多平台發布策略", timeEstimate: "1小時", priority: "high" as const },
+          { task: "製作關鍵字標籤列表", timeEstimate: "30分鐘", priority: "high" as const },
+          { task: "安排發布時程", timeEstimate: "30分鐘", priority: "medium" as const },
+          { task: "準備回應模板", timeEstimate: "20分鐘", priority: "low" as const }
+        ]
+      }
+    ]
   },
   {
     id: "culture",
@@ -26,7 +69,29 @@ const PROGRAM_TEMPLATES = [
     titleColor: "text-pink-900",
     textColor: "text-pink-800",
     focus: "作品介紹、訪談重點、創作賞析、藝術背景",
-    team: ["🎵 剪輯師", "✍️ 文化記者", "🎨 設計師", "📱 社媒專員"]
+    team: ["🎵 剪輯師", "✍️ 文化記者", "🎨 設計師", "📱 社媒專員"],
+    detailedTeam: [
+      {
+        role: "剪輯師",
+        emoji: "🎵",
+        tasks: [
+          { task: "剪輯訪談精華片段", timeEstimate: "3-4小時", priority: "high" as const },
+          { task: "整合作品展示鏡頭", timeEstimate: "2-3小時", priority: "high" as const },
+          { task: "調色和畫面美化", timeEstimate: "2小時", priority: "medium" as const },
+          { task: "添加藝術作品特寫", timeEstimate: "1小時", priority: "medium" as const }
+        ]
+      },
+      {
+        role: "文化記者",
+        emoji: "✍️",
+        tasks: [
+          { task: "準備專業訪談問題", timeEstimate: "2小時", priority: "high" as const },
+          { task: "研究藝術家背景", timeEstimate: "3小時", priority: "high" as const },
+          { task: "撰寫作品賞析文案", timeEstimate: "2-3小時", priority: "medium" as const },
+          { task: "整理藝術術語解釋", timeEstimate: "1小時", priority: "low" as const }
+        ]
+      }
+    ]
   },
   {
     id: "music",
@@ -107,6 +172,8 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
   const [colleagueEmail, setColleagueEmail] = useState("");
   const [shareMessage, setShareMessage] = useState("");
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<typeof PROGRAM_TEMPLATES[0] | null>(null);
   const { toast } = useToast();
 
   const handleCopyLink = async () => {
@@ -162,6 +229,17 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
 
   const handleClearAll = () => {
     setSelectedTemplates([]);
+  };
+
+  const handleMemoDoubleClick = (template: typeof PROGRAM_TEMPLATES[0]) => {
+    setSelectedTemplate(template);
+    setDetailModalOpen(true);
+  };
+
+  const handleModalToggleSelection = () => {
+    if (selectedTemplate) {
+      handleTemplateToggle(selectedTemplate.id);
+    }
   };
 
   return (
@@ -231,13 +309,18 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
               {/* Memo Card */}
               <Card 
                 className={cn(
-                  "cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg p-4 h-48",
+                  "cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg p-4 h-48 group",
                   rotation,
                   `bg-gradient-to-br ${template.color}`,
                   isSelected && "ring-2 ring-amber-400 shadow-lg scale-105 -rotate-0"
                 )}
                 onClick={() => handleTemplateToggle(template.id)}
+                onDoubleClick={() => handleMemoDoubleClick(template)}
               >
+                {/* Double-click hint */}
+                <div className="absolute top-1 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Eye className="w-3 h-3 text-slate-500" />
+                </div>
                 <div className="h-full flex flex-col">
                   {/* Selection indicator */}
                   {isSelected && (
@@ -281,6 +364,13 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
                         </span>
                       )}
                     </div>
+                  </div>
+                  
+                  {/* Double-click instruction */}
+                  <div className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className={cn("text-xs", template.textColor)}>
+                      雙擊查看詳情
+                    </span>
                   </div>
                 </div>
               </Card>
@@ -355,6 +445,15 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
           完成協作設定 ({selectedTemplates.length} 個範本)
         </Button>
       </div>
+
+      {/* Detail Modal */}
+      <MemoDetailModal
+        isOpen={detailModalOpen}
+        onClose={() => setDetailModalOpen(false)}
+        template={selectedTemplate}
+        isSelected={selectedTemplate ? selectedTemplates.includes(selectedTemplate.id) : false}
+        onToggleSelection={handleModalToggleSelection}
+      />
     </div>
   );
 };
