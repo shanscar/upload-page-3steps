@@ -9,7 +9,13 @@ import { UploadProgress } from "@/components/UploadProgress";
 import { ProgramTypeTemplates } from "@/components/ProgramTypeTemplates";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-type WorkflowState = 'input' | 'analyzing' | 'upload' | 'processing' | 'collaboration';
+type WorkflowState = 
+  | 'talk-input' 
+  | 'talk-analyzing' 
+  | 'talk-metadata-edit'
+  | 'archive-upload'
+  | 'archive-processing' 
+  | 'work-collaboration';
 
 interface AnalysisData {
   location: string;
@@ -19,85 +25,146 @@ interface AnalysisData {
   template: string;
 }
 
+interface TalkState {
+  currentSubState: 'input' | 'analyzing' | 'metadata-edit';
+  lastCompletedSubState: 'input' | 'analyzing' | 'metadata-edit' | null;
+  description: string;
+  analysisData: AnalysisData | null;
+}
+
+interface ArchiveState {
+  uploadedFiles: File[];
+  metadata: any;
+  processingComplete: boolean;
+}
+
+interface WorkState {
+  collaborationStarted: boolean;
+  selectedTemplate: any;
+}
+
 const Index = () => {
-  const [currentState, setCurrentState] = useState<WorkflowState>('input');
-  const [description, setDescription] = useState("");
-  const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null);
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [uploadMetadata, setUploadMetadata] = useState<any>(null);
+  const [currentState, setCurrentState] = useState<WorkflowState>('talk-input');
+  const [talkState, setTalkState] = useState<TalkState>({
+    currentSubState: 'input',
+    lastCompletedSubState: null,
+    description: '',
+    analysisData: null
+  });
+  const [archiveState, setArchiveState] = useState<ArchiveState>({
+    uploadedFiles: [],
+    metadata: null,
+    processingComplete: false
+  });
+  const [workState, setWorkState] = useState<WorkState>({
+    collaborationStarted: false,
+    selectedTemplate: null
+  });
   const isMobile = useIsMobile();
 
   const handleAnalyze = (desc: string) => {
-    setDescription(desc);
-    setCurrentState('analyzing');
+    setTalkState(prev => ({
+      ...prev,
+      description: desc,
+      currentSubState: 'analyzing',
+      lastCompletedSubState: 'input'
+    }));
+    setCurrentState('talk-analyzing');
   };
 
   const handleReanalyze = (desc: string) => {
-    setDescription(desc);
-    // Stay on analyzing state but trigger re-analysis
-    setCurrentState('analyzing');
+    setTalkState(prev => ({
+      ...prev,
+      description: desc,
+      currentSubState: 'analyzing'
+    }));
+    setCurrentState('talk-analyzing');
   };
 
   const handleAnalysisComplete = (data: AnalysisData) => {
-    setAnalysisData(data);
-    setCurrentState('upload');
+    setTalkState(prev => ({
+      ...prev,
+      analysisData: data,
+      currentSubState: 'metadata-edit',
+      lastCompletedSubState: 'metadata-edit'
+    }));
+    setCurrentState('archive-upload');
   };
 
   const handleEditAnalysis = () => {
-    setCurrentState('input');
+    setCurrentState('talk-metadata-edit');
   };
 
   const handleFileUpload = (files: File[], metadata: any) => {
-    setUploadedFiles(files);
-    setUploadMetadata(metadata);
-    setCurrentState('processing');
+    setArchiveState(prev => ({
+      ...prev,
+      uploadedFiles: files,
+      metadata: metadata
+    }));
+    setCurrentState('archive-processing');
   };
 
   const handleProcessingComplete = () => {
-    setCurrentState('collaboration');
+    setArchiveState(prev => ({
+      ...prev,
+      processingComplete: true
+    }));
+    setCurrentState('work-collaboration');
   };
 
   const handleTemplateSelect = (template: any) => {
-    // 完成流程
+    setWorkState(prev => ({
+      ...prev,
+      selectedTemplate: template,
+      collaborationStarted: true
+    }));
     console.log('Template selected:', template);
   };
 
   const handleStepClick = (stepNumber: number) => {
-    // Only allow navigation to completed steps or current step
     if (stepNumber === 1) {
-      setCurrentState('input');
-    } else if (stepNumber === 2 && analysisData) {
-      setCurrentState('upload');
-    } else if (stepNumber === 3 && uploadedFiles.length > 0) {
-      setCurrentState('processing');
+      // Go to the last completed sub-state of talk
+      const lastState = talkState.lastCompletedSubState;
+      if (lastState === 'metadata-edit') {
+        setCurrentState('talk-metadata-edit');
+      } else if (lastState === 'analyzing') {
+        setCurrentState('talk-analyzing');
+      } else {
+        setCurrentState('talk-input');
+      }
+    } else if (stepNumber === 2 && talkState.analysisData) {
+      setCurrentState('archive-upload');
+    } else if (stepNumber === 3 && archiveState.uploadedFiles.length > 0) {
+      setCurrentState('work-collaboration');
     }
   };
 
   const handleArrowClick = (direction: 'next' | 'prev', fromStep: number) => {
     if (direction === 'next') {
-      if (fromStep === 1 && analysisData) {
-        setCurrentState('upload');
-      } else if (fromStep === 2 && uploadedFiles.length > 0) {
-        setCurrentState('processing');
+      if (fromStep === 1 && talkState.analysisData) {
+        setCurrentState('archive-upload');
+      } else if (fromStep === 2 && archiveState.uploadedFiles.length > 0) {
+        setCurrentState('work-collaboration');
       }
     } else if (direction === 'prev') {
       if (fromStep === 2) {
-        setCurrentState('input');
+        setCurrentState('talk-metadata-edit');
       } else if (fromStep === 3) {
-        setCurrentState('upload');
+        setCurrentState('archive-upload');
       }
     }
   };
 
   const getCurrentStep = () => {
     switch (currentState) {
-      case 'input':
-      case 'analyzing':
+      case 'talk-input':
+      case 'talk-analyzing':
+      case 'talk-metadata-edit':
         return 1;
-      case 'upload':
+      case 'archive-upload':
+      case 'archive-processing':
         return 2;
-      case 'processing':
-      case 'collaboration':
+      case 'work-collaboration':
         return 3;
       default:
         return 1;
@@ -108,19 +175,19 @@ const Index = () => {
   const getCompletedSteps = () => {
     const completed = [];
     
-    if (analysisData) {
+    if (talkState.analysisData && talkState.lastCompletedSubState === 'metadata-edit') {
       completed.push({
         step: 1,
-        title: "說說今天拍了什麼",
-        summary: `${analysisData.location} - ${analysisData.type}${analysisData.people ? ` (${analysisData.people.length}人)` : ''}`
+        title: "說話",
+        summary: `${talkState.analysisData.location} - ${talkState.analysisData.type}${talkState.analysisData.people ? ` (${talkState.analysisData.people.length}人)` : ''}`
       });
     }
     
-    if (uploadedFiles.length > 0) {
+    if (archiveState.uploadedFiles.length > 0) {
       completed.push({
         step: 2,
-        title: "放入影片",
-        summary: `${uploadedFiles.length}個檔案已上傳`
+        title: "入檔",
+        summary: `${archiveState.uploadedFiles.length}個檔案已上傳`
       });
     }
     
@@ -130,22 +197,39 @@ const Index = () => {
   // Get current active step content
   const getCurrentStepContent = () => {
     switch (currentState) {
-      case 'input':
-      case 'analyzing':
+      case 'talk-input':
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-semibold text-foreground">說說今天拍了什麼</h2>
-            {currentState === 'input' && (
-              <DescriptionInput 
-                onAnalyze={handleAnalyze}
-                isAnalyzing={false}
-                showExamples={true}
-                showProgressBar={false}
-              />
-            )}
-            {currentState === 'analyzing' && (
+            <DescriptionInput 
+              onAnalyze={handleAnalyze}
+              isAnalyzing={false}
+              showExamples={true}
+              showProgressBar={false}
+            />
+          </div>
+        );
+      
+      case 'talk-analyzing':
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold text-foreground">說說今天拍了什麼</h2>
+            <AnalysisResult
+              description={talkState.description}
+              onConfirm={handleAnalysisComplete}
+              onEdit={handleEditAnalysis}
+              onReanalyze={handleReanalyze}
+            />
+          </div>
+        );
+      
+      case 'talk-metadata-edit':
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold text-foreground">編輯詳細資料</h2>
+            {talkState.analysisData && (
               <AnalysisResult
-                description={description}
+                description={talkState.description}
                 onConfirm={handleAnalysisComplete}
                 onEdit={handleEditAnalysis}
                 onReanalyze={handleReanalyze}
@@ -154,35 +238,35 @@ const Index = () => {
           </div>
         );
       
-      case 'upload':
+      case 'archive-upload':
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-semibold text-foreground">放入影片</h2>
-            {analysisData && (
+            <h2 className="text-2xl font-semibold text-foreground">入檔</h2>
+            {talkState.analysisData && (
               <FileUpload
-                expectedFileType={analysisData.template}
+                expectedFileType={talkState.analysisData.template}
                 onUpload={handleFileUpload}
               />
             )}
           </div>
         );
       
-      case 'processing':
+      case 'archive-processing':
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-semibold text-foreground">處理中</h2>
-            {analysisData && (
+            {talkState.analysisData && (
               <UploadProgress
-                files={uploadedFiles}
-                metadata={uploadMetadata}
-                analysisData={analysisData}
+                files={archiveState.uploadedFiles}
+                metadata={archiveState.metadata}
+                analysisData={talkState.analysisData}
                 onComplete={handleProcessingComplete}
               />
             )}
           </div>
         );
       
-      case 'collaboration':
+      case 'work-collaboration':
         return (
           <div className="space-y-6">
             <div className="text-center space-y-6">

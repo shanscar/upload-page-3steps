@@ -22,12 +22,19 @@ export const CompactStepSummary = ({
 }: CompactStepSummaryProps) => {
   if (!isCompleted) return null;
 
+  const handleCardClick = () => {
+    onEdit();
+  };
+
   return (
-    <Card className={cn(
-      "p-3 border transition-all duration-300 hover:shadow-medium cursor-pointer",
-      "border-completed/30 bg-completed/5 hover:bg-completed/10",
-      className
-    )}>
+    <Card 
+      onClick={handleCardClick}
+      className={cn(
+        "p-3 border transition-all duration-300 hover:shadow-medium cursor-pointer",
+        "border-completed/30 bg-completed/5 hover:bg-completed/10",
+        className
+      )}
+    >
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0 flex-1">
           <div className="w-6 h-6 rounded-full bg-completed text-completed-foreground text-xs font-bold flex items-center justify-center flex-shrink-0">
