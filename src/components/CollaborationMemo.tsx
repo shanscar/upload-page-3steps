@@ -482,16 +482,31 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
 
   const handleCopyLink = async () => {
     const projectUrl = window.location.href;
+    
+    // Create WhatsApp-style message with assignments
+    let message = `📋 工作協作備忘錄\n${projectUrl}\n\n`;
+    
+    if (assignedTasks.length > 0) {
+      message += "✅ 已指派任務：\n";
+      assignedTasks.forEach((task, index) => {
+        message += `${index + 1}. ${task.emoji} ${task.taskName}\n   👤 @${task.assignee}\n\n`;
+      });
+    } else {
+      message += "📝 尚未指派任務\n\n";
+    }
+    
+    message += `📅 ${new Date().toLocaleDateString("zh-TW")}`;
+    
     try {
-      await navigator.clipboard.writeText(projectUrl);
+      await navigator.clipboard.writeText(message);
       toast({
-        title: "連結已複製",
-        description: "項目連結已複製到剪貼板",
+        title: "協作內容已複製",
+        description: "包含連結和任務指派的完整內容已複製到剪貼板",
       });
     } catch (err) {
       toast({
         title: "複製失敗",
-        description: "無法複製連結，請手動複製",
+        description: "無法複製內容，請手動複製",
         variant: "destructive",
       });
     }
