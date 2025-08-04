@@ -36,6 +36,7 @@ interface ArchiveState {
   uploadedFiles: File[];
   metadata: any;
   processingComplete: boolean;
+  lastCompletedSubState: 'upload' | 'processing' | null;
 }
 
 interface WorkState {
@@ -54,7 +55,8 @@ const Index = () => {
   const [archiveState, setArchiveState] = useState<ArchiveState>({
     uploadedFiles: [],
     metadata: null,
-    processingComplete: false
+    processingComplete: false,
+    lastCompletedSubState: null
   });
   const [workState, setWorkState] = useState<WorkState>({
     collaborationStarted: false,
@@ -99,7 +101,8 @@ const Index = () => {
     setArchiveState(prev => ({
       ...prev,
       uploadedFiles: files,
-      metadata: metadata
+      metadata: metadata,
+      lastCompletedSubState: 'upload'
     }));
     setCurrentState('archive-processing');
   };
@@ -107,7 +110,8 @@ const Index = () => {
   const handleProcessingComplete = () => {
     setArchiveState(prev => ({
       ...prev,
-      processingComplete: true
+      processingComplete: true,
+      lastCompletedSubState: 'processing'
     }));
     setCurrentState('work-collaboration');
   };
@@ -133,7 +137,13 @@ const Index = () => {
         setCurrentState('talk-input');
       }
     } else if (stepNumber === 2 && talkState.analysisData) {
-      setCurrentState('archive-upload');
+      // Go to the last completed sub-state of archive
+      const lastState = archiveState.lastCompletedSubState;
+      if (lastState === 'processing') {
+        setCurrentState('archive-processing');
+      } else {
+        setCurrentState('archive-upload');
+      }
     } else if (stepNumber === 3 && archiveState.uploadedFiles.length > 0) {
       setCurrentState('work-collaboration');
     }
@@ -183,11 +193,11 @@ const Index = () => {
       });
     }
     
-    if (archiveState.uploadedFiles.length > 0) {
+    if (archiveState.processingComplete && archiveState.lastCompletedSubState === 'processing') {
       completed.push({
         step: 2,
         title: "入檔",
-        summary: `${archiveState.uploadedFiles.length}個檔案已上傳`
+        summary: `${archiveState.uploadedFiles.length}個檔案已處理完成`
       });
     }
     
