@@ -4,12 +4,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Copy, Pin, Paperclip, CheckCircle } from "lucide-react";
+import { Copy, Pin, Paperclip, CheckCircle, Users, UserPlus, X, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { MemoDetailModal } from "./MemoDetailModal";
 
-// Program Templates Data
+// Team member suggestions with roles
+const TEAM_MEMBERS = [
+  { id: '@張剪輯', name: '張剪輯', role: '剪輯師', emoji: '🎬' },
+  { id: '@李記者', name: '李記者', role: '記者', emoji: '📰' },
+  { id: '@王設計', name: '王設計', role: '設計師', emoji: '🎨' },
+  { id: '@陳社媒', name: '陳社媒', role: '社媒專員', emoji: '📱' },
+  { id: '@林文化', name: '林文化', role: '文化記者', emoji: '🎭' },
+  { id: '@黃音樂', name: '黃音樂', role: '音樂記者', emoji: '🎵' },
+  { id: '@趙旅遊', name: '趙旅遊', role: '旅遊記者', emoji: '✈️' },
+  { id: '@吳生活', name: '吳生活', role: '生活記者', emoji: '🏡' }
+];
+
+// Program Templates Data - keeping existing structure
 const PROGRAM_TEMPLATES = [
   {
     id: '1',
@@ -44,24 +56,6 @@ const PROGRAM_TEMPLATES = [
           { task: '事實核查', timeEstimate: '1.5小時', priority: 'high' as const },
           { task: '背景資料整理', timeEstimate: '1小時', priority: 'medium' as const }
         ]
-      },
-      {
-        role: '🎨 視覺設計',
-        emoji: '🖼️',
-        tasks: [
-          { task: '政策對比圖', timeEstimate: '1.5小時', priority: 'medium' as const },
-          { task: '時事資訊卡', timeEstimate: '1小時', priority: 'medium' as const },
-          { task: '數據圖表設計', timeEstimate: '2小時', priority: 'low' as const }
-        ]
-      },
-      {
-        role: '📱 社媒專員',
-        emoji: '📲',
-        tasks: [
-          { task: '網上話題包裝', timeEstimate: '1小時', priority: 'high' as const },
-          { task: '焦點推廣', timeEstimate: '30分鐘', priority: 'medium' as const },
-          { task: '輿論監測', timeEstimate: '持續進行', priority: 'medium' as const }
-        ]
       }
     ]
   },
@@ -86,8 +80,7 @@ const PROGRAM_TEMPLATES = [
         emoji: '✂️',
         tasks: [
           { task: '重點訪談剪輯', timeEstimate: '2-3小時', priority: 'high' as const },
-          { task: '創作片段編輯', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '背景音樂配置', timeEstimate: '45分鐘', priority: 'low' as const }
+          { task: '創作片段編輯', timeEstimate: '1.5小時', priority: 'high' as const }
         ]
       },
       {
@@ -95,355 +88,17 @@ const PROGRAM_TEMPLATES = [
         emoji: '🎭',
         tasks: [
           { task: '背景分析', timeEstimate: '2小時', priority: 'high' as const },
-          { task: '深度整理', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '文化脈絡研究', timeEstimate: '1小時', priority: 'medium' as const }
-        ]
-      },
-      {
-        role: '🎨 設計師',
-        emoji: '🖌️',
-        tasks: [
-          { task: '藝術宣傳圖', timeEstimate: '2小時', priority: 'medium' as const },
-          { task: '故事圖像化', timeEstimate: '1.5小時', priority: 'medium' as const },
-          { task: '作品展示設計', timeEstimate: '1小時', priority: 'low' as const }
-        ]
-      },
-      {
-        role: '📱 社媒專員',
-        emoji: '🌟',
-        tasks: [
-          { task: '深度人物推廣', timeEstimate: '1小時', priority: 'high' as const },
-          { task: '專訪精華分享', timeEstimate: '45分鐘', priority: 'medium' as const },
-          { task: '藝術社群互動', timeEstimate: '持續進行', priority: 'medium' as const }
-        ]
-      }
-    ]
-  },
-  {
-    id: '3',
-    title: '🎵 音樂娛樂／流行榜類',
-    color: 'from-pink-100 to-pink-200',
-    titleColor: 'text-pink-800',
-    textColor: 'text-pink-700',
-    examples: ['中文歌曲龍虎榜', 'Made in Hong Kong', '輕談淺唱不夜天'],
-    focus: '音樂趨勢分析、榜單內容製作、歌手互動展示',
-    processingAreas: [
-      { icon: '⏰', label: '時間索引', content: '音樂播放環節、榜單介紹、歌手互動' },
-      { icon: '📝', label: '文字稿', content: '歌曲創作背景、歌手語錄、音樂趨勢' },
-      { icon: '📱', label: '社媒素材', content: 'MV短片、音樂榜單視覺化、流行精選剪輯' },
-      { icon: '🔍', label: '關鍵字標籤', content: '歌手名稱、歌曲標題、流行音樂類型' }
-    ],
-    team: ['剪輯師', '音樂記者', '設計師', '社媒專員'],
-    detailedTeam: [
-      {
-        role: '🎵 剪輯師',
-        emoji: '🎧',
-        tasks: [
-          { task: '熱門片段剪輯', timeEstimate: '2小時', priority: 'high' as const },
-          { task: 'Live演出編輯', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '音效後製', timeEstimate: '1小時', priority: 'medium' as const }
-        ]
-      },
-      {
-        role: '✍️ 音樂記者',
-        emoji: '🎤',
-        tasks: [
-          { task: '流行分析', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '新碟資料整理', timeEstimate: '1小時', priority: 'medium' as const },
-          { task: '音樂趨勢研究', timeEstimate: '45分鐘', priority: 'medium' as const }
-        ]
-      },
-      {
-        role: '🎨 設計師',
-        emoji: '🎨',
-        tasks: [
-          { task: '榜單圖像設計', timeEstimate: '2小時', priority: 'medium' as const },
-          { task: '藝人宣傳設計', timeEstimate: '1.5小時', priority: 'medium' as const },
-          { task: 'MV視覺包裝', timeEstimate: '1小時', priority: 'low' as const }
-        ]
-      },
-      {
-        role: '📱 社媒專員',
-        emoji: '🎶',
-        tasks: [
-          { task: '音樂精華推廣', timeEstimate: '45分鐘', priority: 'high' as const },
-          { task: '榜單內容分享', timeEstimate: '30分鐘', priority: 'medium' as const },
-          { task: '粉絲互動管理', timeEstimate: '持續進行', priority: 'medium' as const }
-        ]
-      }
-    ]
-  },
-  {
-    id: '4',
-    title: '🏡 生活資訊／服務類',
-    color: 'from-green-100 to-green-200',
-    titleColor: 'text-green-800',
-    textColor: 'text-green-700',
-    examples: ['精靈一點', '長者健康之道', '投資新世代'],
-    focus: '實用生活建議、專家指導、聽眾服務資訊',
-    processingAreas: [
-      { icon: '⏰', label: '時間索引', content: '專家貼士、實用建議、聽眾參與段落' },
-      { icon: '📝', label: '文字稿', content: '重點資訊、建議要點、生活數據摘要' },
-      { icon: '📱', label: '社媒素材', content: '健康貼士圖表、理財資訊卡' },
-      { icon: '🔍', label: '關鍵字標籤', content: '生活主題、專家姓名、知識分類' }
-    ],
-    team: ['剪輯師', '生活記者', '設計師', '社媒專員'],
-    detailedTeam: [
-      {
-        role: '🎵 剪輯師',
-        emoji: '📹',
-        tasks: [
-          { task: '貼士剪輯', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '實用段落編輯', timeEstimate: '1小時', priority: 'medium' as const },
-          { task: '專家訪談剪輯', timeEstimate: '1小時', priority: 'medium' as const }
-        ]
-      },
-      {
-        role: '✍️ 生活記者',
-        emoji: '📋',
-        tasks: [
-          { task: '指引內容整理', timeEstimate: '2小時', priority: 'high' as const },
-          { task: '知識整理', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '專家資料核實', timeEstimate: '45分鐘', priority: 'medium' as const }
-        ]
-      },
-      {
-        role: '🎨 設計師',
-        emoji: '💡',
-        tasks: [
-          { task: '資訊圖卡設計', timeEstimate: '2小時', priority: 'medium' as const },
-          { task: '健康視覺設計', timeEstimate: '1.5小時', priority: 'medium' as const },
-          { task: '數據圖表製作', timeEstimate: '1小時', priority: 'low' as const }
-        ]
-      },
-      {
-        role: '📱 社媒專員',
-        emoji: '🔔',
-        tasks: [
-          { task: '生活建議推廣', timeEstimate: '45分鐘', priority: 'high' as const },
-          { task: '資訊重點包裝', timeEstimate: '30分鐘', priority: 'medium' as const },
-          { task: '用戶諮詢回應', timeEstimate: '持續進行', priority: 'medium' as const }
-        ]
-      }
-    ]
-  },
-  {
-    id: '5',
-    title: '🌏 旅遊／國際視野類',
-    color: 'from-cyan-100 to-cyan-200',
-    titleColor: 'text-cyan-800',
-    textColor: 'text-cyan-700',
-    examples: ['旅遊樂園', '我要走天涯', 'The Pulse', 'Backchat'],
-    focus: '旅遊體驗分享、國際視野拓展、文化交流探討',
-    processingAreas: [
-      { icon: '⏰', label: '時間索引', content: '目的地介紹、旅遊體驗、國際觀察段落' },
-      { icon: '📝', label: '文字稿', content: '旅遊感受、全球趨勢、異地故事' },
-      { icon: '📱', label: '社媒素材', content: '旅遊精華短片、世界地圖圖示、景點推介' },
-      { icon: '🔍', label: '關鍵字標籤', content: '旅遊地點、國家名稱、國際議題' }
-    ],
-    team: ['剪輯師', '旅遊記者', '設計師', '社媒專員'],
-    detailedTeam: [
-      {
-        role: '🎵 剪輯師',
-        emoji: '🌍',
-        tasks: [
-          { task: '遊歷故事剪輯', timeEstimate: '2小時', priority: 'high' as const },
-          { task: '旅遊片段編輯', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '景點介紹製作', timeEstimate: '1小時', priority: 'medium' as const }
-        ]
-      },
-      {
-        role: '✍️ 旅遊／國際記者',
-        emoji: '✈️',
-        tasks: [
-          { task: '異地分析', timeEstimate: '2小時', priority: 'high' as const },
-          { task: '文化觀察', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '旅遊資訊整理', timeEstimate: '1小時', priority: 'medium' as const }
-        ]
-      },
-      {
-        role: '🎨 設計師',
-        emoji: '🗺️',
-        tasks: [
-          { task: '地圖設計', timeEstimate: '2小時', priority: 'medium' as const },
-          { task: '景點圖片處理', timeEstimate: '1.5小時', priority: 'medium' as const },
-          { task: '旅遊視覺包裝', timeEstimate: '1小時', priority: 'low' as const }
-        ]
-      },
-      {
-        role: '📱 社媒專員',
-        emoji: '🏖️',
-        tasks: [
-          { task: '國際內容分享', timeEstimate: '45分鐘', priority: 'high' as const },
-          { task: '旅遊推廣', timeEstimate: '30分鐘', priority: 'medium' as const },
-          { task: '旅友互動管理', timeEstimate: '持續進行', priority: 'medium' as const }
-        ]
-      }
-    ]
-  },
-  {
-    id: '6',
-    title: '🎭 戲曲／傳統文化類',
-    color: 'from-amber-100 to-amber-200',
-    titleColor: 'text-amber-800',
-    textColor: 'text-amber-700',
-    examples: ['戲曲之夜', '粵曲天地', '晚間粵曲'],
-    focus: '傳統文化傳承、戲曲藝術推廣、文化教育普及',
-    processingAreas: [
-      { icon: '⏰', label: '時間索引', content: '經典演出、藝人介紹、曲藝故事' },
-      { icon: '📝', label: '文字稿', content: '曲目背景、戲曲名句、文化傳承' },
-      { icon: '📱', label: '社媒素材', content: '經典片段、曲藝知識、藝人故事' },
-      { icon: '🔍', label: '關鍵字標籤', content: '曲目名稱、戲曲流派、傳統文化' }
-    ],
-    team: ['剪輯師', '文化記者', '設計師', '社媒專員'],
-    detailedTeam: [
-      {
-        role: '🎵 剪輯師',
-        emoji: '🎬',
-        tasks: [
-          { task: '戲曲片段剪輯', timeEstimate: '2.5小時', priority: 'high' as const },
-          { task: '名段精華製作', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '背景音樂處理', timeEstimate: '45分鐘', priority: 'medium' as const }
-        ]
-      },
-      {
-        role: '✍️ 文化記者',
-        emoji: '📜',
-        tasks: [
-          { task: '曲藝介紹撰寫', timeEstimate: '2小時', priority: 'high' as const },
-          { task: '藝人資料整理', timeEstimate: '1.5小時', priority: 'medium' as const },
-          { task: '文化背景研究', timeEstimate: '1小時', priority: 'medium' as const }
-        ]
-      },
-      {
-        role: '🎨 設計師',
-        emoji: '🎨',
-        tasks: [
-          { task: '戲曲主題視覺', timeEstimate: '2小時', priority: 'medium' as const },
-          { task: '文化推廣圖設計', timeEstimate: '1.5小時', priority: 'medium' as const },
-          { task: '傳統元素包裝', timeEstimate: '1小時', priority: 'low' as const }
-        ]
-      },
-      {
-        role: '📱 社媒專員',
-        emoji: '🏮',
-        tasks: [
-          { task: '戲曲推介', timeEstimate: '45分鐘', priority: 'high' as const },
-          { task: '歷史故事散播', timeEstimate: '30分鐘', priority: 'medium' as const },
-          { task: '文化社群維護', timeEstimate: '持續進行', priority: 'medium' as const }
-        ]
-      }
-    ]
-  },
-  {
-    id: '7',
-    title: '🎲 互動娛樂／遊戲類',
-    color: 'from-orange-100 to-orange-200',
-    titleColor: 'text-orange-800',
-    textColor: 'text-orange-700',
-    examples: ['鬥秀場', '守下留情', '三五成群'],
-    focus: '互動遊戲設計、娛樂內容製作、聽眾參與活動',
-    processingAreas: [
-      { icon: '⏰', label: '時間索引', content: '開場、遊戲環節、互動討論' },
-      { icon: '📝', label: '文字稿', content: '互動對話、遊戲規則、聽眾反應' },
-      { icon: '📱', label: '社媒素材', content: '趣味短片、互動精華、遊戲花絮' },
-      { icon: '🔍', label: '關鍵字標籤', content: '節目主題、遊戲名稱、娛樂類型' }
-    ],
-    team: ['剪輯師', '娛樂記者', '設計師', '社媒專員'],
-    detailedTeam: [
-      {
-        role: '🎵 剪輯師',
-        emoji: '🎮',
-        tasks: [
-          { task: '趣味段落剪輯', timeEstimate: '2小時', priority: 'high' as const },
-          { task: '互動精華製作', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '搞笑時刻集錦', timeEstimate: '1小時', priority: 'medium' as const }
-        ]
-      },
-      {
-        role: '✍️ 娛樂記者',
-        emoji: '🎪',
-        tasks: [
-          { task: '有趣內容整理', timeEstimate: '1.5小時', priority: 'high' as const },
-          { task: '遊戲規則說明', timeEstimate: '1小時', priority: 'medium' as const },
-          { task: '娛樂趨勢分析', timeEstimate: '45分鐘', priority: 'low' as const }
-        ]
-      },
-      {
-        role: '🎨 設計師',
-        emoji: '🎨',
-        tasks: [
-          { task: '遊戲視覺設計', timeEstimate: '2小時', priority: 'medium' as const },
-          { task: '趣味圖卡製作', timeEstimate: '1.5小時', priority: 'medium' as const },
-          { task: '互動元素設計', timeEstimate: '1小時', priority: 'low' as const }
-        ]
-      },
-      {
-        role: '📱 社媒專員',
-        emoji: '🎉',
-        tasks: [
-          { task: '娛樂推廣', timeEstimate: '45分鐘', priority: 'high' as const },
-          { task: '爆笑短片製作', timeEstimate: '30分鐘', priority: 'medium' as const },
-          { task: '遊戲互動管理', timeEstimate: '持續進行', priority: 'medium' as const }
-        ]
-      }
-    ]
-  },
-  {
-    id: '8',
-    title: '📚 專題／紀實／教育類',
-    color: 'from-indigo-100 to-indigo-200',
-    titleColor: 'text-indigo-800',
-    textColor: 'text-indigo-700',
-    examples: ['香港故事', '獅子山下', 'CIBS社區計劃'],
-    focus: '深度專題製作、紀實報導、教育內容傳播',
-    processingAreas: [
-      { icon: '⏰', label: '時間索引', content: '故事開端、人物描寫、重要事件' },
-      { icon: '📝', label: '文字稿', content: '真實故事、教育信息、深度分析' },
-      { icon: '📱', label: '社媒素材', content: '紀實剪輯、人物片段、教育展示' },
-      { icon: '🔍', label: '關鍵字標籤', content: '主角名稱、社會事件、教育主題' }
-    ],
-    team: ['剪輯師', '專題記者', '設計師', '社媒專員'],
-    detailedTeam: [
-      {
-        role: '🎵 剪輯師',
-        emoji: '📽️',
-        tasks: [
-          { task: '故事精華剪輯', timeEstimate: '3小時', priority: 'high' as const },
-          { task: '人物訪談編輯', timeEstimate: '2小時', priority: 'high' as const },
-          { task: '紀實場景製作', timeEstimate: '1.5小時', priority: 'medium' as const }
-        ]
-      },
-      {
-        role: '✍️ 專題記者',
-        emoji: '🔍',
-        tasks: [
-          { task: '深度分析撰寫', timeEstimate: '3小時', priority: 'high' as const },
-          { task: '內容梳理', timeEstimate: '2小時', priority: 'high' as const },
-          { task: '事實查證', timeEstimate: '1小時', priority: 'medium' as const }
-        ]
-      },
-      {
-        role: '🎨 設計師',
-        emoji: '📊',
-        tasks: [
-          { task: '紀實圖像設計', timeEstimate: '2小時', priority: 'medium' as const },
-          { task: '教育圖卡製作', timeEstimate: '1.5小時', priority: 'medium' as const },
-          { task: '專題視覺包裝', timeEstimate: '1小時', priority: 'low' as const }
-        ]
-      },
-      {
-        role: '📱 社媒專員',
-        emoji: '📖',
-        tasks: [
-          { task: '故事推廣', timeEstimate: '1小時', priority: 'high' as const },
-          { task: '教育資源分享', timeEstimate: '45分鐘', priority: 'medium' as const },
-          { task: '社會議題討論', timeEstimate: '持續進行', priority: 'medium' as const }
+          { task: '深度整理', timeEstimate: '1.5小時', priority: 'high' as const }
         ]
       }
     ]
   }
 ];
+
+interface TaskAssignment {
+  taskId: string;
+  assignedTo: string[];
+}
 
 interface CollaborationMemoProps {
   analysisData?: {
@@ -468,25 +123,55 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<typeof PROGRAM_TEMPLATES[0] | null>(null);
+  const [taskAssignments, setTaskAssignments] = useState<TaskAssignment[]>([]);
+  const [showAssignInput, setShowAssignInput] = useState<string | null>(null);
+  const [assignInput, setAssignInput] = useState('');
   const { toast } = useToast();
 
-  const handleCopyLink = async () => {
-    const projectUrl = window.location.href;
+  const handleCopyMessage = async () => {
+    const selectedTemplateNames = selectedTemplates.map(id => 
+      PROGRAM_TEMPLATES.find(t => t.id === id)?.title
+    ).filter(Boolean);
+
+    const followUpTasks = getFollowUpTasks();
+    
+    // Format message with assignments
+    let message = `📋 工作協作備忘錄 (${new Date().toLocaleDateString('zh-TW')})\n\n`;
+    message += `已選範本：${selectedTemplateNames.join('、')}\n\n`;
+    message += `🎯 跟進事項：\n`;
+    
+    followUpTasks.forEach((task, index) => {
+      const assignment = taskAssignments.find(a => a.taskId === task.id);
+      const assignedText = assignment && assignment.assignedTo.length > 0 
+        ? ` (${assignment.assignedTo.join(' ')})` 
+        : '';
+      message += `${index + 1}. ${task.task}${assignedText}\n`;
+    });
+
+    // Add team assignment summary
+    const allAssignedMembers = new Set<string>();
+    taskAssignments.forEach(assignment => {
+      assignment.assignedTo.forEach(member => allAssignedMembers.add(member));
+    });
+    
+    if (allAssignedMembers.size > 0) {
+      message += `\n👥 協作成員：${Array.from(allAssignedMembers).join(' ')}\n`;
+    }
+
     try {
-      await navigator.clipboard.writeText(projectUrl);
+      await navigator.clipboard.writeText(message);
       toast({
-        title: "連結已複製",
-        description: "項目連結已複製到剪貼板",
+        title: "訊息已複製",
+        description: "協作備忘錄已複製到剪貼板，包含所有指派信息",
       });
     } catch (err) {
       toast({
         title: "複製失敗",
-        description: "無法複製連結，請手動複製",
+        description: "無法複製訊息，請手動複製",
         variant: "destructive",
       });
     }
   };
-
 
   const handleTemplateToggle = (templateId: string) => {
     setSelectedTemplates(prev => 
@@ -495,7 +180,6 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
         : [...prev, templateId]
     );
   };
-
 
   const handleMemoDoubleClick = (template: typeof PROGRAM_TEMPLATES[0]) => {
     setSelectedTemplate(template);
@@ -508,22 +192,23 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
     }
   };
 
-  const handleResetSelection = () => {
-    setSelectedTemplates([]);
-  };
-
-  // Extract follow-up tasks from selected templates
+  // Extract follow-up tasks from selected templates with unique IDs
   const getFollowUpTasks = () => {
-    const allTasks: string[] = [];
+    const allTasks: Array<{id: string, task: string, priority: string, timeEstimate: string, templateId: string}> = [];
     
     selectedTemplates.forEach(templateId => {
       const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
       if (template?.detailedTeam) {
         template.detailedTeam.forEach(teamMember => {
-          teamMember.tasks.forEach(task => {
-            if (!allTasks.includes(task.task)) {
-              allTasks.push(task.task);
-            }
+          teamMember.tasks.forEach((task, taskIndex) => {
+            const taskId = `${templateId}-${teamMember.role}-${taskIndex}`;
+            allTasks.push({
+              id: taskId,
+              task: task.task,
+              priority: task.priority,
+              timeEstimate: task.timeEstimate,
+              templateId
+            });
           });
         });
       }
@@ -532,35 +217,89 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
     return allTasks;
   };
 
+  const handleAssignTask = (taskId: string) => {
+    setShowAssignInput(taskId);
+    setAssignInput('');
+  };
+
+  const handleConfirmAssignment = (taskId: string) => {
+    if (!assignInput.trim()) return;
+    
+    // Parse @ mentions
+    const mentions = assignInput.match(/@\w+/g) || [];
+    const validMentions = mentions.filter(mention => 
+      TEAM_MEMBERS.some(member => member.id === mention)
+    );
+
+    if (validMentions.length > 0) {
+      setTaskAssignments(prev => {
+        const existing = prev.find(a => a.taskId === taskId);
+        if (existing) {
+          return prev.map(a => 
+            a.taskId === taskId 
+              ? { ...a, assignedTo: [...new Set([...a.assignedTo, ...validMentions])] }
+              : a
+          );
+        } else {
+          return [...prev, { taskId, assignedTo: validMentions }];
+        }
+      });
+    }
+
+    setShowAssignInput(null);
+    setAssignInput('');
+  };
+
+  const handleRemoveAssignment = (taskId: string, memberToRemove: string) => {
+    setTaskAssignments(prev => 
+      prev.map(a => 
+        a.taskId === taskId 
+          ? { ...a, assignedTo: a.assignedTo.filter(m => m !== memberToRemove) }
+          : a
+      ).filter(a => a.assignedTo.length > 0)
+    );
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high': return 'text-red-600 bg-red-50 border-red-200';
+      case 'medium': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+      case 'low': return 'text-green-600 bg-green-50 border-green-200';
+      default: return 'text-gray-600 bg-gray-50 border-gray-200';
+    }
+  };
+
   const selectedTemplateNames = selectedTemplates.map(id => 
     PROGRAM_TEMPLATES.find(t => t.id === id)?.title
   ).filter(Boolean);
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      {selectedTemplates.length === 0 ? (
-        // Template Selection Mode
-        <>
-          {/* Memo Header with Collaboration */}
-          <div className="relative mb-8">
+    <div className="max-w-7xl mx-auto p-6">
+      {/* Integrated Layout - Two Column */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* Left Column - Template Selection */}
+        <div className="lg:col-span-2">
+          {/* Memo Header */}
+          <div className="relative mb-6">
             <Pin className="absolute -top-3 -right-3 text-slate-400 transform rotate-45 w-8 h-8 z-10" />
             <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-amber-200 shadow-lg">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <Paperclip className="w-6 h-6 text-amber-600 transform -rotate-12" />
-                    <h1 className="text-3xl font-bold text-amber-900 font-handwriting">
+                    <h1 className="text-2xl font-bold text-amber-900 font-handwriting">
                       工作協作備忘錄
                     </h1>
                   </div>
                   
-                  {/* Collaboration Section - Integrated into header */}
                   <div className="flex items-center gap-3">
                     <Button 
-                      onClick={handleCopyLink}
+                      onClick={handleCopyMessage}
                       variant="outline" 
                       size="sm"
                       className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
+                      disabled={selectedTemplates.length === 0}
                     >
                       <Copy className="w-4 h-4 mr-1" />
                       複製訊息
@@ -579,24 +318,22 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
             </Card>
           </div>
 
-          {/* Process Options - Memo Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+          {/* Template Selection Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             {PROGRAM_TEMPLATES.map((template, index) => {
               const isSelected = selectedTemplates.includes(template.id);
               const rotation = index % 2 === 0 ? 'rotate-1' : '-rotate-1';
               
               return (
                 <div key={template.id} className="relative">
-                  {/* Pin for each memo */}
                   <Pin className={cn(
                     "absolute -top-2 -right-1 w-5 h-5 transform rotate-45 z-10",
                     isSelected ? "text-red-500" : "text-slate-400"
                   )} />
                   
-                  {/* Memo Card */}
                   <Card 
                     className={cn(
-                      "cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg p-4 h-48 group relative overflow-hidden",
+                      "cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg p-4 h-32 group relative overflow-hidden",
                       rotation,
                       `bg-gradient-to-br ${template.color}`,
                       isSelected && "ring-2 ring-amber-400 shadow-lg scale-105 -rotate-0"
@@ -604,16 +341,13 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
                     onClick={() => handleTemplateToggle(template.id)}
                     onDoubleClick={() => handleMemoDoubleClick(template)}
                   >
-
                     <div className="h-full flex flex-col">
-                      {/* Selection indicator */}
                       {isSelected && (
                         <div className="absolute top-2 left-2 z-10">
                           <CheckCircle className="w-5 h-5 text-green-600 bg-white rounded-full" />
                         </div>
                       )}
                       
-                      {/* Title */}
                       <h3 className={cn(
                         "text-sm font-bold font-handwriting mb-2 leading-tight",
                         template.titleColor
@@ -621,33 +355,10 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
                         {template.title}
                       </h3>
                       
-                      {/* Focus areas */}
                       <div className="flex-1">
-                        <p className={cn("text-xs font-medium mb-1", template.textColor)}>
-                          重點處理：
-                        </p>
-                        <p className={cn("text-xs leading-tight mb-2", template.textColor)}>
+                        <p className={cn("text-xs leading-tight", template.textColor)}>
                           {template.focus}
                         </p>
-                      </div>
-                      
-                      {/* Team */}
-                      <div>
-                        <p className={cn("text-xs font-medium mb-1", template.textColor)}>
-                          建議分工：
-                        </p>
-                        <div className="flex flex-wrap gap-1">
-                          {template.team.slice(0, 2).map((member, idx) => (
-                            <span key={idx} className={cn("text-xs", template.textColor)}>
-                              {member.split(' ')[0]}
-                            </span>
-                          ))}
-                          {template.team.length > 2 && (
-                            <span className={cn("text-xs", template.textColor)}>
-                              +{template.team.length - 2}
-                            </span>
-                          )}
-                        </div>
                       </div>
                     </div>
                   </Card>
@@ -655,85 +366,158 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
               );
             })}
           </div>
-        </>
-      ) : (
-        // Follow-up Items Mode
-        <>
-          {/* Simplified Memo Header */}
-          <div className="relative mb-8">
-            <Pin className="absolute -top-3 -right-3 text-slate-400 transform rotate-45 w-8 h-8 z-10" />
-            <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-amber-200 shadow-lg">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <Paperclip className="w-6 h-6 text-amber-600 transform -rotate-12" />
-                    <h1 className="text-3xl font-bold text-amber-900 font-handwriting">
-                      工作協作備忘錄
-                    </h1>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Button 
-                      onClick={handleResetSelection}
-                      variant="outline"
-                      size="sm"
-                      className="bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200"
-                    >
-                      重新選擇範本
-                    </Button>
-                    <div className="text-sm text-amber-700 font-mono bg-amber-100 px-3 py-1 rounded">
-                      {new Date().toLocaleDateString('zh-TW')}
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Selected Templates Summary */}
-                <div className="mb-4">
-                  <p className="text-amber-800 text-sm font-medium mb-2">已選範本：</p>
-                  <div className="flex flex-wrap gap-2">
+        </div>
+
+        {/* Right Column - Follow-up Tasks & Assignments */}
+        <div className="lg:col-span-1">
+          {selectedTemplates.length > 0 && (
+            <>
+              {/* Selected Templates Summary */}
+              <Card className="mb-6 bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200">
+                <div className="p-4">
+                  <h3 className="text-lg font-bold text-blue-900 mb-3">
+                    📋 已選範本
+                  </h3>
+                  <div className="space-y-2">
                     {selectedTemplateNames.map((name, index) => (
-                      <Badge key={index} variant="secondary" className="bg-amber-100 text-amber-800">
+                      <Badge key={index} variant="secondary" className="bg-blue-100 text-blue-800 text-xs">
                         {name}
                       </Badge>
                     ))}
                   </div>
                 </div>
-              </div>
-            </Card>
-          </div>
+              </Card>
 
-          {/* Follow-up Items */}
-          <Card className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 shadow-lg mb-8">
-            <div className="p-6">
-              <h3 className="text-xl font-bold text-green-900 font-handwriting mb-4">
-                📋 跟進事項
-              </h3>
-              
-              <div className="space-y-3">
-                {getFollowUpTasks().map((task, index) => (
-                  <div key={index} className="flex items-start gap-3 p-3 bg-white rounded-lg border border-green-200">
-                    <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-green-700 text-sm font-bold">{index + 1}</span>
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-green-800 font-medium">{task}</p>
-                    </div>
+              {/* Follow-up Tasks with Assignments */}
+              <Card className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 shadow-lg">
+                <div className="p-4">
+                  <h3 className="text-lg font-bold text-green-900 font-handwriting mb-4">
+                    🎯 跟進事項
+                  </h3>
+                  
+                  <div className="space-y-3 max-h-96 overflow-y-auto">
+                    {getFollowUpTasks().map((task, index) => {
+                      const assignment = taskAssignments.find(a => a.taskId === task.id);
+                      const isAssigning = showAssignInput === task.id;
+                      
+                      return (
+                        <div key={task.id} className="p-3 bg-white rounded-lg border border-green-200">
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-green-700 text-xs font-bold bg-green-100 px-2 py-1 rounded">
+                                  {index + 1}
+                                </span>
+                                <Badge className={cn("text-xs px-2 py-0.5", getPriorityColor(task.priority))}>
+                                  {task.priority === 'high' ? '高' : task.priority === 'medium' ? '中' : '低'}
+                                </Badge>
+                              </div>
+                              <p className="text-green-800 font-medium text-sm">{task.task}</p>
+                              <p className="text-green-600 text-xs mt-1">預估時間：{task.timeEstimate}</p>
+                            </div>
+                            
+                            {!isAssigning && (
+                              <Button
+                                onClick={() => handleAssignTask(task.id)}
+                                size="sm"
+                                variant="outline"
+                                className="text-xs px-2 py-1"
+                              >
+                                <UserPlus className="w-3 h-3 mr-1" />
+                                指派
+                              </Button>
+                            )}
+                          </div>
+
+                          {/* Assignment Input */}
+                          {isAssigning && (
+                            <div className="mt-2 p-2 bg-gray-50 rounded border">
+                              <Input
+                                value={assignInput}
+                                onChange={(e) => setAssignInput(e.target.value)}
+                                placeholder="輸入 @同事ID，例如：@張剪輯 @李記者"
+                                className="text-xs mb-2"
+                                onKeyPress={(e) => {
+                                  if (e.key === 'Enter') {
+                                    handleConfirmAssignment(task.id);
+                                  }
+                                }}
+                              />
+                              <div className="flex flex-wrap gap-1 mb-2">
+                                {TEAM_MEMBERS.map(member => (
+                                  <Button
+                                    key={member.id}
+                                    onClick={() => setAssignInput(prev => prev + (prev ? ' ' : '') + member.id)}
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-xs px-2 py-1 h-6"
+                                  >
+                                    {member.emoji} {member.name}
+                                  </Button>
+                                ))}
+                              </div>
+                              <div className="flex gap-2">
+                                <Button
+                                  onClick={() => handleConfirmAssignment(task.id)}
+                                  size="sm"
+                                  className="text-xs px-3 py-1 h-6"
+                                >
+                                  確認
+                                </Button>
+                                <Button
+                                  onClick={() => setShowAssignInput(null)}
+                                  size="sm"
+                                  variant="outline"
+                                  className="text-xs px-3 py-1 h-6"
+                                >
+                                  取消
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Assigned Members */}
+                          {assignment && assignment.assignedTo.length > 0 && (
+                            <div className="mt-2 flex flex-wrap gap-1">
+                              {assignment.assignedTo.map((memberID, idx) => {
+                                const member = TEAM_MEMBERS.find(m => m.id === memberID);
+                                return (
+                                  <div
+                                    key={idx}
+                                    className="flex items-center gap-1 bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
+                                  >
+                                    <span>{member?.emoji}</span>
+                                    <span>{memberID}</span>
+                                    <button
+                                      onClick={() => handleRemoveAssignment(task.id, memberID)}
+                                      className="ml-1 text-blue-600 hover:text-red-600"
+                                    >
+                                      <X className="w-3 h-3" />
+                                    </button>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
-                ))}
-              </div>
-              
-              {getFollowUpTasks().length === 0 && (
-                <p className="text-green-700 text-center py-8 italic">
-                  暫無跟進事項，請先選擇範本
-                </p>
-              )}
-            </div>
-          </Card>
-        </>
-      )}
-
+                  
+                  {getFollowUpTasks().length === 0 && (
+                    <p className="text-green-700 text-center py-8 italic text-sm">
+                      請先選擇範本以查看跟進事項
+                    </p>
+                  )}
+                </div>
+              </Card>
+            </>
+          )}
+        </div>
+      </div>
 
       {/* Action Footer */}
-      <div className="flex justify-end">
+      <div className="flex justify-end mt-8">
         <Button 
           onClick={onContinue}
           className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 text-lg"
