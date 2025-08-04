@@ -352,7 +352,7 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
           <Card className="p-6">
             <h4 className="font-medium mb-4 flex items-center gap-2">
               <AudioWaveform className="w-5 h-5 text-primary" />
-              音軌：偵測到 {audioTracks.length} 個音軌
+              🗣️ 語言設定
             </h4>
 
             {/* Draggable Language Pool */}
