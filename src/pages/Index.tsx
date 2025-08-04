@@ -73,14 +73,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b bg-card">
-        <div className="max-w-4xl mx-auto px-6 py-8">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-foreground mb-4">
-              🚀 媒體協作工作流程
-            </h1>
-          </div>
+      {/* Progress Bar as Header */}
+      <div className="bg-gradient-card border-b shadow-soft">
+        <div className="max-w-4xl mx-auto px-6 py-12">
+          <WorkflowProgressBar 
+            currentStep={getCurrentStep()} 
+            className="scale-110"
+          />
         </div>
       </div>
 
