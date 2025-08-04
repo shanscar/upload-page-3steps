@@ -11,6 +11,7 @@ interface TaskDetail {
   timeEstimate: string;
   priority: 'high' | 'medium' | 'low';
   completed?: boolean;
+  selected?: boolean;
 }
 
 interface TeamMemberDetail {
@@ -54,6 +55,30 @@ export const MemoDetailModal = ({
   onToggleSelection 
 }: MemoDetailModalProps) => {
   if (!template) return null;
+
+  // Initialize task selection state - default all selected
+  const [taskSelections, setTaskSelections] = React.useState<{[key: string]: boolean}>({});
+
+  React.useEffect(() => {
+    if (template?.detailedTeam) {
+      const initialSelections: {[key: string]: boolean} = {};
+      template.detailedTeam.forEach((member, memberIndex) => {
+        member.tasks.forEach((task, taskIndex) => {
+          const taskKey = `${memberIndex}-${taskIndex}`;
+          initialSelections[taskKey] = true; // Default all selected
+        });
+      });
+      setTaskSelections(initialSelections);
+    }
+  }, [template]);
+
+  const toggleTaskSelection = (memberIndex: number, taskIndex: number) => {
+    const taskKey = `${memberIndex}-${taskIndex}`;
+    setTaskSelections(prev => ({
+      ...prev,
+      [taskKey]: !prev[taskKey]
+    }));
+  };
 
   const getPriorityColor = (priority: 'high' | 'medium' | 'low') => {
     switch (priority) {
@@ -186,41 +211,43 @@ export const MemoDetailModal = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {(template.detailedTeam || []).map((member, index) => (
                   <div key={index} className="bg-white/50 rounded-lg p-4 border border-white/30">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-2xl">{member.emoji}</span>
+                    <div className="flex items-center justify-center gap-2 mb-3">
                       <h4 className={cn("font-bold text-lg", template.titleColor)}>
                         {member.role}
                       </h4>
                     </div>
                     
                     <div className="space-y-2">
-                      {member.tasks.map((task, taskIndex) => (
-                        <div key={taskIndex} className="bg-white/70 rounded p-3 border border-white/40">
-                          <div className="flex items-start justify-between mb-2">
-                            <p className={cn("text-sm font-medium flex-1", template.textColor)}>
-                              {task.task}
-                            </p>
-                            <span className="text-lg ml-2">
-                              {getPriorityIcon(task.priority)}
-                            </span>
-                          </div>
-                          
-                          <div className="flex items-center gap-2">
-                            <Badge 
-                              variant="outline" 
-                              className={cn("text-xs", getPriorityColor(task.priority))}
-                            >
-                              {task.priority === 'high' ? '高優先' : 
-                               task.priority === 'medium' ? '中優先' : '低優先'}
-                            </Badge>
-                            
-                            <div className="flex items-center gap-1 text-xs text-slate-600">
-                              <Clock className="w-3 h-3" />
-                              {task.timeEstimate}
+                      {member.tasks.map((task, taskIndex) => {
+                        const taskKey = `${index}-${taskIndex}`;
+                        const isTaskSelected = taskSelections[taskKey];
+                        
+                        return (
+                          <div 
+                            key={taskIndex} 
+                            className={cn(
+                              "rounded p-4 border cursor-pointer transition-all duration-200 text-center",
+                              isTaskSelected 
+                                ? "bg-white/70 border-white/40 hover:bg-white/80" 
+                                : "bg-white/30 border-white/20 opacity-60 hover:bg-white/40"
+                            )}
+                            onClick={() => toggleTaskSelection(index, taskIndex)}
+                          >
+                            <div className="flex items-center justify-center gap-2 mb-2">
+                              {isTaskSelected && (
+                                <CheckCircle2 className="w-4 h-4 text-green-600" />
+                              )}
+                              <p className={cn(
+                                "text-sm font-medium",
+                                template.textColor,
+                                !isTaskSelected && "line-through"
+                              )}>
+                                {task.task}
+                              </p>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 ))}
