@@ -276,7 +276,7 @@ const Index = () => {
     if (talkState.analysisData && talkState.lastCompletedSubState === 'metadata-edit') {
       completed.push({
         step: 1,
-        title: "說話",
+        title: "述說",
         summary: `${talkState.analysisData.location} - ${talkState.analysisData.type}${talkState.analysisData.people ? ` (${talkState.analysisData.people.length}人)` : ''}`,
         isCompleted: true
       });
