@@ -267,12 +267,7 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
               </Button>
             </div>
           </div>
-        ) : (
-          <div className="space-y-4 py-8">
-            <div className="text-3xl text-success">✨</div>
-            <p className="text-lg font-medium text-success">檔案收到了！</p>
-          </div>
-        )}
+        ) : null}
       </Card>
 
       {uploadedFiles.length > 0 && (
