@@ -227,15 +227,6 @@ export const MemoDetailModal = ({
               </div>
             </div>
             
-            {/* Tips */}
-            <div className="mt-6 p-4 bg-white/40 rounded-lg border border-white/30">
-              <p className={cn("text-sm font-medium", template.textColor)}>
-                💡 <strong>協作提示：</strong>
-                這個範本適合 {template.detailedTeam?.length || template.team.length} 人小組協作，
-                建議在開始前進行角色分配會議，確保每個成員都清楚自己的責任範圍。
-                各項任務可根據實際需要調整優先級和時間分配。
-              </p>
-            </div>
           </div>
         </div>
         
