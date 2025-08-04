@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Copy, Pin, Paperclip, CheckCircle, UserPlus } from "lucide-react";
+import { Copy, Pin, Paperclip, CheckCircle, UserPlus, Check, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { MemoDetailModal } from "./MemoDetailModal";
@@ -852,17 +852,18 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
                                     <Button
                                       size="sm"
                                       onClick={handleSaveAssignee}
-                                      className="bg-green-600 hover:bg-green-700 text-white px-3"
+                                      className="h-8 w-8 p-0 text-green-600 hover:bg-green-100"
+                                      variant="ghost"
                                     >
-                                      確定
+                                      <Check className="h-4 w-4" />
                                     </Button>
                                     <Button
                                       size="sm"
-                                      variant="outline"
+                                      variant="ghost"
                                       onClick={handleCancelAssign}
-                                      className="px-3"
+                                      className="h-8 w-8 p-0 text-gray-600 hover:bg-gray-100"
                                     >
-                                      取消
+                                      <X className="h-4 w-4" />
                                     </Button>
                                   </div>
                                 </div>
