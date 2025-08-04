@@ -357,24 +357,40 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
 
             {/* Draggable Language Pool */}
             <div className="mb-6 p-4 bg-muted/30 rounded-lg">
-              <h5 className="text-sm font-medium mb-3 text-muted-foreground">拖拽語言標籤到音軌卡片上</h5>
-              <div className="flex flex-wrap gap-2">
-                {LANGUAGE_OPTIONS.map(language => (
-                  <div
-                    key={language}
-                    draggable
-                    onDragStart={(e) => handleLanguageDragStart(e, language)}
-                    onDragEnd={handleLanguageDragEnd}
-                    className={cn(
-                      "px-3 py-2 rounded-full text-sm font-medium cursor-move transition-all duration-200",
-                      "hover:scale-105 hover:shadow-md active:scale-95",
-                      getLanguageColor(language),
-                      dragState.draggedLanguage === language && "opacity-50 scale-95"
-                    )}
-                  >
-                    {language}
-                  </div>
-                ))}
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+                  🎯 拖拽至音軌:
+                </span>
+                {LANGUAGE_OPTIONS.map(language => {
+                  const getLanguageIcon = (lang: string) => {
+                    switch (lang) {
+                      case '粵語': return '🇭🇰';
+                      case '英語': return '🇺🇸';
+                      case '普通話': return '🇨🇳';
+                      case '環境聲': return '🔊';
+                      case '其他': return '🌐';
+                      default: return '🗣️';
+                    }
+                  };
+                  
+                  return (
+                    <div
+                      key={language}
+                      draggable
+                      onDragStart={(e) => handleLanguageDragStart(e, language)}
+                      onDragEnd={handleLanguageDragEnd}
+                      className={cn(
+                        "px-3 py-2 rounded-full text-sm font-medium cursor-move transition-all duration-200 flex items-center gap-1",
+                        "hover:scale-105 hover:shadow-md active:scale-95",
+                        getLanguageColor(language),
+                        dragState.draggedLanguage === language && "opacity-50 scale-95"
+                      )}
+                    >
+                      <span>{getLanguageIcon(language)}</span>
+                      {language}
+                    </div>
+                  );
+                })}
               </div>
               {dragState.isDragging && (
                 <p className="text-xs text-muted-foreground mt-2">
