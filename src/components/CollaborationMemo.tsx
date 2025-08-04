@@ -636,6 +636,39 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
 
   const handleSaveAssignee = () => {
     if (assigneeName.trim() && assigneeName.trim() !== '@' && assigningTask) {
+      // Check if it's a processing area task assignment (format: templateId-areaIndex-taskIndex)
+      if (assigningTask.includes('-') && assigningTask.split('-').length === 3) {
+        const [templateId, areaIndex, taskIndex] = assigningTask.split('-');
+        const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
+        
+        if (template && template.processingAreas[parseInt(areaIndex)]) {
+          const area = template.processingAreas[parseInt(areaIndex)];
+          const tasks = area.content.split('、');
+          const taskName = tasks[parseInt(taskIndex)]?.trim();
+          
+          if (taskName) {
+            const newAssignment = {
+              taskKey: assigningTask,
+              taskName: taskName,
+              assignee: assigneeName.replace(/^@/, ''),
+              role: area.label,
+              emoji: area.icon,
+              priority: 'medium' as const
+            };
+            
+            setAssignedTasks(prev => [...prev, newAssignment]);
+            setAssigningTask(null);
+            setAssigneeName('');
+            
+            toast({
+              title: "任務已指派",
+              description: `「${taskName}」已指派給 ${assigneeName.replace(/^@/, '')}`,
+            });
+            return;
+          }
+        }
+      }
+      
       // Check if it's a processing area assignment (format: templateId-areaIndex)
       if (assigningTask.includes('-') && assigningTask.split('-').length === 2) {
         const [templateId, areaIndex] = assigningTask.split('-');
@@ -1153,68 +1186,78 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                                 </h4>
                               </div>
                               
-                              <div className="bg-white rounded-lg p-3 border border-green-200">
-                                {isAssigning ? (
-                                  <div className="space-y-3">
-                                    <p className="text-green-800 font-medium text-sm">
-                                      {area.content}
-                                    </p>
-                                    <div className="flex items-center gap-2">
-                                       <Input
-                                         value={assigneeName}
-                                         onChange={(e) => setAssigneeName(e.target.value)}
-                                         onKeyDown={(e) => {
-                                           if (e.key === 'Enter') {
-                                             handleSaveAssignee();
-                                           }
-                                         }}
-                                         placeholder="@輸入人名 (Enter確認)"
-                                         className="flex-1 text-sm"
-                                         autoFocus
-                                       />
-                                      <Button
-                                        size="sm"
-                                        onClick={handleSaveAssignee}
-                                        className="h-8 w-8 p-0 text-green-600 hover:bg-green-100"
-                                        variant="ghost"
-                                      >
-                                        <Check className="h-4 w-4" />
-                                      </Button>
-                                      <Button
-                                        size="sm"
-                                        variant="ghost"
-                                        onClick={handleCancelAssign}
-                                        className="h-8 w-8 p-0 text-gray-600 hover:bg-gray-100"
-                                      >
-                                        <X className="h-4 w-4" />
-                                      </Button>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <div className="flex items-start justify-between">
-                                    <div className="flex-1">
-                                      <p className="text-green-800 font-medium text-sm mb-1">
-                                        {area.content}
-                                      </p>
+                               <div className="space-y-2">
+                                 {area.content.split('、').map((task, taskIndex) => {
+                                   const taskKey = `${template.id}-${areaIndex}-${taskIndex}`;
+                                   const isTaskAssigning = assigningTask === taskKey;
+                                   const isTaskAssigned = assignedTasks.some(assignedTask => assignedTask.taskKey === taskKey);
+                                   
+                                   return (
+                                     <div key={taskIndex} className="bg-white rounded-lg p-3 border border-green-200">
+                                       {isTaskAssigning ? (
+                                         <div className="space-y-3">
+                                           <p className="text-green-800 font-medium text-sm">
+                                             {task.trim()}
+                                           </p>
+                                           <div className="flex items-center gap-2">
+                                              <Input
+                                                value={assigneeName}
+                                                onChange={(e) => setAssigneeName(e.target.value)}
+                                                onKeyDown={(e) => {
+                                                  if (e.key === 'Enter') {
+                                                    handleSaveAssignee();
+                                                  }
+                                                }}
+                                                placeholder="@輸入人名 (Enter確認)"
+                                                className="flex-1 text-sm"
+                                                autoFocus
+                                              />
+                                             <Button
+                                               size="sm"
+                                               onClick={handleSaveAssignee}
+                                               className="h-8 w-8 p-0 text-green-600 hover:bg-green-100"
+                                               variant="ghost"
+                                             >
+                                               <Check className="h-4 w-4" />
+                                             </Button>
+                                             <Button
+                                               size="sm"
+                                               variant="ghost"
+                                               onClick={handleCancelAssign}
+                                               className="h-8 w-8 p-0 text-gray-600 hover:bg-gray-100"
+                                             >
+                                               <X className="h-4 w-4" />
+                                             </Button>
+                                           </div>
+                                         </div>
+                                       ) : (
+                                         <div className="flex items-start justify-between">
+                                           <div className="flex-1">
+                                             <p className="text-green-800 font-medium text-sm mb-1">
+                                               {task.trim()}
+                                             </p>
+                                            </div>
+                                            {isTaskAssigned ? (
+                                              <div className="ml-2 flex items-center gap-1 text-green-600">
+                                                <CheckCircle className="h-4 w-4" />
+                                                <span className="text-xs font-medium">已指派</span>
+                                              </div>
+                                            ) : (
+                                              <Button
+                                                size="sm"
+                                                variant="ghost"
+                                                onClick={() => handleAssignTask(taskKey)}
+                                                className="ml-2 p-1 h-8 w-8 text-green-600 hover:text-green-800 hover:bg-green-100"
+                                              >
+                                                <UserPlus className="h-4 w-4" />
+                                              </Button>
+                                            )}
+                                         </div>
+                                       )}
                                      </div>
-                                     {isAssigned ? (
-                                       <div className="ml-2 flex items-center gap-1 text-green-600">
-                                         <CheckCircle className="h-4 w-4" />
-                                         <span className="text-xs font-medium">已指派</span>
-                                       </div>
-                                     ) : (
-                                       <Button
-                                         size="sm"
-                                         variant="ghost"
-                                         onClick={() => handleAssignTask(areaKey)}
-                                         className="ml-2 p-1 h-8 w-8 text-green-600 hover:text-green-800 hover:bg-green-100"
-                                       >
-                                         <UserPlus className="h-4 w-4" />
-                                       </Button>
-                                     )}
-                                  </div>
-                                )}
-                              </div>
+                                   );
+                                 })}
+                               </div>
                             </div>
                           </Card>
                         );
