@@ -317,7 +317,7 @@ const Index = () => {
           </div>;
       case 'talk-analyzing':
         return <div className="space-y-6">
-            <h2 className="text-2xl font-semibold text-foreground">說說今天拍了什麼</h2>
+            <h2 className="text-2xl font-semibold text-foreground">分享：今天拍了什麼？</h2>
             <AnalysisResult description={talkState.description} onConfirm={handleAnalysisComplete} onEdit={handleEditAnalysis} onReanalyze={handleReanalyze} />
           </div>;
       case 'talk-metadata-edit':
