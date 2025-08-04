@@ -48,6 +48,11 @@ const Index = () => {
     setCurrentState('input');
   };
 
+  const handleEditFromView = () => {
+    setViewingStep(null);
+    setCurrentState('analyzing');
+  };
+
   const handleFileUpload = (files: File[], metadata: any) => {
     setUploadedFiles(files);
     setUploadMetadata(metadata);
@@ -82,14 +87,12 @@ const Index = () => {
   const handleBackFromView = () => {
     setViewingStep(null);
     // Return to appropriate state based on progress
-    if (currentState === 'viewDetails') {
-      if (uploadedFiles.length > 0) {
-        setCurrentState('processing');
-      } else if (analysisData) {
-        setCurrentState('upload');
-      } else {
-        setCurrentState('input');
-      }
+    if (uploadedFiles.length > 0) {
+      setCurrentState('processing');
+    } else if (analysisData) {
+      setCurrentState('upload');
+    } else {
+      setCurrentState('input');
     }
   };
 
@@ -226,7 +229,7 @@ const Index = () => {
               <AnalysisResult
                 description={description}
                 onConfirm={handleAnalysisComplete}
-                onEdit={handleEditAnalysis}
+                onEdit={handleEditFromView}
                 onReanalyze={handleReanalyze}
                 viewOnly={true}
                 onBack={handleBackFromView}
