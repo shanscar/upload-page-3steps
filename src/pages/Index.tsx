@@ -1,272 +1,95 @@
 import { useState, useEffect } from "react";
-import { WorkflowStep } from "@/components/WorkflowStep";
 import { WorkflowProgressBar } from "@/components/WorkflowProgressBar";
-import { HorizontalWorkflowSteps } from "@/components/HorizontalWorkflowSteps";
 import { DescriptionInput } from "@/components/DescriptionInput";
 import { AnalysisResult } from "@/components/AnalysisResult";
 import { FileUpload } from "@/components/FileUpload";
-import { UploadProgress } from "@/components/UploadProgress";
 import { CollaborationMemo } from "@/components/CollaborationMemo";
 import { useIsMobile } from "@/hooks/use-mobile";
-type WorkflowState = 'talk-input' | 'talk-analyzing' | 'talk-metadata-edit' | 'archive-upload' | 'archive-processing' | 'work-collaboration';
-interface AnalysisData {
-  location: string;
-  type: string;
-  people: string[];
-  date: string;
-  template: string;
-  focus: string;
-  teamRoles: Array<{
-    role: string;
-    tasks: string[];
-  }>;
-}
-interface TalkState {
-  currentSubState: 'input' | 'analyzing' | 'metadata-edit';
-  lastCompletedSubState: 'input' | 'analyzing' | 'metadata-edit' | null;
-  description: string;
-  analysisData: AnalysisData | null;
-}
-interface ProcessStep {
-  id: string;
-  name: string;
-  progress: number;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
-}
-interface ArchiveState {
-  uploadedFiles: File[];
-  metadata: any;
-  processingComplete: boolean;
-  lastCompletedSubState: 'upload' | 'processing' | null;
-  processingSteps: ProcessStep[];
-  isProcessing: boolean;
-}
+import { useProject } from "@/contexts/ProjectContext";
+import { useProjectWorkflow } from "@/hooks/useProjectWorkflow";
+import { useProcessingStatus } from "@/hooks/useProcessingStatus";
+import { useMetadataAnalysis } from "@/hooks/useMetadataAnalysis";
+import { useFileUpload } from "@/hooks/useFileUpload";
+import { AnalysisData } from "@/types/project";
+
 interface SentStatus {
   timestamp: string;
   recipientCount: number;
 }
-interface WorkState {
-  collaborationStarted: boolean;
-  selectedTemplate: any;
-  sentStatus: SentStatus | null;
-}
+
 const Index = () => {
-  const [currentState, setCurrentState] = useState<WorkflowState>('talk-input');
-  const [talkState, setTalkState] = useState<TalkState>({
-    currentSubState: 'input',
-    lastCompletedSubState: null,
-    description: '',
-    analysisData: null
-  });
-  const [archiveState, setArchiveState] = useState<ArchiveState>({
-    uploadedFiles: [],
-    metadata: null,
-    processingComplete: false,
-    lastCompletedSubState: null,
-    processingSteps: [{
-      id: 'upload',
-      name: '檔案上載',
-      progress: 0,
-      status: 'pending'
-    }, {
-      id: 'separation',
-      name: '音軌分離',
-      progress: 0,
-      status: 'pending'
-    }, {
-      id: 'ai_analysis',
-      name: 'AI分析',
-      progress: 0,
-      status: 'pending'
-    }, {
-      id: 'auto_tagging',
-      name: '自動標記',
-      progress: 0,
-      status: 'pending'
-    }],
-    isProcessing: false
-  });
-  const [workState, setWorkState] = useState<WorkState>({
-    collaborationStarted: false,
-    selectedTemplate: null,
-    sentStatus: null
-  });
+  const [sentStatus, setSentStatus] = useState<SentStatus | null>(null);
+  
   const isMobile = useIsMobile();
+  const { state: projectState, createProject } = useProject();
+  const workflow = useProjectWorkflow();
+  const { processingJobs, isProcessing } = useProcessingStatus();
+  const { analyzeDescription, analysisData, isAnalyzing } = useMetadataAnalysis();
+  const { uploadFiles, isUploading } = useFileUpload();
 
-  // Background processing function
-  const startBackgroundProcessing = async () => {
-    const steps = ['separation', 'ai_analysis', 'auto_tagging'];
-    for (const stepId of steps) {
-      await simulateStep(stepId);
+  // Create a project when analysis is completed
+  useEffect(() => {
+    if (analysisData && !projectState.currentProject) {
+      createProject(
+        `${analysisData.location} - ${analysisData.type}`,
+        `錄製於 ${analysisData.date}，參與人員：${analysisData.people.join(', ')}`
+      );
     }
+  }, [analysisData, projectState.currentProject, createProject]);
 
-    // Mark processing as complete
-    setArchiveState(prev => ({
-      ...prev,
-      processingComplete: true,
-      lastCompletedSubState: 'processing',
-      isProcessing: false
-    }));
+  const handleAnalyze = async (description: string) => {
+    await analyzeDescription(description);
+    workflow.setDescription(description);
   };
-  const simulateStep = (stepId: string) => {
-    return new Promise<void>(resolve => {
-      // Different durations for different steps to simulate realistic processing
-      let baseDuration = 5000; // Base 5 seconds
-      const stepName = archiveState.processingSteps.find(step => step.id === stepId)?.name || '';
-      if (stepName.includes('音軌分離')) baseDuration = 6000; // 6-10 seconds for audio separation
-      if (stepName.includes('AI分析')) baseDuration = 10000; // 10-15 seconds for AI analysis  
-      if (stepName.includes('自動標記')) baseDuration = 4000; // 4-7 seconds for auto-tagging
 
-      const duration = baseDuration + Math.random() * (stepName.includes('音軌分離') ? 4000 : stepName.includes('AI分析') ? 5000 : 3000);
-
-      // Start processing
-      setArchiveState(prev => ({
-        ...prev,
-        processingSteps: prev.processingSteps.map(step => step.id === stepId ? {
-          ...step,
-          status: 'processing'
-        } : step)
-      }));
-      const interval = setInterval(() => {
-        setArchiveState(prev => ({
-          ...prev,
-          processingSteps: prev.processingSteps.map(step => {
-            if (step.id === stepId) {
-              const newProgress = Math.min(step.progress + 5, 100); // 5% increments for smoother animation
-              const newStatus = newProgress >= 100 ? 'completed' as const : 'processing' as const;
-              if (newProgress >= 100) {
-                clearInterval(interval);
-                resolve();
-              }
-              return {
-                ...step,
-                progress: newProgress,
-                status: newStatus
-              };
-            }
-            return step;
-          })
-        }));
-      }, duration / 20); // Update every 5% instead of 10%
-    });
-  };
-  const handleAnalyze = (desc: string) => {
-    setTalkState(prev => ({
-      ...prev,
-      description: desc,
-      currentSubState: 'analyzing',
-      lastCompletedSubState: 'input'
-    }));
-    setCurrentState('talk-analyzing');
-  };
-  const handleReanalyze = (desc: string) => {
-    setTalkState(prev => ({
-      ...prev,
-      description: desc,
-      currentSubState: 'analyzing'
-    }));
-    setCurrentState('talk-analyzing');
-  };
   const handleAnalysisComplete = (data: AnalysisData) => {
-    setTalkState(prev => ({
-      ...prev,
-      analysisData: data,
-      currentSubState: 'metadata-edit',
-      lastCompletedSubState: 'metadata-edit'
-    }));
-    setCurrentState('archive-upload');
+    workflow.setAnalysisData(data);
+    workflow.nextStep(); // Move to upload step
   };
-  const handleEditAnalysis = () => {
-    setCurrentState('talk-metadata-edit');
-  };
-  const handleFileUpload = (files: File[], metadata: any) => {
-    setArchiveState(prev => ({
-      ...prev,
-      uploadedFiles: files,
-      metadata: metadata,
-      lastCompletedSubState: 'upload',
-      isProcessing: true,
-      processingSteps: prev.processingSteps.map(step => step.id === 'upload' ? {
-        ...step,
-        status: 'completed',
-        progress: 100
-      } : step)
-    }));
-    // Skip archive-processing and go directly to collaboration
-    setCurrentState('work-collaboration');
-    // Scroll to top when entering collaboration step
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 100);
-    // Start background processing
-    startBackgroundProcessing();
-  };
-  const handleProcessingComplete = () => {
-    setArchiveState(prev => ({
-      ...prev,
-      processingComplete: true,
-      lastCompletedSubState: 'processing'
-    }));
-    setCurrentState('work-collaboration');
-  };
-  const handleTemplateSelect = (template: any) => {
-    setWorkState(prev => ({
-      ...prev,
-      selectedTemplate: template,
-      collaborationStarted: true
-    }));
-    console.log('Template selected:', template);
-  };
-  const handleStepClick = (stepNumber: number) => {
-    if (stepNumber === 1) {
-      // Go to the last completed sub-state of talk
-      const lastState = talkState.lastCompletedSubState;
-      if (lastState === 'metadata-edit') {
-        setCurrentState('talk-metadata-edit');
-      } else if (lastState === 'analyzing') {
-        setCurrentState('talk-analyzing');
-      } else {
-        setCurrentState('talk-input');
-      }
-    } else if (stepNumber === 2 && talkState.analysisData) {
-      setCurrentState('archive-upload');
-    } else if (stepNumber === 3 && archiveState.uploadedFiles.length > 0) {
-      setCurrentState('work-collaboration');
-      // Scroll to top when navigating to collaboration step
+
+  const handleFileUpload = async (files: File[], metadata: any) => {
+    const success = await uploadFiles({
+      files,
+      selectedDate: metadata.date,
+      customDate: metadata.customDate,
+      audioTracks: metadata.audioTracks || []
+    });
+    
+    if (success) {
+      workflow.setUploadComplete();
+      workflow.nextStep(); // Move to collaboration step
+      
+      // Scroll to top when entering collaboration step
       setTimeout(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }, 100);
     }
   };
-  const handleArrowClick = (direction: 'next' | 'prev', fromStep: number) => {
-    if (direction === 'next') {
-      if (fromStep === 1 && talkState.analysisData) {
-        setCurrentState('archive-upload');
-      } else if (fromStep === 2 && archiveState.uploadedFiles.length > 0) {
-        setCurrentState('work-collaboration');
-        // Scroll to top when navigating to collaboration step
-        setTimeout(() => {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }, 100);
-      }
-    } else if (direction === 'prev') {
-      if (fromStep === 2) {
-        setCurrentState('talk-metadata-edit');
-      } else if (fromStep === 3) {
-        setCurrentState('archive-upload');
-      }
+
+  const handleStepClick = (stepNumber: number) => {
+    if (stepNumber === 1 && analysisData) {
+      workflow.setDescription(workflow.workflowState.description);
+    } else if (stepNumber === 2 && analysisData) {
+      // Go to upload step if analysis is complete
+      workflow.nextStep();
+    } else if (stepNumber === 3 && projectState.currentProject?.files.length) {
+      // Go to collaboration step if files are uploaded
+      workflow.nextStep();
+      workflow.nextStep();
     }
   };
+
   const getCurrentStep = () => {
-    switch (currentState) {
-      case 'talk-input':
-      case 'talk-analyzing':
-      case 'talk-metadata-edit':
+    switch (workflow.workflowState.currentStep) {
+      case 'description':
         return 1;
-      case 'archive-upload':
-      case 'archive-processing':
+      case 'analysis':
+        return 1;
+      case 'upload':
         return 2;
-      case 'work-collaboration':
+      case 'collaboration':
+        return 3;
+      case 'completed':
         return 3;
       default:
         return 1;
@@ -276,99 +99,169 @@ const Index = () => {
   // Generate completed steps summaries
   const getCompletedSteps = () => {
     const completed = [];
-    if (talkState.analysisData && talkState.lastCompletedSubState === 'metadata-edit') {
+    
+    if (analysisData) {
       completed.push({
         step: 1,
         title: "述說",
-        summary: `${talkState.analysisData.location} - ${talkState.analysisData.type}${talkState.analysisData.people ? ` (${talkState.analysisData.people.length}人)` : ''}`,
+        summary: `${analysisData.location} - ${analysisData.type}${analysisData.people ? ` (${analysisData.people.length}人)` : ''}`,
         isCompleted: true
       });
     }
 
     // Show archive processing status
-    if (archiveState.uploadedFiles.length > 0) {
-      if (archiveState.isProcessing) {
+    if (projectState.currentProject?.files.length > 0) {
+      if (isProcessing) {
         // Get current processing step
-        const processingStep = archiveState.processingSteps.find(step => step.status === 'processing');
-        const completedSteps = archiveState.processingSteps.filter(step => step.status === 'completed').length;
+        const processingJob = processingJobs.find(job => job.status === 'processing');
+        const completedJobs = processingJobs.filter(job => job.status === 'completed').length;
         completed.push({
           step: 2,
           title: "入檔",
-          summary: processingStep ? `處理中... ${processingStep.name} ${processingStep.progress}%` : `處理中... ${completedSteps}/${archiveState.processingSteps.length} 完成`,
+          summary: processingJob ? `處理中... ${processingJob.job_type} ${processingJob.progress_percentage}%` : `處理中... ${completedJobs}/${processingJobs.length} 完成`,
           isCompleted: false,
           isProcessing: true,
-          processingSteps: archiveState.processingSteps
+          processingSteps: processingJobs.map(job => ({
+            id: job.id,
+            name: job.job_type,
+            progress: job.progress_percentage,
+            status: job.status
+          }))
         });
-      } else if (archiveState.processingComplete) {
+      } else if (processingJobs.every(job => job.status === 'completed')) {
         completed.push({
           step: 2,
           title: "入檔",
-          summary: `${archiveState.uploadedFiles.length}個檔案已處理完成`,
+          summary: `${projectState.currentProject.files.length}個檔案已處理完成`,
           isCompleted: true
         });
       }
     }
-    if (workState.sentStatus) {
+    
+    if (sentStatus) {
       completed.push({
         step: 3,
         title: "開工",
-        summary: `已發送通知 - ${workState.sentStatus.timestamp} (${workState.sentStatus.recipientCount}位協作者)`,
+        summary: `已發送通知 - ${sentStatus.timestamp} (${sentStatus.recipientCount}位協作者)`,
         isCompleted: true
       });
     }
+    
     return completed;
   };
 
   // Get current active step content
   const getCurrentStepContent = () => {
-    switch (currentState) {
-      case 'talk-input':
-        return <div className="space-y-6">
+    switch (workflow.workflowState.currentStep) {
+      case 'description':
+        return (
+          <div className="space-y-6">
             <h2 className="text-2xl font-semibold text-foreground">分享：今天拍了什麼？</h2>
-            <DescriptionInput onAnalyze={handleAnalyze} isAnalyzing={false} showExamples={true} showProgressBar={false} />
-          </div>;
-      case 'talk-analyzing':
-        return <div className="space-y-6">
+            <DescriptionInput 
+              onAnalyze={handleAnalyze} 
+              isAnalyzing={isAnalyzing} 
+              showExamples={true} 
+              showProgressBar={true}
+              initialValue={workflow.workflowState.description} 
+            />
+          </div>
+        );
+        
+      case 'analysis':
+        return (
+          <div className="space-y-6">
             <h2 className="text-2xl font-semibold text-foreground">分享：今天拍了什麼？</h2>
-            <AnalysisResult description={talkState.description} onConfirm={handleAnalysisComplete} onEdit={handleEditAnalysis} onReanalyze={handleReanalyze} />
-          </div>;
-      case 'talk-metadata-edit':
-        return <div className="space-y-6">
-            <h2 className="text-2xl font-semibold text-foreground">編輯詳細資料</h2>
-            {talkState.analysisData && <AnalysisResult description={talkState.description} onConfirm={handleAnalysisComplete} onEdit={handleEditAnalysis} onReanalyze={handleReanalyze} />}
-          </div>;
-      case 'archive-upload':
-        return <div className="space-y-6">
+            {analysisData && (
+              <AnalysisResult 
+                description={workflow.workflowState.description} 
+                onConfirm={handleAnalysisComplete} 
+                onEdit={() => workflow.previousStep()} 
+                onReanalyze={handleAnalyze} 
+              />
+            )}
+          </div>
+        );
+        
+      case 'upload':
+        return (
+          <div className="space-y-6">
             <h2 className="text-2xl font-semibold text-foreground">入檔</h2>
-            {talkState.analysisData && <FileUpload expectedFileType={talkState.analysisData.template} onUpload={handleFileUpload} initialData={{
-            files: archiveState.uploadedFiles,
-            metadata: archiveState.metadata,
-            selectedDate: archiveState.metadata?.date,
-            customDate: archiveState.metadata?.customDate,
-            audioTracks: archiveState.metadata?.audioTracks
-          }} />}
-          </div>;
-      case 'work-collaboration':
-        return <div className="space-y-6">
-            {talkState.analysisData && <CollaborationMemo analysisData={talkState.analysisData} archiveData={archiveState} onContinue={(sentStatus?: SentStatus) => {
-            if (sentStatus) {
-              setWorkState(prev => ({
-                ...prev,
-                sentStatus
-              }));
-            }
-            console.log('Collaboration completed');
-          }} />}
-          </div>;
+            {analysisData && (
+              <FileUpload 
+                expectedFileType={analysisData.template} 
+                onUpload={handleFileUpload}
+                initialData={{
+                  files: [],
+                  metadata: {
+                    date: projectState.currentProject?.metadata?.recording_date || "today",
+                    customDate: undefined
+                  },
+                  selectedDate: projectState.currentProject?.metadata?.recording_date || "today",
+                  audioTracks: projectState.currentProject?.audioTracks.map(track => ({
+                    id: parseInt(track.id),
+                    language: track.language,
+                    isSelected: track.is_selected,
+                    channelType: track.channel_type as 'mono' | 'stereo',
+                    volumeLevel: 75 // Default volume level
+                  })) || []
+                }} 
+              />
+            )}
+          </div>
+        );
+        
+      case 'collaboration':
+        return (
+          <div className="space-y-6">
+            {analysisData && (
+              <CollaborationMemo 
+                analysisData={{
+                  template: analysisData.template,
+                  focus: `處理 ${analysisData.type} 相關內容`,
+                  teamRoles: [
+                    {
+                      role: '剪輯師',
+                      tasks: ['音軌處理', '內容剪輯']
+                    },
+                    {
+                      role: '記者',
+                      tasks: ['內容整理', '背景核查']
+                    }
+                  ]
+                }}
+                archiveData={{
+                  metadata: {
+                    date: projectState.currentProject?.metadata?.recording_date,
+                    customDate: undefined
+                  },
+                  uploadedFiles: []
+                }}
+                onContinue={(status?: SentStatus) => {
+                  if (status) {
+                    setSentStatus(status);
+                    workflow.nextStep(); // Move to completed
+                  }
+                }} 
+              />
+            )}
+          </div>
+        );
+        
       default:
         return null;
     }
   };
-  return <div className="min-h-screen bg-gradient-to-br from-background via-primary-glow/10 to-secondary/20">
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary-glow/10 to-secondary/20">
       {/* Compact Header */}
       <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm border-b border-border/50 p-4">
         <div className="max-w-7xl mx-auto">
-          <WorkflowProgressBar currentStep={getCurrentStep()} completedSteps={getCompletedSteps()} onEditStep={handleStepClick} />
+          <WorkflowProgressBar 
+            currentStep={getCurrentStep()} 
+            completedSteps={getCompletedSteps()} 
+            onEditStep={handleStepClick} 
+          />
         </div>
       </div>
 
@@ -378,6 +271,8 @@ const Index = () => {
           {getCurrentStepContent()}
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;
