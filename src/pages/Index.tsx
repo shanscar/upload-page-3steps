@@ -327,7 +327,7 @@ const Index = () => {
       case 'talk-input':
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-semibold text-foreground">說說今天拍了什麼</h2>
+            <h2 className="text-2xl font-semibold text-foreground">分享今天拍了什麼</h2>
             <DescriptionInput 
               onAnalyze={handleAnalyze}
               isAnalyzing={false}
