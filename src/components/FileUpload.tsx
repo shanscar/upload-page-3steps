@@ -2,8 +2,10 @@ import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { AudioWaveform, Circle, CircleDot, Check, ChevronDown, X } from "lucide-react";
+import { AudioWaveform, Circle, CircleDot, Check, ChevronDown, X, CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
 
 interface FileUploadProps {
   expectedFileType: string;
@@ -29,6 +31,7 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [audioTracks, setAudioTracks] = useState<AudioTrack[]>([]);
   const [selectedDate, setSelectedDate] = useState("today");
+  const [customDate, setCustomDate] = useState<Date>();
   const [dragState, setDragState] = useState<DragState>({
     isDragging: false,
     draggedLanguage: null,
@@ -304,12 +307,11 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
           {/* Date Selection */}
           <Card className="p-4">
             <h4 className="font-medium mb-3">📅 錄製日期：</h4>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               {[
                 { value: "today", label: "今天" },
                 { value: "yesterday", label: "昨天" },
-                { value: "dayBefore", label: "前天" },
-                { value: "custom", label: "自選日期" }
+                { value: "dayBefore", label: "前天" }
               ].map(option => (
                 <Button
                   key={option.value}
@@ -320,6 +322,34 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
                   {option.label}
                 </Button>
               ))}
+              
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={selectedDate === "custom" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedDate("custom")}
+                  >
+                    <CalendarIcon className="w-4 h-4 mr-2" />
+                    {selectedDate === "custom" && customDate 
+                      ? format(customDate, "MM/dd") 
+                      : "自選日期"
+                    }
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={customDate}
+                    onSelect={(date) => {
+                      setCustomDate(date);
+                      if (date) setSelectedDate("custom");
+                    }}
+                    initialFocus
+                    className={cn("p-3 pointer-events-auto")}
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
           </Card>
 
