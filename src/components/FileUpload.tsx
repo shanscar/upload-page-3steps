@@ -16,7 +16,7 @@ interface AudioTrack {
   id: number;
   language?: string;
   isSelected: boolean;
-  channelType: 'mono' | 'stereo' | 'surround';
+  channelType: 'mono' | 'stereo';
   volumeLevel: number; // 0-100 for waveform height
 }
 
@@ -73,7 +73,7 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
       { id: 1, isSelected: true, channelType: "stereo", volumeLevel: 85 },
       { id: 2, isSelected: false, channelType: "stereo", volumeLevel: 72 },
       { id: 3, isSelected: false, channelType: "mono", volumeLevel: 68 },
-      { id: 4, isSelected: false, channelType: "surround", volumeLevel: 45 }
+      { id: 4, isSelected: false, channelType: "mono", volumeLevel: 45 }
     ];
     setAudioTracks(mockTracks);
   };
@@ -100,7 +100,7 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
     ));
   };
 
-  const updateTrackChannelType = (trackId: number, channelType: 'mono' | 'stereo' | 'surround') => {
+  const updateTrackChannelType = (trackId: number, channelType: 'mono' | 'stereo') => {
     setAudioTracks(prev => prev.map(track => 
       track.id === trackId ? { ...track, channelType } : track
     ));
@@ -182,8 +182,7 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
   const LANGUAGE_OPTIONS = ["粵語", "英語", "普通話", "環境聲", "其他"];
   const CHANNEL_OPTIONS = [
     { value: 'mono', label: '單聲道', icon: <Circle className="w-3 h-3" /> },
-    { value: 'stereo', label: '立體聲', icon: <div className="flex gap-1"><CircleDot className="w-3 h-3" /><CircleDot className="w-3 h-3" /></div> },
-    { value: 'surround', label: '環繞聲', icon: <div className="flex gap-0.5"><Circle className="w-2 h-2" /><Circle className="w-2 h-2" /><Circle className="w-2 h-2" /><Circle className="w-2 h-2" /></div> }
+    { value: 'stereo', label: '立體聲', icon: <div className="flex gap-1"><CircleDot className="w-3 h-3" /><CircleDot className="w-3 h-3" /></div> }
   ];
   
   // Language color mapping
@@ -203,7 +202,6 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
     switch (channelType) {
       case 'mono': return <Circle className="w-3 h-3" />;
       case 'stereo': return <div className="flex gap-1"><CircleDot className="w-3 h-3" /><CircleDot className="w-3 h-3" /></div>;
-      case 'surround': return <div className="flex gap-0.5"><Circle className="w-2 h-2" /><Circle className="w-2 h-2" /><Circle className="w-2 h-2" /><Circle className="w-2 h-2" /></div>;
       default: return <Circle className="w-3 h-3" />;
     }
   };
@@ -462,7 +460,7 @@ export const FileUpload = ({ expectedFileType, onUpload }: FileUploadProps) => {
                                   track.channelType === option.value && "bg-primary/10"
                                 )}
                                 onClick={() => {
-                                  updateTrackChannelType(track.id, option.value as 'mono' | 'stereo' | 'surround');
+                                  updateTrackChannelType(track.id, option.value as 'mono' | 'stereo');
                                 }}
                               >
                                 {option.icon}
