@@ -835,18 +835,18 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                         </p>
                        </div>
                        
-                        {/* Programs */}
-                         <div>
-                           <p className={cn("text-xs font-medium mb-0.5", template.textColor)}>
-                             建議節目：
-                           </p>
-                           <div className="flex items-center gap-1">
-                             {template.examples.slice(0, 2).map((example, idx) => (
-                               <span key={idx} className={cn("text-xs", template.textColor)}>
-                                 {example}{idx < template.examples.slice(0, 2).length - 1 ? ", " : ""}
-                               </span>
-                             ))}
-                             {template.examples.length > 2 && (
+                       {/* Programs */}
+                        <div>
+                          <p className={cn("text-xs font-medium mb-1", template.textColor)}>
+                            建議節目：
+                          </p>
+                          <div className="flex flex-wrap gap-1">
+                            {template.examples.slice(0, 3).map((example, idx) => (
+                              <span key={idx} className={cn("text-xs", template.textColor)}>
+                                {example}{idx < 2 && idx < template.examples.slice(0, 3).length - 1 ? ", " : ""}
+                              </span>
+                            ))}
+                            {template.examples.length > 3 && (
                               <Dialog>
                                 <DialogTrigger asChild>
                                   <button
@@ -858,7 +858,7 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                                       });
                                     }}
                                   >
-                                     +{template.examples.length - 2}更多
+                                    +{template.examples.length - 3}更多
                                   </button>
                                 </DialogTrigger>
                                 <DialogContent className="max-w-lg">
@@ -1010,21 +1010,21 @@ ${tasks.map(task => `  • ${task.taskName} (${task.role})`).join('\n')}`
                             </p>
                           </div>
                           
-                            <div>
-                               <p className={cn("text-sm font-medium mb-1", template.textColor)}>
-                                 建議節目：
-                               </p>
-                               <div className="flex items-center gap-1">
-                                 {template.examples.slice(0, 2).map((example, idx) => (
-                                   <Badge key={idx} variant="secondary" className="text-xs whitespace-normal">
-                                     {example}
-                                   </Badge>
-                                 ))}
-                                 {template.examples.length > 2 && (
+                           <div>
+                              <p className={cn("text-sm font-medium mb-2", template.textColor)}>
+                                建議節目：
+                              </p>
+                              <div className="flex flex-wrap gap-1">
+                                {template.examples.slice(0, 3).map((example, idx) => (
+                                  <Badge key={idx} variant="secondary" className="text-xs whitespace-normal">
+                                    {example}
+                                  </Badge>
+                                ))}
+                                {template.examples.length > 3 && (
                                   <Dialog>
                                     <DialogTrigger asChild>
                                       <Badge variant="outline" className="text-xs cursor-pointer hover:bg-gray-100">
-                                        +{template.examples.length - 2}更多
+                                        +{template.examples.length - 3}更多
                                       </Badge>
                                     </DialogTrigger>
                                     <DialogContent className="max-w-lg">
