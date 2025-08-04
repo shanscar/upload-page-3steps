@@ -470,6 +470,14 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
   const [selectedTemplate, setSelectedTemplate] = useState<typeof PROGRAM_TEMPLATES[0] | null>(null);
   const [assigningTask, setAssigningTask] = useState<string | null>(null);
   const [assigneeName, setAssigneeName] = useState<string>('');
+  const [assignedTasks, setAssignedTasks] = useState<Array<{
+    taskKey: string;
+    taskName: string;
+    assignee: string;
+    role: string;
+    emoji: string;
+    priority: 'high' | 'medium' | 'low';
+  }>>([]);
   const { toast } = useToast();
 
   const handleCopyLink = async () => {
@@ -520,11 +528,38 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
   };
 
   const handleSaveAssignee = () => {
-    if (assigneeName.trim() && assigneeName.trim() !== '@') {
-      toast({
-        title: "已指派任務",
-        description: `任務已指派給 ${assigneeName}`,
-      });
+    if (assigneeName.trim() && assigneeName.trim() !== '@' && assigningTask) {
+      // Find the task details
+      const allTasks = getPrioritizedTasks();
+      let taskDetails = null;
+      let roleDetails = null;
+      
+      for (const roleGroup of allTasks) {
+        const taskIndex = parseInt(assigningTask.split('-').pop() || '0');
+        if (assigningTask.startsWith(roleGroup.role) && roleGroup.tasks[taskIndex]) {
+          taskDetails = roleGroup.tasks[taskIndex];
+          roleDetails = roleGroup;
+          break;
+        }
+      }
+      
+      if (taskDetails && roleDetails) {
+        const newAssignment = {
+          taskKey: assigningTask,
+          taskName: taskDetails.task,
+          assignee: assigneeName.replace(/^@/, ''),
+          role: roleDetails.role,
+          emoji: roleDetails.emoji,
+          priority: taskDetails.priority
+        };
+        
+        setAssignedTasks(prev => [...prev, newAssignment]);
+        
+        toast({
+          title: "已指派任務",
+          description: `任務「${taskDetails.task}」已指派給 ${assigneeName}`,
+        });
+      }
     }
     setAssigningTask(null);
     setAssigneeName('');
@@ -533,6 +568,14 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
   const handleCancelAssign = () => {
     setAssigningTask(null);
     setAssigneeName('');
+  };
+
+  const handleRemoveAssignment = (taskKey: string) => {
+    setAssignedTasks(prev => prev.filter(task => task.taskKey !== taskKey));
+    toast({
+      title: "已移除指派",
+      description: "任務指派已移除",
+    });
   };
 
   // Extract follow-up tasks from selected templates
@@ -751,6 +794,59 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
             </Card>
           </div>
 
+          {/* Assigned Tasks Section */}
+          {assignedTasks.length > 0 && (
+            <div className="mb-8">
+              <h3 className="text-xl font-bold text-amber-900 mb-4 flex items-center gap-2">
+                <CheckCircle className="w-6 h-6 text-green-600" />
+                已指派任務 ({assignedTasks.length})
+              </h3>
+              <div className="flex flex-wrap gap-3">
+                {assignedTasks.map((task, index) => (
+                  <div
+                    key={index}
+                    className={cn(
+                      "relative group bg-white rounded-lg border-2 shadow-md p-3 min-w-48 animate-fade-in",
+                      task.priority === 'high' ? 'border-red-200 bg-red-50' :
+                      task.priority === 'medium' ? 'border-orange-200 bg-orange-50' :
+                      'border-green-200 bg-green-50'
+                    )}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-lg">{task.emoji}</span>
+                          <div className="flex items-center gap-1">
+                            <Badge 
+                              variant={task.priority === 'high' ? 'destructive' : task.priority === 'medium' ? 'default' : 'secondary'}
+                              className="text-xs"
+                            >
+                              {task.priority === 'high' ? '高' : task.priority === 'medium' ? '中' : '低'}
+                            </Badge>
+                          </div>
+                        </div>
+                        <p className="text-sm font-medium text-gray-800 mb-1 line-clamp-2">
+                          {task.taskName}
+                        </p>
+                        <p className="text-xs text-gray-600 font-medium">
+                          指派給：{task.assignee}
+                        </p>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleRemoveAssignment(task.taskKey)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0 text-gray-400 hover:text-red-500 hover:bg-red-100"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Main Layout: Left 1/3 Selected Memo + Right 2/3 Role Tasks */}
           <div className="flex flex-col lg:flex-row gap-8 mb-8">
             {/* Left 1/3: Selected Memo Papers */}
@@ -833,6 +929,7 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
                         {roleGroup.tasks.map((task, taskIndex) => {
                           const taskKey = `${roleGroup.role}-${taskIndex}`;
                           const isAssigning = assigningTask === taskKey;
+                          const isAssigned = assignedTasks.some(assignedTask => assignedTask.taskKey === taskKey);
                           
                           return (
                             <div key={taskIndex} className="bg-white rounded-lg p-3 border border-green-200">
@@ -882,15 +979,22 @@ export const CollaborationMemo = ({ analysisData, archiveData, onContinue }: Col
                                       </Badge>
                                       <span>{task.timeEstimate}</span>
                                     </div>
-                                  </div>
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={() => handleAssignTask(taskKey)}
-                                    className="ml-2 p-1 h-8 w-8 text-green-600 hover:text-green-800 hover:bg-green-100"
-                                  >
-                                    <UserPlus className="h-4 w-4" />
-                                  </Button>
+                                   </div>
+                                   {isAssigned ? (
+                                     <div className="ml-2 flex items-center gap-1 text-green-600">
+                                       <CheckCircle className="h-4 w-4" />
+                                       <span className="text-xs font-medium">已指派</span>
+                                     </div>
+                                   ) : (
+                                     <Button
+                                       size="sm"
+                                       variant="ghost"
+                                       onClick={() => handleAssignTask(taskKey)}
+                                       className="ml-2 p-1 h-8 w-8 text-green-600 hover:text-green-800 hover:bg-green-100"
+                                     >
+                                       <UserPlus className="h-4 w-4" />
+                                     </Button>
+                                   )}
                                 </div>
                               )}
                             </div>
