@@ -10,10 +10,10 @@ interface DescriptionInputProps {
 }
 
 const EXAMPLES = [
-  "今日去政府總部採訪財政預算案記者會",
-  "在中大訪問陳教授談AI發展",
-  "突發：旺角交通意外現場報導",
-  "在S5直播室訪問李醫生談胸腺癌"
+  "政府總部採訪",
+  "今日下午2點在政府總部大樓記者會廳，採訪財政司司長陳茂波講解新一年度預算案重點，現場約30名記者出席",
+  "突發：旺角亞皆老街交通意外，涉及兩車相撞，現場有輕傷人士送院",
+  "在TVB電視城S5直播室專訪瑪麗醫院腫瘤科李醫生，討論胸腺癌最新治療方案及預防方法"
 ];
 
 export const DescriptionInput = ({ onAnalyze, isAnalyzing }: DescriptionInputProps) => {
@@ -64,10 +64,10 @@ export const DescriptionInput = ({ onAnalyze, isAnalyzing }: DescriptionInputPro
       <div className="text-center">
         <div className="text-3xl mb-3">💬</div>
         <h3 className="text-xl font-medium text-foreground mb-2">
-          今天拍了什麼？
+          說說今日的拍攝情況
         </h3>
         <p className="text-sm text-muted-foreground">
-          一句話就夠了
+          越詳細越好：時間、地點、人物、事件
         </p>
       </div>
 
@@ -76,7 +76,7 @@ export const DescriptionInput = ({ onAnalyze, isAnalyzing }: DescriptionInputPro
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="例如：今日去政府總部採訪財政預算案..."
+          placeholder="例如：今日下午2點在政府總部大樓記者會廳，採訪財政司司長陳茂波講解新一年度預算案重點..."
           className={cn(
             "min-h-[140px] text-lg p-6 transition-all duration-300 border-2 shadow-sm",
             "bg-card focus:shadow-medium focus:border-primary focus:scale-[1.02]",
