@@ -21,21 +21,42 @@ const Index = () => {
   const [sentStatus, setSentStatus] = useState<SentStatus | null>(null);
   
   const isMobile = useIsMobile();
-  const { state: projectState, createProject } = useProject();
+  const { state: projectState, createProject, updateMetadata } = useProject();
   const workflow = useProjectWorkflow();
   const { processingJobs, isProcessing } = useProcessingStatus();
   const { analyzeDescription, analysisData, isAnalyzing } = useMetadataAnalysis();
   const { uploadFiles, isUploading } = useFileUpload();
 
-  // Create a project when analysis is completed
+  // Create a project and update metadata when analysis is completed
   useEffect(() => {
-    if (analysisData && !projectState.currentProject) {
-      createProject(
-        `${analysisData.location} - ${analysisData.type}`,
-        `錄製於 ${analysisData.date}，參與人員：${analysisData.people.join(', ')}`
-      );
-    }
-  }, [analysisData, projectState.currentProject, createProject]);
+    const handleProjectAndMetadata = async () => {
+      if (analysisData && !projectState.currentProject) {
+        try {
+          // 先創建專案
+          const newProject = await createProject(
+            `${analysisData.location} - ${analysisData.type}`,
+            `錄製於 ${analysisData.date}，參與人員：${analysisData.people.join(', ')}`
+          );
+
+          // 等待專案創建完成後更新元數據
+          if (newProject) {
+            const metadata = {
+              location: analysisData.location,
+              content_type: analysisData.type,
+              people: analysisData.people,
+              template_type: analysisData.template,
+              recording_date: new Date().toISOString().split('T')[0]
+            };
+            await updateMetadata(metadata);
+          }
+        } catch (error) {
+          console.error('項目創建或元數據更新失敗:', error);
+        }
+      }
+    };
+
+    handleProjectAndMetadata();
+  }, [analysisData, projectState.currentProject, createProject, updateMetadata]);
 
   const handleAnalyze = async (description: string) => {
     await analyzeDescription(description);

@@ -23,7 +23,6 @@ export function useMetadataAnalysis(): MetadataAnalysisHook {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { updateMetadata } = useProject();
 
   const generateMockAnalysis = (desc: string): AnalysisData => {
     // Simple keyword matching for demo
@@ -74,17 +73,8 @@ export function useMetadataAnalysis(): MetadataAnalysisHook {
       const analysis = generateMockAnalysis(description);
       setAnalysisData(analysis);
 
-      // Save to project metadata
-      const metadata: Partial<ProjectMetadata> = {
-        location: analysis.location,
-        content_type: analysis.type,
-        people: analysis.people,
-        template_type: analysis.template,
-        recording_date: new Date().toISOString().split('T')[0]
-      };
-
-      await updateMetadata(metadata);
-
+      // 僅設置分析數據，不直接更新資料庫
+      // 專案創建和元數據更新將由 Index.tsx 處理
       return analysis;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'AI 分析失敗';
@@ -93,27 +83,18 @@ export function useMetadataAnalysis(): MetadataAnalysisHook {
     } finally {
       setIsAnalyzing(false);
     }
-  }, [updateMetadata]);
+  }, []);
 
   const updateAnalysis = useCallback(async (data: AnalysisData): Promise<void> => {
     try {
       setAnalysisData(data);
-
-      // Update project metadata
-      const metadata: Partial<ProjectMetadata> = {
-        location: data.location,
-        content_type: data.type,
-        people: data.people,
-        template_type: data.template,
-        recording_date: new Date().toISOString().split('T')[0]
-      };
-
-      await updateMetadata(metadata);
+      // 僅更新本地狀態，不直接操作資料庫
+      // 資料庫更新由父組件處理
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '更新分析失敗';
       setError(errorMessage);
     }
-  }, [updateMetadata]);
+  }, []);
 
   const clearAnalysis = useCallback(() => {
     setAnalysisData(null);
