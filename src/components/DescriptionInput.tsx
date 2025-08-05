@@ -140,7 +140,7 @@ export const DescriptionInput = ({
         />
         
         {/* Integrated button at bottom-right corner */}
-        {showHint && description && !isAnalyzing && (
+        {showHint && description && !isAnalyzing && !showProgressBar && (
           <Button
             onClick={handleAnalyze}
             size="sm"
