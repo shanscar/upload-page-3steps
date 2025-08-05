@@ -16,6 +16,9 @@ import {
   TaskAssignment
 } from '@/types/project';
 
+// 無認證模式的匿名用戶 ID
+const ANONYMOUS_USER_ID = '00000000-0000-0000-0000-000000000000';
+
 // 類型轉換函數
 export function transformProject(data: any): Project {
   return {
@@ -69,15 +72,10 @@ export function transformProcessingJob(data: any): ProcessingJob {
 export class ProjectService {
   // 創建項目
   static async createProject(title: string, description: string): Promise<Project> {
-    const { data: user } = await supabase.auth.getUser();
-    if (!user.user) {
-      throw new Error('用戶未登錄');
-    }
-
     const { data, error } = await supabase
       .from('projects')
       .insert({
-        user_id: user.user.id,
+        user_id: ANONYMOUS_USER_ID,
         title,
         description,
         status: 'draft'
@@ -174,13 +172,10 @@ export class ProjectService {
     file: File, 
     onProgress?: (progress: number) => void
   ): Promise<ProjectFile> {
-    const { data: user } = await supabase.auth.getUser();
-    if (!user.user) throw new Error('用戶未登錄');
-
     // 生成唯一檔案路徑
     const fileExt = file.name.split('.').pop();
     const fileName = `${crypto.randomUUID()}.${fileExt}`;
-    const filePath = `${user.user.id}/${projectId}/original/${fileName}`;
+    const filePath = `${ANONYMOUS_USER_ID}/${projectId}/original/${fileName}`;
 
     // 上傳到 Storage
     const { error: uploadError } = await supabase.storage
