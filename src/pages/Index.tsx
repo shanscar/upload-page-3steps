@@ -27,6 +27,13 @@ const Index = () => {
   const { analyzeDescription, analysisData, isAnalyzing } = useMetadataAnalysis();
   const { uploadFiles, isUploading } = useFileUpload();
 
+  // Transition to analysis step when analysis data is available
+  useEffect(() => {
+    if (analysisData && workflow.workflowState.currentStep === 'description') {
+      workflow.setAnalysisData(analysisData);
+    }
+  }, [analysisData, workflow]);
+
   // Create a project and update metadata when analysis is completed
   useEffect(() => {
     const handleProjectAndMetadata = async () => {
